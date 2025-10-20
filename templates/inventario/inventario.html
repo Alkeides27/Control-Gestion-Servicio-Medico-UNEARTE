@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Inventario Actual{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Inventario Actual</h1>
+    <a href="{% url 'inventario:index' %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Volver
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header card-header-medical text-white">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-box-seam"></i> Existencias de Medicamentos
+                </h5>
+            </div>
+            <div class="card-body">
+                <!-- Tabla de inventario -->
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Medicamento</th>
+                                <th>Código</th>
+                                <th>Cantidad</th>
+                                <th>Fecha de Caducidad</th>
+                                <th>Lote</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in inventario %}
+                            <tr>
+                                <td>{{ item.medicamento.nombre }}</td>
+                                <td>{{ item.medicamento.codigo }}</td>
+                                <td>{{ item.cantidad }}</td>
+                                <td>{{ item.fecha_caducidad|date:"d/m/Y" }}</td>
+                                <td>{{ item.lote|default:"No especificado" }}</td>
+                                <td>
+                                    {% if item.fecha_caducidad < today %}
+                                        <span class="badge bg-danger">Caducado</span>
+                                    {% elif item.cantidad <= item.medicamento.stock_minimo %}
+                                        <span class="badge bg-warning">Bajo stock</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Disponible</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">No se encontraron existencias en el inventario.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Paginación -->
+                {% if inventario.has_other_pages %}
+                <nav aria-label="Navegación de páginas">
+                    <ul class="pagination justify-content-center">
+                        {% if inventario.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1">&laquo; Primero</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ inventario.previous_page_number }}">Anterior</a>
+                        </li>
+                        {% endif %}
+
+                        <li class="page-item active">
+                            <span class="page-link">
+                                Página {{ inventario.number }} de {{ inventario.paginator.num_pages }}
+                            </span>
+                        </li>
+
+                        {% if inventario.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ inventario.next_page_number }}">Siguiente</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ inventario.paginator.num_pages }}">Último &raquo;</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

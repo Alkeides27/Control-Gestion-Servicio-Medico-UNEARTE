@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Cita{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header card-header-medical text-white">
+                <h3 class="card-title mb-0">
+                    <i class="bi bi-calendar-check"></i> Editar Cita
+                </h3>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.paciente.id_for_label }}" class="form-label">
+                                {{ form.paciente.label }}
+                            </label>
+                            {{ form.paciente }}
+                            {% if form.paciente.errors %}
+                                <div class="text-danger">
+                                    {{ form.paciente.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.tipo_cita.id_for_label }}" class="form-label">
+                                {{ form.tipo_cita.label }}
+                            </label>
+                            <div class="input-group">
+                                {{ form.tipo_cita }}
+                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#crearTipoModal">
+                                    <i class="bi bi-plus-circle"></i> Nuevo
+                                </button>
+                            </div>
+                            {% if form.tipo_cita.errors %}
+                                <div class="text-danger">
+                                    {{ form.tipo_cita.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.motivo.id_for_label }}" class="form-label">
+                                {{ form.motivo.label }}
+                            </label>
+                            <div class="input-group">
+                                {{ form.motivo }}
+                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#crearMotivoModal">
+                                    <i class="bi bi-plus-circle"></i> Nuevo
+                                </button>
+                            </div>
+                            {% if form.motivo.errors %}
+                                <div class="text-danger">
+                                    {{ form.motivo.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.estado.id_for_label }}" class="form-label">
+                                {{ form.estado.label }}
+                            </label>
+                            <div class="input-group">
+                                {{ form.estado }}
+                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#crearEstadoModal">
+                                    <i class="bi bi-plus-circle"></i> Nuevo
+                                </button>
+                            </div>
+                            {% if form.estado.errors %}
+                                <div class="text-danger">
+                                    {{ form.estado.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.fecha.id_for_label }}" class="form-label">
+                                {{ form.fecha.label }}
+                            </label>
+                            {{ form.fecha }}
+                            {% if form.fecha.errors %}
+                                <div class="text-danger">
+                                    {{ form.fecha.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-3 mb-3">
+                            <label for="{{ form.hora_inicio.id_for_label }}" class="form-label">
+                                {{ form.hora_inicio.label }}
+                            </label>
+                            {{ form.hora_inicio }}
+                            {% if form.hora_inicio.errors %}
+                                <div class="text-danger">
+                                    {{ form.hora_inicio.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-3 mb-3">
+                            <label for="{{ form.hora_fin.id_for_label }}" class="form-label">
+                                {{ form.hora_fin.label }}
+                            </label>
+                            {{ form.hora_fin }}
+                            {% if form.hora_fin.errors %}
+                                <div class="text-danger">
+                                    {{ form.hora_fin.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.observaciones.id_for_label }}" class="form-label">
+                            {{ form.observaciones.label }}
+                        </label>
+                        {{ form.observaciones }}
+                        {% if form.observaciones.errors %}
+                            <div class="text-danger">
+                                {{ form.observaciones.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'citas:show' cita.id %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Volver
+                        </a>
+                        <button type="submit" class="btn btn-medical-primary">
+                            <i class="bi bi-save"></i> Actualizar Cita
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<div class="modal fade" id="crearTipoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Crear Nuevo Tipo de Cita</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="crearTipoForm">
+                    <div class="mb-3">
+                        <label for="nombre_tipo" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre_tipo" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="descripcion_tipo" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion_tipo" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="duracion_tipo" class="form-label">Duración (minutos)</label>
+                        <input type="number" class="form-control" id="duracion_tipo" value="30">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Crear</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="crearMotivoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Crear Nuevo Motivo de Cita</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="crearMotivoForm">
+                    <div class="mb-3">
+                        <label for="nombre_motivo" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre_motivo" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="descripcion_motivo" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion_motivo" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Crear</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="crearEstadoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Crear Nuevo Estado de Cita</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="crearEstadoForm">
+                    <div class="mb-3">
+                        <label for="nombre_estado" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre_estado" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="descripcion_estado" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion_estado" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Crear</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% load static %}
+<script src="{% static 'js/citas_modals.js' %}"></script>
+<script>
+$(document).ready(function() {
+    // Asegurar que se muestren los valores correctos de fecha y hora
+    {% if form.instance.fecha %}
+        var fechaCita = "{{ form.instance.fecha|date:'Y-m-d' }}";
+        $('#id_fecha').val(fechaCita);
+    {% endif %}
+    
+    {% if form.instance.hora_inicio %}
+        var horaInicio = "{{ form.instance.hora_inicio|time:'H:i' }}";
+        $('#id_hora_inicio').val(horaInicio);
+    {% endif %}
+    
+    {% if form.instance.hora_fin %}
+        var horaFin = "{{ form.instance.hora_fin|time:'H:i' }}";
+        $('#id_hora_fin').val(horaFin);
+    {% endif %}
+});
+</script>
+{% endblock %}

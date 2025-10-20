@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalles del Paciente{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="dashboard-title">Detalles del Paciente</h1>
+    <div>
+        <a href="{% url 'pacientes:edit' paciente.id %}" class="btn btn-outline-medical me-2">
+            <i class="bi bi-pencil"></i> Editar
+        </a>
+        <a href="{% url 'pacientes:destroy' paciente.id %}" class="btn btn-outline-danger">
+            <i class="bi bi-trash"></i> Eliminar
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-medical mb-4">
+            <div class="card-header-medical">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-person"></i> Información Personal
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <strong>Nombre:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        {{ paciente.nombre }} {{ paciente.apellido }}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <strong>Número de Documento:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        {{ paciente.numero_documento }}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <strong>Fecha de Nacimiento:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        {{ paciente.fecha_nacimiento|date:"d/m/Y" }}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <strong>Edad:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        {{ paciente.edad }} años
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <strong>Género:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        {{ paciente.genero }}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <strong>Email:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        {{ paciente.email|default:"No especificado" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card card-medical mb-4">
+            <div class="card-header-medical">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-telephone"></i> Teléfonos
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if telefonos %}
+                    <ul class="list-group">
+                        {% for telefono in telefonos %}
+                            <li class="list-group-item">
+                                <strong>{{ telefono.tipo_telefono }}:</strong> {{ telefono.numero }}
+                                {% if telefono.es_principal %}
+                                    <span class="badge bg-primary">Principal</span>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">No se han registrado teléfonos.</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card card-medical">
+            <div class="card-header-medical">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-geo-alt"></i> Direcciones
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if direcciones %}
+                    <ul class="list-group">
+                        {% for direccion in direcciones %}
+                            <li class="list-group-item">
+                                {{ direccion.direccion }}, {{ direccion.ciudad }}
+                                {% if direccion.es_principal %}
+                                    <span class="badge bg-primary">Principal</span>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">No se han registrado direcciones.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a href="{% url 'pacientes:index' %}" class="btn btn-outline-medical">
+        <i class="bi bi-arrow-left"></i> Volver al listado
+    </a>
+</div>
+{% endblock %}

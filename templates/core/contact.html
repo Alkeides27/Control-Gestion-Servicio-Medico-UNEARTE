@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Contacto{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>Contacto</h1>
+        <p class="lead">Información de contacto del sistema.</p>
+        
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Información de Contacto</h5>
+                <p class="card-text">
+                    Para cualquier consulta o soporte técnico, puede contactarnos a través de los siguientes medios:
+                </p>
+                
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <i class="bi bi-envelope"></i> Email: 
+                        <a href="mailto:soporte@sistemedico.com">soporte@sistemedico.com</a>
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-telephone"></i> Teléfono: +58 (212) 123-4567
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-geo-alt"></i> Dirección: Universidad Nacional Experimental de las Artes (UNEARTES)
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

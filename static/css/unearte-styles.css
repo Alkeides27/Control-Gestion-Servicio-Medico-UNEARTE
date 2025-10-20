@@ -1,0 +1,254 @@
+/* Colores corporativos de UNEARTE */
+:root {
+    --unearte-primary: #0d52e7; /* Azul rey de UNEARTE */
+    --unearte-secondary: #8c1d40; /* Rojo/morado de UNEARTE */
+    --unearte-accent: #ffc107; /* Color secundario */
+    --unearte-light: #f8f9fa;
+    --unearte-dark: #212529;
+}
+
+/* Barra de navegación */
+.navbar-unearte {
+    background: linear-gradient(135deg, var(--unearte-primary), var(--unearte-secondary)) !important;
+}
+
+.navbar-brand-custom {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.navbar-brand-custom img {
+    height: 40px;
+    width: auto;
+}
+
+.navbar-brand-custom span {
+    color: white !important;
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.nav-link-custom {
+    color: white !important;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.nav-link-custom:hover {
+    color: var(--unearte-accent) !important;
+    transform: translateY(-2px);
+}
+
+/* Botones con colores UNEARTE */
+.btn-unearte-primary {
+    background-color: var(--unearte-primary) !important;
+    border-color: var(--unearte-primary) !important;
+    color: white !important;
+}
+
+.btn-unearte-primary:hover {
+    background-color: #143720 !important;
+    border-color: #143720 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(26, 71, 42, 0.3);
+}
+
+.btn-unearte-secondary {
+    background-color: var(--unearte-secondary) !important;
+    border-color: var(--unearte-secondary) !important;
+    color: white !important;
+}
+
+.btn-unearte-secondary:hover {
+    background-color: #6a1731 !important;
+    border-color: #6a1731 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(140, 29, 64, 0.3);
+}
+
+.btn-outline-unearte-primary {
+    border-color: var(--unearte-primary) !important;
+    color: var(--unearte-primary) !important;
+}
+
+.btn-outline-unearte-primary:hover {
+    background-color: var(--unearte-primary) !important;
+    border-color: var(--unearte-primary) !important;
+    color: white !important;
+}
+
+.btn-outline-unearte-secondary {
+    border-color: var(--unearte-secondary) !important;
+    color: var(--unearte-secondary) !important;
+}
+
+.btn-outline-unearte-secondary:hover {
+    background-color: var(--unearte-secondary) !important;
+    border-color: var(--unearte-secondary) !important;
+    color: white !important;
+}
+
+/* Tarjetas */
+.card-unearte {
+    border: 1px solid rgba(26, 71, 42, 0.15) !important;
+    box-shadow: 0 0.125rem 0.25rem rgba(26, 71, 42, 0.1) !important;
+}
+
+.card-header-unearte {
+    background: linear-gradient(135deg, var(--unearte-primary), #2a6a3a) !important;
+    color: white !important;
+    border: none !important;
+}
+
+/* Encabezados */
+.bg-unearte-primary {
+    background-color: var(--unearte-primary) !important;
+}
+
+.bg-unearte-secondary {
+    background-color: var(--unearte-secondary) !important;
+}
+
+.text-unearte-primary {
+    color: var(--unearte-primary) !important;
+}
+
+.text-unearte-secondary {
+    color: var(--unearte-secondary) !important;
+}
+
+/* Alertas */
+.alert-unearte-primary {
+    background-color: rgba(26, 71, 42, 0.1) !important;
+    border-color: var(--unearte-primary) !important;
+    color: var(--unearte-primary) !important;
+}
+
+.alert-unearte-secondary {
+    background-color: rgba(140, 29, 64, 0.1) !important;
+    border-color: var(--unearte-secondary) !important;
+    color: var(--unearte-secondary) !important;
+}
+
+/* Links */
+.link-unearte {
+    color: var(--unearte-primary) !important;
+}
+
+.link-unearte:hover {
+    color: var(--unearte-secondary) !important;
+    text-decoration: underline;
+}
+
+/* Formularios */
+.form-control:focus {
+    border-color: var(--unearte-primary) !important;
+    box-shadow: 0 0 0 0.2rem rgba(26, 71, 42, 0.25) !important;
+}
+
+.form-select:focus {
+    border-color: var(--unearte-primary) !important;
+    box-shadow: 0 0 0 0.2rem rgba(26, 71, 42, 0.25) !important;
+}
+
+/* Tabs */
+.nav-tabs .nav-link.active,
+.nav-tabs .nav-item.show .nav-link {
+    color: var(--unearte-primary) !important;
+    background-color: white !important;
+    border-color: var(--unearte-primary) var(--unearte-primary) transparent !important;
+}
+
+.nav-tabs .nav-link:hover,
+.nav-tabs .nav-link:focus {
+    color: var(--unearte-secondary) !important;
+}
+
+/* Tablas */
+.table-unearte {
+    --bs-table-bg: transparent;
+    --bs-table-accent-bg: rgba(26, 71, 42, 0.05);
+    --bs-table-striped-bg: rgba(26, 71, 42, 0.03);
+    --bs-table-active-bg: rgba(26, 71, 42, 0.1);
+    --bs-table-hover-bg: rgba(26, 71, 42, 0.075);
+    --bs-table-border-color: rgba(26, 71, 42, 0.1);
+}
+
+.table-unearte thead th {
+    background-color: rgba(26, 71, 42, 0.1) !important;
+    border-bottom-color: var(--unearte-primary) !important;
+}
+
+/* Página de inicio y dashboard */
+.dashboard-welcome {
+    background: linear-gradient(135deg, rgba(26, 71, 42, 0.1), rgba(140, 29, 64, 0.1));
+    border-radius: 10px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.dashboard-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    height: 100%;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(26, 71, 42, 0.2);
+}
+
+.dashboard-card-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.dashboard-card-primary {
+    background-color: rgba(26, 71, 42, 0.1);
+    color: var(--unearte-primary);
+}
+
+.dashboard-card-secondary {
+    background-color: rgba(140, 29, 64, 0.1);
+    color: var(--unearte-secondary);
+}
+
+
+
+/* Mejoras generales de UI */
+.page-title {
+    position: relative;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    border-bottom: 3px solid var(--unearte-primary);
+}
+
+.page-title::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--unearte-primary), var(--unearte-secondary));
+}
+
+.action-buttons {
+    background-color: var(--unearte-light);
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+    border-left: 4px solid var(--unearte-primary);
+}
+
+.action-buttons .btn {
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}

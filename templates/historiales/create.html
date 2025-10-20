@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Crear Historial Médico{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Crear Nuevo Historial Médico</h4>
+        </div>
+        <div class="card-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.non_field_errors %}
+                            <p class="mb-0">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label for="{{ form.paciente.id_for_label }}" class="form-label">{{ form.paciente.label }}</label>
+                    {{ form.paciente }}
+                    {% if form.paciente.errors %}<div class="invalid-feedback d-block">{{ form.paciente.errors.0 }}</div>{% endif %}
+                </div>
+
+                <hr>
+                <h5 class="mb-3">Detalles del Historial</h5>
+
+                <div class="row">
+                    <!-- Alergias -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label d-flex justify-content-between align-items-center">
+                            <span>{{ form.alergias.label }}</span>
+                            <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#crearAlergiaModal">
+                                <i class="bi bi-plus-circle"></i> Nuevo
+                            </button>
+                        </label>
+                        <div id="id_alergias_container" class="form-check-container border rounded p-2" style="max-height: 150px; overflow-y: auto;">
+                            {% for choice in form.alergias %}
+                            <div class="form-check">
+                                {{ choice.tag }}
+                                <label class="form-check-label" for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% if form.alergias.errors %}<div class="invalid-feedback d-block">{{ form.alergias.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <!-- Enfermedades -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label d-flex justify-content-between align-items-center">
+                            <span>{{ form.enfermedades_preexistentes.label }}</span>
+                            <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#crearEnfermedadModal">
+                                <i class="bi bi-plus-circle"></i> Nuevo
+                            </button>
+                        </label>
+                        <div id="id_enfermedades_preexistentes_container" class="form-check-container border rounded p-2" style="max-height: 150px; overflow-y: auto;">
+                            {% for choice in form.enfermedades_preexistentes %}
+                            <div class="form-check">
+                                {{ choice.tag }}
+                                <label class="form-check-label" for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% if form.enfermedades_preexistentes.errors %}<div class="invalid-feedback d-block">{{ form.enfermedades_preexistentes.errors.0 }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <!-- Medicamentos -->
+                <div class="mb-3">
+                    <label class="form-label d-flex justify-content-between align-items-center">
+                        <span>{{ form.medicamentos_actuales.label }}</span>
+                        <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#crearMedicamentoModal">
+                            <i class="bi bi-plus-circle"></i> Nuevo
+                        </button>
+                    </label>
+                    <div id="id_medicamentos_actuales_container" class="form-check-container border rounded p-2" style="max-height: 150px; overflow-y: auto;">
+                        {% for choice in form.medicamentos_actuales %}
+                        <div class="form-check">
+                            {{ choice.tag }}
+                            <label class="form-check-label" for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% if form.medicamentos_actuales.errors %}<div class="invalid-feedback d-block">{{ form.medicamentos_actuales.errors.0 }}</div>{% endif %}
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <a href="{% url 'historiales:index' %}" class="btn btn-secondary me-2">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Guardar Historial</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Crear Alergia -->
+<div class="modal fade" id="crearAlergiaModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Crear Nueva Alergia</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="crearAlergiaForm">
+                    <div class="mb-3">
+                        <label for="nueva_alergia_nombre" class="form-label">Nombre de la Alergia</label>
+                        <input type="text" id="nueva_alergia_nombre" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Crear</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Crear Enfermedad -->
+<div class="modal fade" id="crearEnfermedadModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Crear Nueva Enfermedad</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="crearEnfermedadForm">
+                    <div class="mb-3">
+                        <label for="nueva_enfermedad_nombre" class="form-label">Nombre de la Enfermedad</label>
+                        <input type="text" id="nueva_enfermedad_nombre" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Crear</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Crear Medicamento -->
+<div class="modal fade" id="crearMedicamentoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Crear Nuevo Medicamento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="crearMedicamentoForm">
+                    <!-- Campo Nombre -->
+                    <div class="mb-3">
+                        <label for="{{ medicamento_form.nombre.id_for_label }}" class="form-label">{{ medicamento_form.nombre.label }}</label>
+                        {{ medicamento_form.nombre }}
+                        <div class="invalid-feedback"></div>
+                    </div>
+
+                    <!-- Campo Categoría -->
+                    <div class="mb-3">
+                        <label for="{{ medicamento_form.categoria.id_for_label }}" class="form-label">{{ medicamento_form.categoria.label }}</label>
+                        <div class="input-group">
+                            {{ medicamento_form.categoria }}
+                            <button class="btn btn-outline-secondary" type="button" id="new-categoria-btn">Nuevo</button>
+                        </div>
+                        <div id="new-categoria-form" class="mt-2" style="display: none;">
+                            <div class="input-group">
+                                <input type="text" id="new-categoria-name" class="form-control" placeholder="Nombre de la nueva categoría">
+                                <button class="btn btn-outline-danger" type="button" id="cancel-new-categoria-btn">Cancelar</button>
+                            </div>
+                        </div>
+                        <div class="invalid-feedback"></div>
+                    </div>
+
+                    <!-- Campo Proveedor -->
+                    <div class="mb-3">
+                        <label for="{{ medicamento_form.proveedor.id_for_label }}" class="form-label">{{ medicamento_form.proveedor.label }}</label>
+                        <div class="input-group">
+                            {{ medicamento_form.proveedor }}
+                            <button class="btn btn-outline-secondary" type="button" id="new-proveedor-btn">Nuevo</button>
+                        </div>
+                        <div id="new-proveedor-form" class="mt-2" style="display: none;">
+                            <div class="input-group">
+                                <input type="text" id="new-proveedor-name" class="form-control" placeholder="Nombre del nuevo proveedor">
+                                <button class="btn btn-outline-danger" type="button" id="cancel-new-proveedor-btn">Cancelar</button>
+                            </div>
+                        </div>
+                        <div class="invalid-feedback"></div>
+                    </div>
+
+                    <!-- Campo Precio -->
+                    <div class="mb-3">
+                        <label for="{{ medicamento_form.precio_unitario.id_for_label }}" class="form-label">{{ medicamento_form.precio_unitario.label }}</label>
+                        {{ medicamento_form.precio_unitario }}
+                        <div class="invalid-feedback"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Crear</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'js/historiales_modals.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestión de Inventario{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="dashboard-title">Gestión de Inventario</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-header">Categorías</div>
+            <div class="card-body">
+                <h5 class="card-title">Gestión de Categorías</h5>
+                <p class="card-text">Administrar las categorías de medicamentos.</p>
+                <a href="{% url 'inventario:listar_categorias' %}" class="btn btn-light">Ver Categorías</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-header">Proveedores</div>
+            <div class="card-body">
+                <h5 class="card-title">Gestión de Proveedores</h5>
+                <p class="card-text">Administrar los proveedores de medicamentos.</p>
+                <a href="{% url 'inventario:listar_proveedores' %}" class="btn btn-light">Ver Proveedores</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card text-white bg-warning mb-3">
+            <div class="card-header">Medicamentos</div>
+            <div class="card-body">
+                <h5 class="card-title">Gestión de Medicamentos</h5>
+                <p class="card-text">Administrar el catálogo de medicamentos.</p>
+                <a href="{% url 'inventario:listar_medicamentos' %}" class="btn btn-light">Ver Medicamentos</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card text-white bg-info mb-3">
+            <div class="card-header">Inventario</div>
+            <div class="card-body">
+                <h5 class="card-title">Existencias</h5>
+                <p class="card-text">Administrar las existencias de medicamentos.</p>
+                <a href="{% url 'inventario:listar_inventario' %}" class="btn btn-light">Ver Inventario</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-bar-chart"></i> Stock de Medicamentos
+                </h5>
+            </div>
+            <div class="card-body">
+                <p>Resumen del stock total por medicamento.</p>
+                <a href="{% url 'inventario:stock_medicamentos' %}" class="btn btn-primary">Ver Stock</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-arrow-left-right"></i> Movimientos de Inventario
+                </h5>
+            </div>
+            <div class="card-body">
+                <p>Registro de todas las entradas y salidas de medicamentos del inventario.</p>
+                <a href="{% url 'inventario:listar_movimientos' %}" class="btn btn-primary">Ver Movimientos</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

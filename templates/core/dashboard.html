@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1><i class="bi bi-speedometer2"></i> Dashboard del Control y Gestión del Servicio Médico</h1>
+        <p class="lead">Bienvenido al sistema de gestión de servicios médicos.</p>
+    </div>
+</div>
+
+<!-- Estadísticas principales clickeables -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <a href="{% url 'pacientes:index' %}" class="text-decoration-none">
+            <div class="card text-white bg-primary mb-3 shadow-sm stat-card h-100">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                    <div class="stat-icon mb-2">
+                        <i class="bi bi-people fs-1"></i>
+                    </div>
+                    <h5 class="card-title mb-0">{{ total_pacientes }}</h5>
+                    <p class="card-text text-center small">Pacientes registrados</p>
+                </div>
+            </div>
+        </a>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <a href="{% url 'citas:hoy' %}" class="text-decoration-none">
+            <div class="card text-white bg-success mb-3 shadow-sm stat-card h-100">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                    <div class="stat-icon mb-2">
+                        <i class="bi bi-calendar-day fs-1"></i>
+                    </div>
+                    <h5 class="card-title mb-0">{{ citas_hoy }}</h5>
+                    <p class="card-text text-center small">Citas programadas para hoy</p>
+                </div>
+            </div>
+        </a>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <a href="{% url 'citas:index' %}?estado=programadas" class="text-decoration-none">
+            <div class="card text-white bg-warning mb-3 shadow-sm stat-card h-100">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                    <div class="stat-icon mb-2">
+                        <i class="bi bi-calendar fs-1"></i>
+                    </div>
+                    <h5 class="card-title mb-0">{{ citas_pendientes }}</h5>
+                    <p class="card-text text-center small">Citas pendientes</p>
+                </div>
+            </div>
+        </a>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <a href="{% url 'historiales:index' %}" class="text-decoration-none">
+            <div class="card text-white bg-info mb-3 shadow-sm stat-card h-100">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                    <div class="stat-icon mb-2">
+                        <i class="bi bi-file-medical fs-1"></i>
+                    </div>
+                    <h5 class="card-title mb-0">{{ total_historiales }}</h5>
+                    <p class="card-text text-center small">Historiales médicos</p>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- Contenido dinámico -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-calendar-check"></i> Últimas Citas</h5>
+            </div>
+            <div class="card-body">
+                {% if ultimas_citas %}
+                    <div class="list-group">
+                        {% for cita in ultimas_citas %}
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ cita.paciente.nombre }} {{ cita.paciente.apellido }}</h6>
+                                    <small>{{ cita.fecha|date:"d/m/Y" }}</small>
+                                </div>
+                                <p class="mb-1">{{ cita.motivo.nombre }}</p>
+                                <small>{{ cita.hora_inicio|time:"H:i" }} - {{ cita.hora_fin|time:"H:i" }}</small>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">No hay citas registradas.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-person-plus"></i> Últimos Pacientes</h5>
+            </div>
+            <div class="card-body">
+                {% if ultimos_pacientes %}
+                    <div class="list-group">
+                        {% for paciente in ultimos_pacientes %}
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ paciente.nombre }} {{ paciente.apellido }}</h6>
+                                    <small>{{ paciente.created_at|date:"d/m/Y" }}</small>
+                                </div>
+                                <p class="mb-1">{{ paciente.tipo_documento }}: {{ paciente.numero_documento }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">No hay pacientes registrados.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.stat-card {
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+}
+
+.stat-icon {
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover .stat-icon {
+    transform: scale(1.1);
+}
+
+.text-decoration-none:hover {
+    text-decoration: none;
+}
+</style>
+{% endblock %}

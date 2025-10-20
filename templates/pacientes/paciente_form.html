@@ -1,0 +1,187 @@
+{% extends 'form_base.html' %}
+
+{% block title %}{{ title|default:"Nuevo Paciente" }}{% endblock %}
+
+{% block form_title %}{{ title|default:"Registrar Nuevo Paciente" }}{% endblock %}
+
+{% block cancel_url %}{% url 'pacientes:index' %}{% endblock %}
+
+{% block submit_text %}{{ submit_text|default:"Guardar Paciente" }}{% endblock %}
+
+{% block form_content %}
+<!-- Sección de Identificación -->
+<div class="section mb-4">
+    <h5 class="bg-light p-2 rounded-top border-bottom-0">
+        <i class="bi bi-person-badge me-2"></i>Datos de Identificación
+    </h5>
+    <div class="p-3 border rounded-bottom">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.tipo_documento.id_for_label }}" class="form-label fw-bold">
+                    {{ form.tipo_documento.label }}
+                    {% if form.tipo_documento.field.required %}<span class="text-danger">*</span>{% endif %}
+                </label>
+                {{ form.tipo_documento }}
+                {% if form.tipo_documento.errors %}
+                    <div class="invalid-feedback d-block">
+                        {% for error in form.tipo_documento.errors %}
+                            <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% if form.tipo_documento.help_text %}
+                    <div class="form-text"><small>{{ form.tipo_documento.help_text }}</small></div>
+                {% endif %}
+            </div>
+            
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.numero_documento.id_for_label }}" class="form-label fw-bold">
+                    {{ form.numero_documento.label }}
+                    {% if form.numero_documento.field.required %}<span class="text-danger">*</span>{% endif %}
+                </label>
+                {{ form.numero_documento }}
+                {% if form.numero_documento.errors %}
+                    <div class="invalid-feedback d-block">
+                        {% for error in form.numero_documento.errors %}
+                            <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% if form.numero_documento.help_text %}
+                    <div class="form-text"><small>{{ form.numero_documento.help_text }}</small></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sección de Datos Personales -->
+<div class="section mb-4">
+    <h5 class="bg-light p-2 rounded-top border-bottom-0">
+        <i class="bi bi-person-lines-fill me-2"></i>Datos Personales
+    </h5>
+    <div class="p-3 border rounded-bottom">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.nombre.id_for_label }}" class="form-label fw-bold">
+                    {{ form.nombre.label }}
+                    {% if form.nombre.field.required %}<span class="text-danger">*</span>{% endif %}
+                </label>
+                {{ form.nombre }}
+                {% if form.nombre.errors %}
+                    <div class="invalid-feedback d-block">
+                        {% for error in form.nombre.errors %}
+                            <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% if form.nombre.help_text %}
+                    <div class="form-text"><small>{{ form.nombre.help_text }}</small></div>
+                {% endif %}
+            </div>
+            
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.apellido.id_for_label }}" class="form-label fw-bold">
+                    {{ form.apellido.label }}
+                    {% if form.apellido.field.required %}<span class="text-danger">*</span>{% endif %}
+                </label>
+                {{ form.apellido }}
+                {% if form.apellido.errors %}
+                    <div class="invalid-feedback d-block">
+                        {% for error in form.apellido.errors %}
+                            <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% if form.apellido.help_text %}
+                    <div class="form-text"><small>{{ form.apellido.help_text }}</small></div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.fecha_nacimiento.id_for_label }}" class="form-label fw-bold">
+                    {{ form.fecha_nacimiento.label }}
+                    {% if form.fecha_nacimiento.field.required %}<span class="text-danger">*</span>{% endif %}
+                </label>
+                {{ form.fecha_nacimiento }}
+                {% if form.fecha_nacimiento.errors %}
+                    <div class="invalid-feedback d-block">
+                        {% for error in form.fecha_nacimiento.errors %}
+                            <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% if form.fecha_nacimiento.help_text %}
+                    <div class="form-text"><small>{{ form.fecha_nacimiento.help_text }}</small></div>
+                {% endif %}
+            </div>
+            
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.genero.id_for_label }}" class="form-label fw-bold">
+                    {{ form.genero.label }}
+                    {% if form.genero.field.required %}<span class="text-danger">*</span>{% endif %}
+                </label>
+                {{ form.genero }}
+                {% if form.genero.errors %}
+                    <div class="invalid-feedback d-block">
+                        {% for error in form.genero.errors %}
+                            <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% if form.genero.help_text %}
+                    <div class="form-text"><small>{{ form.genero.help_text }}</small></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sección de Contacto -->
+<div class="section mb-4">
+    <h5 class="bg-light p-2 rounded-top border-bottom-0">
+        <i class="bi bi-envelope-at me-2"></i>Información de Contacto
+    </h5>
+    <div class="p-3 border rounded-bottom">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.email.id_for_label }}" class="form-label fw-bold">
+                    {{ form.email.label }}
+                    {% if form.email.field.required %}<span class="text-danger">*</span>{% endif %}
+                </label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="invalid-feedback d-block">
+                        {% for error in form.email.errors %}
+                            <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% if form.email.help_text %}
+                    <div class="form-text"><small>{{ form.email.help_text }}</small></div>
+                {% endif %}
+            </div>
+            
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.confirmar_email.id_for_label }}" class="form-label fw-bold">
+                    {{ form.confirmar_email.label }}
+                    {% if form.confirmar_email.field.required %}<span class="text-danger">*</span>{% endif %}
+                </label>
+                {{ form.confirmar_email }}
+                {% if form.confirmar_email.errors %}
+                    <div class="invalid-feedback d-block">
+                        {% for error in form.confirmar_email.errors %}
+                            <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% if form.confirmar_email.help_text %}
+                    <div class="form-text"><small>{{ form.confirmar_email.help_text }}</small></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

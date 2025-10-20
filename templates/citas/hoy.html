@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Citas de Hoy{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="dashboard-title">Citas para Hoy ({{ hoy|date:"d/m/Y" }})</h1>
+    <a href="{% url 'citas:index' %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Ver todas las citas
+    </a>
+</div>
+
+<!-- Tabla de citas de hoy -->
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Paciente</th>
+                <th>Tipo de Cita</th>
+                <th>Motivo</th>
+                <th>Hora</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cita in citas %}
+            <tr>
+                <td>{{ cita.paciente.nombre }} {{ cita.paciente.apellido }}</td>
+                <td>{{ cita.tipo_cita }}</td>
+                <td>{{ cita.motivo }}</td>
+                <td>{{ cita.hora_inicio|time:"H:i" }} - {{ cita.hora_fin|time:"H:i" }}</td>
+                <td>
+                    <span class="badge bg-{{ cita.estado.color|default:'secondary' }}">
+                        {{ cita.estado }}
+                    </span>
+                </td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <a href="{% url 'citas:show' cita.id %}" class="btn btn-outline-primary btn-sm" title="Ver detalles">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                        <a href="{% url 'citas:edit' cita.id %}" class="btn btn-outline-warning btn-sm" title="Editar">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="{% url 'citas:cambiar_estado' cita.id cita.estado.id %}" class="btn btn-outline-info btn-sm" title="Cambiar estado">
+                            <i class="bi bi-arrow-repeat"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">No hay citas programadas para hoy.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

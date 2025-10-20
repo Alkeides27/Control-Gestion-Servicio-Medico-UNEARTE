@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="card-title mb-0">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ titulo }}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <p class="lead">
+                        ¿Estás seguro de que deseas eliminar al usuario <strong>{{ usuario.username }}</strong>?
+                    </p>
+                    <p>Esta acción no se puede deshacer.</p>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'core:lista_usuarios' %}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle me-1"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash-fill me-1"></i> Sí, eliminar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Stock de Medicamentos</title>
+    <style>
+        @page {
+            size: letter landscape;
+            margin: 1.5cm;
+            @frame header_frame {
+                -pdf-frame-content: header_content;
+                left: 50pt; top: 50pt; width: 700pt; height: 50pt;
+            }
+            @frame content_frame {
+                left: 50pt; top: 90pt; width: 700pt; height: 480pt;
+            }
+            @frame footer_frame {
+                -pdf-frame-content: footer_content;
+                left: 50pt; top: 570pt; width: 700pt; height: 20pt;
+            }
+        }
+        body {
+            font-family: "Helvetica", sans-serif;
+            color: #333;
+        }
+        #header_content {
+            text-align: center;
+        }
+        #header_content img {
+            height: 40px;
+            vertical-align: middle;
+        }
+        #header_content h1 {
+            display: inline;
+            vertical-align: middle;
+            margin-left: 10px;
+            font-size: 20px;
+        }
+        #footer_content {
+            text-align: right;
+            font-size: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+            font-size: 10px;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            font-size: 10px;
+            font-weight: bold;
+            color: #fff;
+            border-radius: 4px;
+        }
+        .bg-danger { background-color: #dc3545; }
+        .bg-warning { background-color: #ffc107; color: #000; }
+        .bg-success { background-color: #28a745; }
+    </style>
+</head>
+<body>
+    <div id="header_content">
+        {% if logo_path %}
+            <img src="{{ logo_path }}" alt="Logo">
+        {% endif %}
+        <h1>Reporte de Stock de Medicamentos</h1>
+    </div>
+
+    <div id="footer_content">
+        Generado el: {{ generation_date }} | Página <pdf:pagenumber> de <pdf:pagecount>
+    </div>
+
+    <table class="info-table" repeat="1">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Código</th>
+                <th>Categoría</th>
+                <th>Proveedor</th>
+                <th class="text-center">Stock Mínimo</th>
+                <th class="text-center">Stock Actual</th>
+                <th class="text-center">Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for med in medicamentos %}
+            <tr>
+                <td>{{ med.nombre }}</td>
+                <td>{{ med.codigo }}</td>
+                <td>{{ med.categoria.nombre }}</td>
+                <td>{{ med.proveedor.nombre }}</td>
+                <td class="text-center">{{ med.stock_minimo }}</td>
+                <td class="text-center">{{ med.stock_actual }}</td>
+                <td class="text-center">
+                    {% if med.estado_stock == 'agotado' %}
+                        <span class="badge bg-danger">Agotado</span>
+                    {% elif med.estado_stock == 'bajo' %}
+                        <span class="badge bg-warning">Bajo stock</span>
+                    {% else %}
+                        <span class="badge bg-success">Normal</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">No hay medicamentos para mostrar.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<div class="card card-unearte shadow-lg">
+    <div class="card-header card-header-unearte text-white text-center">
+        <h3 class="card-title mb-0">
+            {% if form.instance.pk %}<i class="bi bi-pencil-square me-2"></i>{% else %}<i class="bi bi-plus-circle me-2"></i>{% endif %}
+            {% block form_title %}{% endblock %}
+        </h3>
+    </div>
+    <div class="card-body">
+        <form method="post" novalidate>
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <strong><i class="bi bi-exclamation-triangle me-1"></i>Errores:</strong>
+                    <ul class="mb-0">
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            
+            {% block form_content %}
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label fw-bold">
+                            {{ field.label }}
+                            {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                        </label>
+                        
+                        {{ field }}
+                        
+                        {% if field.help_text %}
+                            <div class="form-text"><small>{{ field.help_text }}</small></div>
+                        {% endif %}
+                        
+                        {% if field.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in field.errors %}
+                                    <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% endblock %}
+            
+            <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                <a href="{% block cancel_url %}{% endblock %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-return-left me-1"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-unearte-primary btn-lg px-4">
+                    <i class="bi bi-save me-1"></i> {% block submit_text %}Guardar{% endblock %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Agregar clases de validación de Bootstrap a los campos
+    document.addEventListener('DOMContentLoaded', function() {
+        const forms = document.querySelectorAll('form');
+        
+        forms.forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                
+                form.classList.add('was-validated');
+            });
+            
+            // Agregar clases de validación a los campos con errores
+            const fields = form.querySelectorAll('input, select, textarea');
+            fields.forEach(field => {
+                field.addEventListener('input', () => {
+                    if (field.checkValidity()) {
+                        field.classList.remove('is-invalid');
+                        field.classList.add('is-valid');
+                    } else {
+                        field.classList.remove('is-valid');
+                        field.classList.add('is-invalid');
+                    }
+                });
+            });
+        });
+    });
+</script>

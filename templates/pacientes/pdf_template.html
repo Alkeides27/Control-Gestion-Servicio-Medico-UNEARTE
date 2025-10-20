@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page {
+            size: letter;
+            @frame header_frame {
+                -pdf-frame-content: header_content;
+                left: 0.5in; width: 7.5in; top: 0.5in; height: 0.7in;
+            }
+            @frame content_frame {
+                left: 0.5in; width: 7.5in; top: 1.3in; height: 9.0in;
+            }
+            @frame footer_frame {
+                -pdf-frame-content: footer_content;
+                left: 0.5in; width: 7.5in; bottom: 0.5in; height: 0.5in;
+            }
+        }
+        
+        body { font-family: 'Helvetica', sans-serif; color: #343a40; font-size: 11pt; }
+        #header_content, #footer_content { width: 100%; }
+        #header_content table, #footer_content table { width: 100%; }
+        #header_content .logo { width: 50px; vertical-align: middle; }
+        #header_content .system-name { font-size: 14pt; font-weight: bold; color: #d2031d; vertical-align: middle; padding-left: 10px; }
+        #header_content .doc-title { font-size: 12pt; text-align: right; vertical-align: middle; color: #6c757d; }
+        #footer_content { text-align: right; font-size: 9pt; color: #6c757d; }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+            border: 1px solid #d2031d;
+        }
+        .info-table thead {
+            display: table-header-group;
+        }
+        .info-table th {
+            font-size: 14pt;
+            background-color: #d2031d;
+            color: #ffffff;
+            padding: 10px;
+            text-align: center;
+        }
+        .info-table td {
+            padding: 12px 10px;
+            vertical-align: middle;
+            text-align: center;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .info-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .info-table .label-cell {
+            font-weight: bold;
+            color: #495057;
+            width: 30%;
+        }
+        .info-table .value-cell {
+            width: 70%;
+        }
+        .row-odd { background-color: #ffffff; }
+        .row-even { background-color: #f8f9fa; }
+    </style>
+</head>
+<body>
+    <div id="header_content">
+        <table>
+            <tr>
+                <td style="width: 60%;"><img src="{{ logo_path }}" class="logo" style="vertical-align: middle;"><span class="system-name">Control y Gestión del Servicio Médico UNEARTE</span></td>
+                <td class="doc-title" style="width: 40%;">Dossier de Paciente</td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="footer_content">
+        <table>
+            <tr>
+                <td style="text-align: left; width: 50%;">Página <pdf:pagenumber> de <pdf:pagecount></td>
+                <td style="text-align: right; width: 50%;">Generado el {{ generation_date }}</td>
+            </tr>
+        </table>
+    </div>
+
+    {% for paciente in pacientes %}
+        <div>
+            <h1 style="font-size: 24pt; color: #d2031d; margin-bottom: 20px; text-align: center; border-bottom: 2px solid #d2031d; padding-bottom: 10px;">{{ paciente.apellido|upper }}, {{ paciente.nombre }}</h1>
+
+            <table class="info-table">
+                <thead><tr><th colspan="2">Información Personal</th></tr></thead>
+                <tbody>
+                    <tr class="row-odd"><td class="label-cell">Cédula de Identidad</td><td class="value-cell">{{ paciente.numero_documento }}</td></tr>
+                    <tr class="row-even"><td class="label-cell">Correo Electrónico</td><td class="value-cell">{{ paciente.email|default:"No especificado" }}</td></tr>
+                    <tr class="row-odd"><td class="label-cell">Fecha de Nacimiento</td><td class="value-cell">{{ paciente.fecha_nacimiento|date:"d/m/Y" }}</td></tr>
+                    <tr class="row-even"><td class="label-cell">Edad Actual</td><td class="value-cell">{{ paciente.edad }} años</td></tr>
+                    <tr class="row-odd"><td class="label-cell">Género</td><td class="value-cell">{{ paciente.get_genero_display }}</td></tr>
+                </tbody>
+            </table>
+
+            <table class="info-table">
+                <thead><tr><th colspan="2">Dirección de Contacto</th></tr></thead>
+                <tbody><tr><td colspan="2">{% if paciente.direccion %}{{ paciente.direccion.direccion }}, {{ paciente.direccion.ciudad.nombre }}, {{ paciente.direccion.ciudad.estado.nombre }}{% else %}No hay dirección registrada.{% endif %}</td></tr></tbody>
+            </table>
+            
+            <table class="info-table" repeat="1">
+                <thead>
+                    <tr>
+                        <th colspan="2">Teléfonos Registrados</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tel in paciente.telefonos.all %}
+                        <tr class="{% if forloop.counter|divisibleby:2 %}row-even{% else %}row-odd{% endif %}">
+                            <td class="label-cell">{{ tel.tipo_telefono.nombre }}</td>
+                            <td class="value-cell">{{ tel.numero }} {% if tel.es_principal %}(Principal){% endif %}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="2">No hay teléfonos registrados.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        {% if not forloop.last %}
+            <div style="page-break-after: always;"></div>
+        {% endif %}
+    {% endfor %}
+</body>
+</html>

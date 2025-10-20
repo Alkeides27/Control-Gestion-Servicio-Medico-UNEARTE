@@ -1,0 +1,424 @@
+{% extends 'base.html' %}
+
+{% block title %}Crear Paciente{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card card-medical">
+            <div class="card-header-medical text-white text-center">
+                <h3 class="card-title mb-0">
+                    <i class="bi bi-person-plus"></i> Crear Nuevo Paciente
+                </h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" id="pacienteForm">
+                    {% csrf_token %}
+                    
+                    <!-- Datos básicos del paciente -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.nombre.id_for_label }}" class="form-label">
+                                    {{ form.nombre.label }}
+                                </label>
+                                {{ form.nombre }}
+                                {% if form.nombre.errors %}
+                                    <div class="text-danger">
+                                        {{ form.nombre.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.apellido.id_for_label }}" class="form-label">
+                                    {{ form.apellido.label }}
+                                </label>
+                                {{ form.apellido }}
+                                {% if form.apellido.errors %}
+                                    <div class="text-danger">
+                                        {{ form.apellido.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.numero_documento.id_for_label }}" class="form-label">
+                                    {{ form.numero_documento.label }}
+                                </label>
+                                {{ form.numero_documento }}
+                                {% if form.numero_documento.errors %}
+                                    <div class="text-danger">
+                                        {{ form.numero_documento.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.fecha_nacimiento.id_for_label }}" class="form-label">
+                                    {{ form.fecha_nacimiento.label }}
+                                </label>
+                                {{ form.fecha_nacimiento }}
+                                {% if form.fecha_nacimiento.errors %}
+                                    <div class="text-danger">
+                                        {{ form.fecha_nacimiento.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.genero.id_for_label }}" class="form-label">
+                                    {{ form.genero.label }}
+                                </label>
+                                {{ form.genero }}
+                                {% if form.genero.errors %}
+                                    <div class="text-danger">
+                                        {{ form.genero.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">
+                                    {{ form.email.label }}
+                                </label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <div class="text-danger">
+                                        {{ form.email.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <!-- Sección de Dirección -->
+                    <h5><i class="bi bi-geo-alt"></i> Dirección</h5>
+                    <div id="direccion-formset">
+                        {{ direccion_formset.management_form }}
+                        {% for direccion_form in direccion_formset %}
+                            <div class="direccion-form mb-3 p-3 border rounded position-relative">
+                                {% for hidden in direccion_form.hidden_fields %}
+                                    {{ hidden }}
+                                {% endfor %}
+                                
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="mb-2">
+                                            <label class="form-label">País</label>
+                                            <input type="text" class="form-control" value="Venezuela" disabled readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-2">
+                                            <label class="form-label">Estado</label>
+                                            <input type="text" class="form-control" value="Distrito Capital" disabled readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-2">
+                                            <label class="form-label">Ciudad</label>
+                                            <input type="text" class="form-control" value="Caracas" disabled readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="mb-2">
+                                            <label for="{{ direccion_form.direccion.id_for_label }}" class="form-label">
+                                                {{ direccion_form.direccion.label }}
+                                            </label>
+                                            {{ direccion_form.direccion }}
+                                            {% if direccion_form.direccion.errors %}
+                                                <div class="text-danger">
+                                                    {{ direccion_form.direccion.errors }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-4">
+                                        <div class="mb-2">
+                                            <label for="{{ direccion_form.codigo_postal.id_for_label }}" class="form-label">
+                                                {{ direccion_form.codigo_postal.label }}
+                                            </label>
+                                            {{ direccion_form.codigo_postal }}
+                                            {% if direccion_form.codigo_postal.errors %}
+                                                <div class="text-danger">
+                                                    {{ direccion_form.codigo_postal.errors }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                {% if direccion_form.non_field_errors %}
+                                    <div class="alert alert-danger">
+                                        {{ direccion_form.non_field_errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <hr>
+                    
+                    <!-- Sección de Teléfonos -->
+                    <h5><i class="bi bi-telephone"></i> Teléfonos</h5>
+                    <div id="telefono-formset">
+                        {{ telefono_formset.management_form }}
+                        {% for telefono_form in telefono_formset %}
+                            <div class="telefono-form mb-3 p-3 border rounded position-relative">
+                                {% for hidden in telefono_form.hidden_fields %}
+                                    {{ hidden }}
+                                {% endfor %}
+                                
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="mb-2">
+                                            <label for="{{ telefono_form.tipo_telefono.id_for_label }}" class="form-label">
+                                                {{ telefono_form.tipo_telefono.label }}
+                                                <button type="button" class="btn btn-sm btn-outline-primary ms-2 btn-crear-tipotelefono" data-bs-toggle="modal" data-bs-target="#crearTipoTelefonoModal" data-form-prefix="{{ telefono_form.prefix }}">
+                                                    <i class="bi bi-plus-circle"></i> Nuevo
+                                                </button>
+                                            </label>
+                                            {{ telefono_form.tipo_telefono }}
+                                            {% if telefono_form.tipo_telefono.errors %}
+                                                <div class="text-danger">
+                                                    {{ telefono_form.tipo_telefono.errors }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-5">
+                                        <div class="mb-2">
+                                            <label for="{{ telefono_form.numero.id_for_label }}" class="form-label">
+                                                {{ telefono_form.numero.label }}
+                                            </label>
+                                            {{ telefono_form.numero }}
+                                            {% if telefono_form.numero.errors %}
+                                                <div class="text-danger">
+                                                    {{ telefono_form.numero.errors }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-2">
+                                        <div class="form-check mt-4">
+                                            {{ telefono_form.es_principal }}
+                                            <label for="{{ telefono_form.es_principal.id_for_label }}" class="form-check-label">
+                                                {{ telefono_form.es_principal.label }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                {% if telefono_form.non_field_errors %}
+                                    <div class="alert alert-danger">
+                                        {{ telefono_form.non_field_errors }}
+                                    </div>
+                                {% endif %}
+                                
+                                {% if forloop.counter > 1 %}
+                                    <button type="button" class="btn btn-sm btn-danger btn-eliminar-telefono position-absolute top-0 end-0 m-2" title="Eliminar este teléfono">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <button type="button" id="agregar-telefono" class="btn btn-outline-medical btn-sm mb-3">
+                        <i class="bi bi-plus-circle"></i> Agregar otro teléfono
+                    </button>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'pacientes:index' %}" class="btn btn-outline-medical">
+                            <i class="bi bi-arrow-left"></i> Volver
+                        </a>
+                        <button type="submit" class="btn btn-medical-primary">
+                            <i class="bi bi-save"></i> Crear Paciente
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para crear Tipo de Teléfono -->
+<div class="modal fade" id="crearTipoTelefonoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-telephone-plus"></i> Crear Nuevo Tipo de Teléfono</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="crearTipoTelefonoForm">
+                    <div class="mb-3">
+                        <label for="nombre_tipo_telefono" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre_tipo_telefono" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Crear Tipo</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% load static %}
+<script src="{% static 'js/pacientes_modals.js' %}"></script>
+<script>
+$(document).ready(function() {
+    // Manejar cambio de país para cargar estados
+    $(document).on('change', '.pais-select', function() {
+        var paisId = $(this).val();
+        var estadoSelect = $(this).closest('.direccion-form').find('.estado-select');
+        var ciudadSelect = $(this).closest('.direccion-form').find('.ciudad-select');
+        
+        if (paisId) {
+            $.get("{% url 'pacientes:cargar_estados' %}", {'pais_id': paisId}, function(data) {
+                estadoSelect.html(data);
+                ciudadSelect.html('<option value="">Seleccione una ciudad</option>');
+            });
+        } else {
+            estadoSelect.html('<option value="">Seleccione un estado</option>');
+            ciudadSelect.html('<option value="">Seleccione una ciudad</option>');
+        }
+    });
+    
+    // Manejar cambio de estado para cargar ciudades
+    $(document).on('change', '.estado-select', function() {
+        var estadoId = $(this).val();
+        var ciudadSelect = $(this).closest('.direccion-form').find('.ciudad-select');
+        
+        if (estadoId) {
+            $.get("{% url 'pacientes:cargar_ciudades' %}", {'estado_id': estadoId}, function(data) {
+                ciudadSelect.html(data);
+            });
+        } else {
+            ciudadSelect.html('<option value="">Seleccione una ciudad</option>');
+        }
+    });
+    
+    // Agregar nuevo teléfono
+    $(document).on('click', '#agregar-telefono', function() {
+        var formset = $('#telefono-formset');
+        var totalFormsInput = formset.find('input[name$="-TOTAL_FORMS"]').first();
+        if (!totalFormsInput.length) {
+            return;
+        }
+        var formIdx = parseInt(totalFormsInput.val()) || 0;
+        
+        var lastForm = formset.children('.telefono-form').last();
+        if (lastForm.length === 0) {
+            return;
+        }
+        
+        var newForm = lastForm.clone(true);
+        newForm.find('input,select,textarea').val('').prop('checked', false);
+        
+        newForm.find('[name], [id]').each(function() {
+            var $el = $(this);
+            ['name', 'id'].forEach(function(attr) {
+                var val = $el.attr(attr);
+                if (val) {
+                    val = val.replace(/-\d+-/g, '-' + formIdx + '-');
+                    $el.attr(attr, val);
+                }
+            });
+        });
+        
+        newForm.find('label[for]').each(function() {
+            var forVal = $(this).attr('for').replace(/-\d+-/g, '-' + formIdx + '-');
+            $(this).attr('for', forVal);
+        });
+        
+        if (formIdx >= 1) {
+            newForm.append('<button type="button" class="btn btn-sm btn-danger btn-eliminar-telefono position-absolute top-0 end-0 m-2" title="Eliminar este teléfono"><i class="bi bi-x"></i></button>');
+        }
+        
+        formset.append(newForm);
+        totalFormsInput.val(formIdx + 1);
+    });
+    
+    // Eliminar teléfono
+    $('#telefono-formset').on('click', '.btn-eliminar-telefono', function(e) {
+        e.preventDefault();
+        var formToRemove = $(this).closest('.telefono-form');
+        var formset = $('#telefono-formset');
+        var totalFormsInput = formset.find('input[name$="-TOTAL_FORMS"]').first();
+        var initialFormsInput = formset.find('input[name$="-INITIAL_FORMS"]').first();
+        
+        if (!totalFormsInput.length || !initialFormsInput.length) {
+            return;
+        }
+        
+        var initialForms = parseInt(initialFormsInput.val()) || 0;
+        var currentTotal = parseInt(totalFormsInput.val()) || 0;
+        var idx = formset.children('.telefono-form').index(formToRemove);
+        
+        if (idx < initialForms) {
+            return;
+        }
+        
+        formToRemove.remove();
+        
+        formset.children('.telefono-form').each(function(newIdx) {
+            $(this).find('[name], [id]').each(function() {
+                var $el = $(this);
+                ['name', 'id'].forEach(function(attr) {
+                    var val = $el.attr(attr);
+                    if (val) {
+                        val = val.replace(/-\d+-/g, '-' + newIdx + '-');
+                        $el.attr(attr, val);
+                    }
+                });
+            });
+            $(this).find('label[for]').each(function() {
+                var forVal = $(this).attr('for').replace(/-\d+-/g, '-' + newIdx + '-');
+                $(this).attr('for', forVal);
+            });
+        });
+        
+        totalFormsInput.val(currentTotal - 1);
+    });
+    
+    // Configurar valores por defecto para UNEARTE (Venezuela)
+    setTimeout(function() {
+        $('.pais-select').each(function() {
+            var $this = $(this);
+            $this.find('option').each(function() {
+                if ($(this).text() === 'Venezuela') {
+                    $this.val($(this).val()).trigger('change');
+                }
+            });
+        });
+    }, 500);
+});
+</script>
+{% endblock %}

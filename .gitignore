@@ -1,0 +1,43 @@
+# Archivos de entorno
+.env
+.env.local
+.env.*
+QWEN.md
+GEMINI.md
+PROJECT_SUMMARY.md
+.qwen
+.github
+
+# Carpetas de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+env.bak/
+venv.bak/
+medico/
+pacientes/management/commands
+
+# Carpetas de Django
+db.sqlite3
+
+# Archivos de IDE
+.vscode/
+*.swp
+*.swo
+.idea/
+*.log
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Miscelaneos
+reset_db.py
+LARavel_TO_DJANGO_MIGRATION_GUIDE.md
+INFORME-PSC-46-6.txt
+
+LARavel_TO_DJANGO_MIGRATION_GUIDE.md

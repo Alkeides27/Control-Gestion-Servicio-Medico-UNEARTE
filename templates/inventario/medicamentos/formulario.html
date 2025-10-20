@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header card-header-medical text-white">
+                <h3 class="card-title mb-0">
+                    <i class="bi bi-file-earmark-plus"></i> {{ titulo }}
+                </h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" novalidate>
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="{{ form.nombre.id_for_label }}" class="form-label">{{ form.nombre.label }}</label>
+                        {{ form.nombre }}
+                        {% if form.nombre.errors %}<div class="text-danger">{{ form.nombre.errors }}</div>{% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.descripcion.id_for_label }}" class="form-label">{{ form.descripcion.label }}</label>
+                        {{ form.descripcion }}
+                        {% if form.descripcion.errors %}<div class="text-danger">{{ form.descripcion.errors }}</div>{% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.categoria.id_for_label }}" class="form-label">{{ form.categoria.label }}</label>
+                        <div class="input-group">
+                            {{ form.categoria }}
+                            <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#crearCategoriaModal">
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
+                        </div>
+                        {% if form.categoria.errors %}<div class="text-danger">{{ form.categoria.errors }}</div>{% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.proveedor.id_for_label }}" class="form-label">{{ form.proveedor.label }}</label>
+                        <div class="input-group">
+                            {{ form.proveedor }}
+                            <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#crearProveedorModal">
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
+                        </div>
+                        {% if form.proveedor.errors %}<div class="text-danger">{{ form.proveedor.errors }}</div>{% endif %}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.precio_unitario.id_for_label }}" class="form-label">{{ form.precio_unitario.label }}</label>
+                            {{ form.precio_unitario }}
+                            {% if form.precio_unitario.errors %}<div class="text-danger">{{ form.precio_unitario.errors }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.stock_minimo.id_for_label }}" class="form-label">{{ form.stock_minimo.label }}</label>
+                            {{ form.stock_minimo }}
+                            {% if form.stock_minimo.errors %}<div class="text-danger">{{ form.stock_minimo.errors }}</div>{% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Nota:</strong> El código del medicamento se generará automáticamente al guardar.
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'inventario:listar_medicamentos' %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Volver
+                        </a>
+                        <button type="submit" class="btn btn-medical-primary">
+                            <i class="bi bi-save"></i> Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Crear Categoría -->
+<div class="modal fade" id="crearCategoriaModal" tabindex="-1" aria-labelledby="crearCategoriaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="crearCategoriaModalLabel">Crear Nueva Categoría</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="crearCategoriaForm">
+                    <div class="mb-3">
+                        <label for="nombre_categoria" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre_categoria" name="nombre" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="descripcion_categoria" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion_categoria" name="descripcion" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Crear</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Crear Proveedor -->
+<div class="modal fade" id="crearProveedorModal" tabindex="-1" aria-labelledby="crearProveedorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="crearProveedorModalLabel">Crear Nuevo Proveedor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="crearProveedorForm">
+                    <div class="mb-3">
+                        <label for="nombre_proveedor" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre_proveedor" name="nombre" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="contacto_proveedor" class="form-label">Contacto</label>
+                        <input type="text" class="form-control" id="contacto_proveedor" name="contacto">
+                    </div>
+                    <div class="mb-3">
+                        <label for="telefono_proveedor" class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" id="telefono_proveedor" name="telefono">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email_proveedor" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email_proveedor" name="email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="direccion_proveedor" class="form-label">Dirección</label>
+                        <textarea class="form-control" id="direccion_proveedor" name="direccion" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Crear</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/inventario_modals.js' %}"></script>
+{% endblock %}

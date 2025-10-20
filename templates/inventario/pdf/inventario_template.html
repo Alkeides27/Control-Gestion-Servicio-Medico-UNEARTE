@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Inventario</title>
+    <style>
+        @page {
+            size: letter landscape;
+            @frame header_frame { -pdf-frame-content: header_content; left: 0.5in; width: 10in; top: 0.5in; height: 0.7in; }
+            @frame content_frame { left: 0.5in; width: 10in; top: 1.3in; height: 6.5in; }
+            @frame footer_frame { -pdf-frame-content: footer_content; left: 0.5in; width: 10in; bottom: 0.5in; height: 0.5in; }
+        }
+        body { font-family: 'Helvetica', sans-serif; color: #343a40; font-size: 10pt; }
+        #header_content, #footer_content { width: 100%; }
+        #header_content table, #footer_content table { width: 100%; }
+        #header_content .logo { width: 50px; vertical-align: middle; }
+        #header_content .system-name { font-size: 14pt; font-weight: bold; color: #d2031d; vertical-align: middle; padding-left: 10px; }
+        #header_content .doc-title { font-size: 12pt; text-align: right; vertical-align: middle; color: #6c757d; }
+        #footer_content { text-align: right; font-size: 9pt; color: #6c757d; }
+        .info-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; border: 1px solid #d2031d; }
+        .info-table thead th { font-size: 11pt; background-color: #d2031d; color: #ffffff; padding: 8px; text-align: center; }
+        .info-table tbody td { padding: 8px; vertical-align: middle; text-align: left; border-bottom: 1px solid #f0f0f0; font-size: 9pt; }
+        .info-table tbody tr:last-child td { border-bottom: none; }
+        .row-odd { background-color: #ffffff; }
+        .row-even { background-color: #f8f9fa; }
+        .text-center { text-align: center; }
+        .text-danger { color: #d2031d; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div id="header_content">
+        <table>
+            <tr>
+                <td style="width: 60%;"><img src="{{ logo_path }}" class="logo" style="vertical-align: middle;"><span class="system-name">Control y Gestión del Servicio Médico UNEARTE</span></td>
+                <td class="doc-title" style="width: 40%;">Reporte de Existencias de Inventario</td>
+            </tr>
+        </table>
+    </div>
+    <div id="footer_content">
+        <table>
+            <tr>
+                <td style="text-align: left; width: 50%;">Página <pdf:pagenumber> de <pdf:pagecount></td>
+                <td style="text-align: right; width: 50%;">Generado el {{ generation_date }}</td>
+            </tr>
+        </table>
+    </div>
+    <table class="info-table" repeat="1">
+        <thead>
+            <tr>
+                <th>Medicamento</th>
+                <th>Código</th>
+                <th>Lote</th>
+                <th class="text-center">Cantidad</th>
+                <th class="text-center">Fecha de Ingreso</th>
+                <th class="text-center">Fecha de Vencimiento</th>
+                <th class="text-center">Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in inventario %}
+            <tr class="{% if forloop.counter|divisibleby:2 %}row-even{% else %}row-odd{% endif %}">
+                <td>{{ item.medicamento.nombre }}</td>
+                <td>{{ item.medicamento.codigo }}</td>
+                <td>{{ item.lote|default:"N/A" }}</td>
+                <td class="text-center">{{ item.cantidad }}</td>
+                <td class="text-center">{{ item.created_at|date:"d/m/Y" }}</td>
+                <td class="text-center {% if item.estado == 'caducado' %}text-danger{% endif %}">
+                    {{ item.fecha_caducidad|date:"d/m/Y" }}
+                </td>
+                <td class="text-center">{{ item.estado|capfirst }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center">No hay existencias de inventario para mostrar.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Acceso Denegado{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="card shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">Acceso Denegado</h4>
+                </div>
+                <div class="card-body">
+                    <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 4rem;"></i>
+                    <h1 class="card-title mt-3">¡Acceso Prohibido!</h1>
+                    <p class="card-text lead">
+                        No tienes los permisos necesarios para acceder a esta página.
+                    </p>
+                    <hr>
+                    <p class="text-muted">
+                        Si crees que esto es un error, por favor, contacta al administrador del sistema.
+                    </p>
+                    <a href="{% url 'core:dashboard' %}" class="btn btn-primary mt-3">
+                        <i class="bi bi-house-door-fill"></i> Volver al Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Medicamentos{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="dashboard-title">Medicamentos</h1>
+    <div>
+        <a href="{% url 'inventario:crear_medicamento' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Nuevo Medicamento
+        </a>
+        <a href="{% url 'inventario:exportar_medicamentos_excel' %}" class="btn btn-success">
+            <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
+        </a>
+        <a href="{% url 'inventario:exportar_medicamentos_pdf' %}" class="btn btn-danger">
+            <i class="bi bi-file-earmark-pdf"></i> Exportar a PDF
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <!-- Tabla de medicamentos -->
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Código</th>
+                        <th>Categoría</th>
+                        <th>Proveedor</th>
+                        <th>Precio Unitario</th>
+                        <th>Stock Mínimo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for medicamento in medicamentos %}
+                    <tr>
+                        <td>{{ medicamento.nombre }}</td>
+                        <td>{{ medicamento.codigo }}</td>
+                        <td>{{ medicamento.categoria }}</td>
+                        <td>{{ medicamento.proveedor }}</td>
+                        <td>Bs. {{ medicamento.precio_unitario }}</td>
+                        <td>{{ medicamento.stock_minimo }}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{% url 'inventario:editar_medicamento' medicamento.id %}" class="btn btn-outline-warning btn-sm" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'inventario:eliminar_medicamento' medicamento.id %}" class="btn btn-outline-danger btn-sm" title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">No se encontraron medicamentos registrados.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginación -->
+        {% if medicamentos.has_other_pages %}
+        <nav aria-label="Navegación de páginas">
+            <ul class="pagination justify-content-center">
+                {% if medicamentos.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">&laquo; Primero</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ medicamentos.previous_page_number }}">Anterior</a>
+                </li>
+                {% endif %}
+
+                <li class="page-item active">
+                    <span class="page-link">
+                        Página {{ medicamentos.number }} de {{ medicamentos.paginator.num_pages }}
+                    </span>
+                </li>
+
+                {% if medicamentos.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ medicamentos.next_page_number }}">Siguiente</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ medicamentos.paginator.num_pages }}">Último &raquo;</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

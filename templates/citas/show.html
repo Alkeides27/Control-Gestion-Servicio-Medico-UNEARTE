@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalles de la Cita{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="dashboard-title">Detalles de la Cita</h1>
+    <div>
+        <a href="{% url 'citas:edit' cita.id %}" class="btn btn-warning">
+            <i class="bi bi-pencil"></i> Editar
+        </a>
+        <a href="{% url 'citas:destroy' cita.id %}" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Eliminar
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-calendar-event"></i> Información de la Cita
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <strong>Paciente:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        <a href="{% url 'pacientes:show' cita.paciente.id %}">
+                            {{ cita.paciente.nombre }} {{ cita.paciente.apellido }}
+                        </a>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <strong>Tipo de Cita:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        {{ cita.tipo_cita }}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <strong>Motivo:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        {{ cita.motivo }}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <strong>Fecha:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        {{ cita.fecha|date:"d/m/Y" }}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <strong>Hora:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        {{ cita.hora_inicio|time:"H:i" }} - {{ cita.hora_fin|time:"H:i" }}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <strong>Estado:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        <span class="badge bg-{{ cita.estado.color|default:'secondary' }}">
+                            {{ cita.estado }}
+                        </span>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <strong>Observaciones:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        {{ cita.observaciones|linebreaks|default:"No se registraron observaciones." }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-journal-text"></i> Notas de la Cita
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if notas %}
+                    <div class="list-group">
+                        {% for nota in notas %}
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ nota.tipo_nota }}</h6>
+                                    <small>{{ nota.created_at|date:"d/m/Y H:i" }}</small>
+                                </div>
+                                <p class="mb-1">{{ nota.contenido }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">No se han registrado notas para esta cita.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a href="{% url 'citas:index' %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Volver al listado
+    </a>
+</div>
+{% endblock %}

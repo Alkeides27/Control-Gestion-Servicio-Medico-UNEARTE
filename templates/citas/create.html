@@ -1,0 +1,441 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Nueva Cita{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header card-header-medical text-white">
+                <h3 class="card-title mb-0">
+                    <i class="bi bi-calendar-plus"></i> Programar Nueva Cita
+                </h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" id="citaForm">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.paciente.id_for_label }}" class="form-label">
+                                {{ form.paciente.label }}
+                            </label>
+                            {{ form.paciente }}
+                            {% if form.paciente.errors %}
+                                <div class="text-danger">
+                                    {{ form.paciente.errors }}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">Seleccione un paciente existente</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.tipo_cita.id_for_label }}" class="form-label">
+                                {{ form.tipo_cita.label }}
+                            </label>
+                            <div class="input-group">
+                                {{ form.tipo_cita }}
+                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#crearTipoModal">
+                                    <i class="bi bi-plus-circle"></i> Nuevo
+                                </button>
+                            </div>
+                            {% if form.tipo_cita.errors %}
+                                <div class="text-danger">
+                                    {{ form.tipo_cita.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.motivo.id_for_label }}" class="form-label">
+                                {{ form.motivo.label }}
+                            </label>
+                            <div class="input-group">
+                                {{ form.motivo }}
+                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#crearMotivoModal">
+                                    <i class="bi bi-plus-circle"></i> Nuevo
+                                </button>
+                            </div>
+                            {% if form.motivo.errors %}
+                                <div class="text-danger">
+                                    {{ form.motivo.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.estado.id_for_label }}" class="form-label">
+                                {{ form.estado.label }}
+                            </label>
+                            <div class="input-group">
+                                {{ form.estado }}
+                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#crearEstadoModal">
+                                    <i class="bi bi-plus-circle"></i> Nuevo
+                                </button>
+                            </div>
+                            {% if form.estado.errors %}
+                                <div class="text-danger">
+                                    {{ form.estado.errors }}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">Estado inicial de la cita</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.fecha.id_for_label }}" class="form-label">
+                                {{ form.fecha.label }}
+                            </label>
+                            {{ form.fecha }}
+                            {% if form.fecha.errors %}
+                                <div class="text-danger">
+                                    {{ form.fecha.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-3 mb-3">
+                            <label for="{{ form.hora_inicio.id_for_label }}" class="form-label">
+                                {{ form.hora_inicio.label }}
+                            </label>
+                            {{ form.hora_inicio }}
+                            {% if form.hora_inicio.errors %}
+                                <div class="text-danger">
+                                    {{ form.hora_inicio.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-3 mb-3">
+                            <label for="{{ form.hora_fin.id_for_label }}" class="form-label">
+                                {{ form.hora_fin.label }}
+                            </label>
+                            {{ form.hora_fin }}
+                            {% if form.hora_fin.errors %}
+                                <div class="text-danger">
+                                    {{ form.hora_fin.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.observaciones.id_for_label }}" class="form-label">
+                            {{ form.observaciones.label }}
+                        </label>
+                        {{ form.observaciones }}
+                        {% if form.observaciones.errors %}
+                            <div class="text-danger">
+                                {{ form.observaciones.errors }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">Observaciones adicionales sobre la cita</div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'citas:index' %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Volver
+                        </a>
+                        <button type="submit" class="btn btn-medical-primary">
+                            <i class="bi bi-save"></i> Programar Cita
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para crear Tipo de Cita -->
+<div class="modal fade" id="crearTipoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-tag"></i> Crear Nuevo Tipo de Cita
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="crearTipoForm">
+                    <div class="mb-3">
+                        <label for="nombre_tipo" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre_tipo" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="descripcion_tipo" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion_tipo" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="duracion_tipo" class="form-label">Duración Estimada (minutos)</label>
+                        <input type="number" class="form-control" id="duracion_tipo" min="1" value="30">
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Crear Tipo
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para crear Motivo de Cita -->
+<div class="modal fade" id="crearMotivoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-bullseye"></i> Crear Nuevo Motivo de Cita
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="crearMotivoForm">
+                    <div class="mb-3">
+                        <label for="nombre_motivo" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre_motivo" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="descripcion_motivo" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion_motivo" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Crear Motivo
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para crear Estado de Cita -->
+<div class="modal fade" id="crearEstadoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-list-task"></i> Crear Nuevo Estado de Cita
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="crearEstadoForm">
+                    <div class="mb-3">
+                        <label for="nombre_estado" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre_estado" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="descripcion_estado" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion_estado" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="color_estado" class="form-label">Color (Código HEX)</label>
+                        <input type="color" class="form-control form-control-color" id="color_estado" value="#007bff">
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Crear Estado
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Crear Tipo de Cita
+    $('#crearTipoForm').submit(function(e) {
+        e.preventDefault();
+        var nombre = $('#nombre_tipo').val();
+        var descripcion = $('#descripcion_tipo').val();
+        var duracion = $('#duracion_tipo').val();
+        
+        if (!nombre) {
+            alert('Por favor, ingrese un nombre para el tipo de cita');
+            return;
+        }
+        
+        // Mostrar indicador de carga
+        var submitBtn = $(this).find('button[type=submit]');
+        var originalText = submitBtn.html();
+        submitBtn.html('<i class="bi bi-hourglass"></i> Creando...');
+        submitBtn.prop('disabled', true);
+        
+        $.ajax({
+            url: '/citas/ajax/crear-tipo-cita/',
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+            },
+            contentType: 'application/json',
+            data: JSON.stringify({
+                'nombre': nombre,
+                'descripcion': descripcion,
+                'duracion_estimada': parseInt(duracion) || 30
+            }),
+            success: function(response) {
+                if (response.success) {
+                    // Agregar opción al select
+                    $('#id_tipo_cita').append(
+                        $('<option>', {
+                            value: response.id,
+                            text: response.nombre
+                        })
+                    );
+                    // Seleccionar la nueva opción
+                    $('#id_tipo_cita').val(response.id);
+                    // Cerrar modal
+                    $('#crearTipoModal').modal('hide');
+                    // Limpiar formulario
+                    $('#crearTipoForm')[0].reset();
+                    // Mostrar mensaje de éxito
+                    alert('Tipo de cita creado exitosamente');
+                } else {
+                    alert('Error al crear el tipo de cita: ' + JSON.stringify(response.errors));
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log('Error detallado:', xhr.responseText);
+                alert('Error al crear el tipo de cita: ' + error);
+            },
+            complete: function() {
+                // Restaurar botón
+                submitBtn.html(originalText);
+                submitBtn.prop('disabled', false);
+            }
+        });
+    });
+    
+    // Crear Motivo de Cita
+    $('#crearMotivoForm').submit(function(e) {
+        e.preventDefault();
+        var nombre = $('#nombre_motivo').val();
+        var descripcion = $('#descripcion_motivo').val();
+        
+        if (!nombre) {
+            alert('Por favor, ingrese un nombre para el motivo de cita');
+            return;
+        }
+        
+        // Mostrar indicador de carga
+        var submitBtn = $(this).find('button[type=submit]');
+        var originalText = submitBtn.html();
+        submitBtn.html('<i class="bi bi-hourglass"></i> Creando...');
+        submitBtn.prop('disabled', true);
+        
+        $.ajax({
+            url: '/citas/ajax/crear-motivo-cita/',
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+            },
+            contentType: 'application/json',
+            data: JSON.stringify({
+                'nombre': nombre,
+                'descripcion': descripcion
+            }),
+            success: function(response) {
+                if (response.success) {
+                    // Agregar opción al select
+                    $('#id_motivo').append(
+                        $('<option>', {
+                            value: response.id,
+                            text: response.nombre
+                        })
+                    );
+                    // Seleccionar la nueva opción
+                    $('#id_motivo').val(response.id);
+                    // Cerrar modal
+                    $('#crearMotivoModal').modal('hide');
+                    // Limpiar formulario
+                    $('#crearMotivoForm')[0].reset();
+                    // Mostrar mensaje de éxito
+                    alert('Motivo de cita creado exitosamente');
+                } else {
+                    alert('Error al crear el motivo de cita: ' + JSON.stringify(response.errors));
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log('Error detallado:', xhr.responseText);
+                alert('Error al crear el motivo de cita: ' + error);
+            },
+            complete: function() {
+                // Restaurar botón
+                submitBtn.html(originalText);
+                submitBtn.prop('disabled', false);
+            }
+        });
+    });
+    
+    // Crear Estado de Cita
+    $('#crearEstadoForm').submit(function(e) {
+        e.preventDefault();
+        var nombre = $('#nombre_estado').val();
+        var descripcion = $('#descripcion_estado').val();
+        var color = $('#color_estado').val();
+        
+        if (!nombre) {
+            alert('Por favor, ingrese un nombre para el estado de cita');
+            return;
+        }
+        
+        // Mostrar indicador de carga
+        var submitBtn = $(this).find('button[type=submit]');
+        var originalText = submitBtn.html();
+        submitBtn.html('<i class="bi bi-hourglass"></i> Creando...');
+        submitBtn.prop('disabled', true);
+        
+        $.ajax({
+            url: '/citas/ajax/crear-estado-cita/',
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+            },
+            contentType: 'application/json',
+            data: JSON.stringify({
+                'nombre': nombre,
+                'descripcion': descripcion,
+                'color': color
+            }),
+            success: function(response) {
+                if (response.success) {
+                    // Agregar opción al select
+                    $('#id_estado').append(
+                        $('<option>', {
+                            value: response.id,
+                            text: response.nombre
+                        })
+                    );
+                    // Seleccionar la nueva opción
+                    $('#id_estado').val(response.id);
+                    // Cerrar modal
+                    $('#crearEstadoModal').modal('hide');
+                    // Limpiar formulario
+                    $('#crearEstadoForm')[0].reset();
+                    // Mostrar mensaje de éxito
+                    alert('Estado de cita creado exitosamente');
+                } else {
+                    alert('Error al crear el estado de cita: ' + JSON.stringify(response.errors));
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log('Error detallado:', xhr.responseText);
+                alert('Error al crear el estado de cita: ' + error);
+            },
+            complete: function() {
+                // Restaurar botón
+                submitBtn.html(originalText);
+                submitBtn.prop('disabled', false);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

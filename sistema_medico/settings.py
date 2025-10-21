@@ -30,9 +30,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-#b)s=!!zne4f_we(@r3wkd0^gs^x%0by$skn^=fc8c@1k(%pq$')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+from decouple import config, Csv
 
-ALLOWED_HOSTS = []
+DEBUG = config('DEBUG', default=False, cast=bool)
+
+# En producción, reemplaza 'localhost, 127.0.0.1' con tu dominio o IP.
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost, 127.0.0.1', cast=Csv())
 
 
 # Application definition
@@ -43,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'whitenoise.runserver_nostatic',  # Debe ir antes de staticfiles
     'django.contrib.staticfiles',
     'core',
     'pacientes',
@@ -53,6 +57,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Middleware de Whitenoise
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -86,8 +91,6 @@ WSGI_APPLICATION = 'sistema_medico.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
-from decouple import config
 
 # Usar SECRET_KEY del entorno o del .env, con valor predeterminado si no existe
 SECRET_KEY = os.getenv('SECRET_KEY', config('SECRET_KEY', default='django-insecure-#b)s=!!zne4f_we(@r3wkd0^gs^x%0by$skn^=fc8c@1k(%pq$'))
@@ -149,6 +152,11 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # Directorio para collectstatic
+
+# Optimizaciones de Whitenoise para producción
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 # Para desarrollo, tambiÃ©n necesitamos definir MEDIA_URL y MEDIA_ROOT
 MEDIA_URL = '/media/'

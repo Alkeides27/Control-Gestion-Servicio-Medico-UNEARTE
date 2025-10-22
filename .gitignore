@@ -2,10 +2,6 @@
 .env
 .env.local
 .env.*
-QWEN.md
-GEMINI.md
-PROJECT_SUMMARY.md
-.qwen
 .github
 
 # Carpetas de Python
@@ -37,7 +33,3 @@ Thumbs.db
 
 # Miscelaneos
 reset_db.py
-LARavel_TO_DJANGO_MIGRATION_GUIDE.md
-INFORME-PSC-46-6.txt
-
-LARavel_TO_DJANGO_MIGRATION_GUIDE.md

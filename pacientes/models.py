@@ -80,13 +80,14 @@ class TipoTelefono(models.Model):
 class Paciente(models.Model):
     # Documento fijo a Cédula de Identidad Venezolana (8 caracteres máximo)
     numero_documento = models.CharField(max_length=8, unique=True)
-    nombre = models.CharField(max_length=255)
-    apellido = models.CharField(max_length=255)
-    fecha_nacimiento = models.DateField()
+    nombre = models.CharField(max_length=255, null=True, blank=True)
+    apellido = models.CharField(max_length=255, null=True, blank=True)
+    fecha_nacimiento = models.DateField(null=True, blank=True)
     genero = models.CharField(
         max_length=1,
         choices=Genero.choices,
-        default=Genero.MASCULINO
+        default=Genero.MASCULINO,
+        null=True, blank=True
     )
     email = models.EmailField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)

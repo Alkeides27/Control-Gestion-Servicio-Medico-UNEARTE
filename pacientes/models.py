@@ -114,8 +114,8 @@ class Paciente(models.Model):
 
 class Direccion(models.Model):
     paciente = models.OneToOneField(Paciente, on_delete=models.CASCADE, related_name='direccion')
-    ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
-    direccion = models.CharField(max_length=255)
+    ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE, null=True, blank=True)
+    direccion = models.CharField(max_length=255, null=True, blank=True)
     codigo_postal = models.CharField(max_length=4, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -123,14 +123,8 @@ class Direccion(models.Model):
     def __str__(self):
         return f"{self.direccion}, {self.ciudad}"
 
-    def clean(self):
-        # Validar que si hay ciudad (aunque sea fija), debe haber dirección
-        if self.ciudad_id and not self.direccion:
-             raise ValidationError("Debe ingresar una dirección cuando selecciona una ciudad.")
-
     def save(self, *args, **kwargs):
         # Llamar a la validación antes de guardar
-        self.clean()
         super().save(*args, **kwargs)
 
     class Meta:
@@ -140,8 +134,8 @@ class Direccion(models.Model):
 
 class Telefono(models.Model):
     paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='telefonos')
-    tipo_telefono = models.ForeignKey(TipoTelefono, on_delete=models.CASCADE)
-    numero = models.CharField(max_length=11)
+    tipo_telefono = models.ForeignKey(TipoTelefono, on_delete=models.CASCADE, null=True, blank=True)
+    numero = models.CharField(max_length=11, null=True, blank=True)
     es_principal = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

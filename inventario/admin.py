@@ -13,7 +13,7 @@ class ProveedorAdmin(admin.ModelAdmin):
 
 @admin.register(Medicamento)
 class MedicamentoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'codigo', 'categoria', 'proveedor', 'precio_unitario', 'stock_minimo')
+    list_display = ('nombre', 'codigo', 'categoria', 'proveedor', 'stock_minimo')
     list_filter = ('categoria', 'proveedor')
     search_fields = ('nombre', 'codigo')
 

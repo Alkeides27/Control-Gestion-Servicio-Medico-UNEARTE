@@ -23,9 +23,7 @@ import json
 
 @medico_required
 def index(request):
-    historiales_list = HistorialMedico.objects.select_related('paciente').prefetch_related(
-        'medicamentos_actuales'
-    ).order_by('-updated_at')
+    historiales_list = HistorialMedico.objects.select_related('paciente').order_by('-fecha')
     
     paginator = Paginator(historiales_list, 10)
     page_number = request.GET.get('page')
@@ -60,9 +58,7 @@ def create(request):
 @medico_required
 def show(request, historial_id):
     historial = get_object_or_404(
-        HistorialMedico.objects.select_related('paciente').prefetch_related(
-            'medicamentos_actuales'
-        ),
+        HistorialMedico.objects.select_related('paciente'),
         id=historial_id
     )
     return render(request, 'historiales/show.html', {'historial': historial})

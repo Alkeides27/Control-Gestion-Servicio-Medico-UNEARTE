@@ -19,51 +19,11 @@
                 <div class="col-md-6">
                     <p><strong>Fecha de Nacimiento:</strong> {{ historial.paciente.fecha_nacimiento }} ({{ historial.paciente.edad }} años)</p>
                     <p><strong>Género:</strong> {{ historial.paciente.get_genero_display }}</p>
-                    <p><strong>Fecha de Creación:</strong> {{ historial.created_at|date:"d/m/Y H:i" }}</p>
-                    <p><strong>Última Actualización:</strong> {{ historial.updated_at|date:"d/m/Y H:i" }}</p>
+                    <p><strong>Fecha:</strong> {{ historial.fecha|date:"d/m/Y H:i" }}</p>
                 </div>
             </div>
 
             <hr>
-
-            <div class="mt-4">
-                <h5>Alergias Conocidas</h5>
-                {% if historial.alergias.all %}
-                    <p>
-                        {% for alergia in historial.alergias.all %}
-                            <span class="badge bg-danger me-1">{{ alergia.nombre }}</span>
-                        {% endfor %}
-                    </p>
-                {% else %}
-                    <p class="text-muted">No se han registrado alergias.</p>
-                {% endif %}
-            </div>
-
-            <div class="mt-4">
-                <h5>Enfermedades Preexistentes</h5>
-                {% if historial.enfermedades_preexistentes.all %}
-                    <p>
-                        {% for enfermedad in historial.enfermedades_preexistentes.all %}
-                            <span class="badge bg-warning text-dark me-1">{{ enfermedad.nombre }}</span>
-                        {% endfor %}
-                    </p>
-                {% else %}
-                    <p class="text-muted">No se han registrado enfermedades preexistentes.</p>
-                {% endif %}
-            </div>
-
-            <div class="mt-4">
-                <h5>Medicamentos Actuales</h5>
-                {% if historial.medicamentos_actuales.all %}
-                    <ul class="list-group">
-                        {% for medicamento in historial.medicamentos_actuales.all %}
-                            <li class="list-group-item">{{ medicamento.nombre }} ({{ medicamento.codigo }})</li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p class="text-muted">No se han registrado medicamentos actuales.</p>
-                {% endif %}
-            </div>
 
         </div>
         <div class="card-footer d-flex justify-content-end">

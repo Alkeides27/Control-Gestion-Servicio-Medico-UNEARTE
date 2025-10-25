@@ -32,7 +32,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-#b)s=!!zne4f_we(@r3wkd0^gs
 # SECURITY WARNING: don't run with debug turned on in production!
 from decouple import config
 
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = config('DEBUG', default=True, cast=bool)
 
 # En producción, reemplaza 'localhost, 127.0.0.1' con tu dominio o IP.
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')

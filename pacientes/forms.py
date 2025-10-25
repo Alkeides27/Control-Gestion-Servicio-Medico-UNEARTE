@@ -71,28 +71,6 @@ class PacienteForm(forms.ModelForm):
                 raise ValidationError('El número de cédula debe tener exactamente 8 dígitos.')
         return numero_documento
 
-    def clean_apellido(self):
-        apellido = self.cleaned_data.get('apellido')
-        if apellido:
-             # Permite letras, espacios y apóstrofes/guiones (común en nombres/apellidos)
-            if not all(c.isalpha() or c.isspace() or c in "-'" for c in apellido):
-                raise ValidationError('Los apellidos solo deben contener letras, espacios, apóstrofes o guiones.')
-            if len(apellido) > 20:
-                raise ValidationError('El apellido no debe exceder los 20 caracteres.')
-        return apellido
-
-    # Validación de confirmación de email (opcional pero buena práctica)
-    def clean(self):
-        cleaned_data = super().clean()
-        email = cleaned_data.get("email")
-        confirmar_email = cleaned_data.get("confirmar_email")
-
-        # Solo valida si ambos emails fueron ingresados
-        if email and confirmar_email and email != confirmar_email:
-            self.add_error('confirmar_email', "Los correos electrónicos no coinciden.")
-
-        return cleaned_data
-
 
 class DireccionForm(forms.ModelForm):
     class Meta:
@@ -135,7 +113,8 @@ class TelefonoForm(forms.ModelForm):
             'numero': forms.TextInput(attrs={
                 'class': 'form-control mb-2',
                 'placeholder': 'Ej: 04121234567',
-                'maxlength': '11'
+                'maxlength': '11',
+                'pattern': '[0-9]*'
             }),
             'es_principal': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }

@@ -99,6 +99,8 @@ class Paciente(models.Model):
     @property
     def edad(self):
         from datetime import date
+        if not self.fecha_nacimiento:
+            return None
         today = date.today()
         return today.year - self.fecha_nacimiento.year - (
             (today.month, today.day) < (self.fecha_nacimiento.month, self.fecha_nacimiento.day)

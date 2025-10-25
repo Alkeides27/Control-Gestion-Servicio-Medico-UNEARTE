@@ -56,12 +56,12 @@
         <tbody>
             {% for paciente in pacientes %}
             <tr>
-                <td>{{ paciente.nombre }} {{ paciente.apellido }}</td>
-                <td>{{ paciente.tipo_documento }}: {{ paciente.numero_documento }}</td>
-                <td>{{ paciente.fecha_nacimiento|date:"d/m/Y" }}</td>
-                <td>{{ paciente.genero }}</td>
-                <td>{{ paciente.email|default:"No especificado" }}</td>
-                <td>{{ paciente.edad }} años</td>
+                <td>{{ paciente.nombre|default:"N/A" }} {{ paciente.apellido|default:"N/A" }}</td>
+                <td>{{ paciente.tipo_documento}}: {{ paciente.numero_documento|default:"N/A" }}</td>
+                <td>{{ paciente.fecha_nacimiento|date:"d/m/Y"|default:"N/A" }}</td>
+                <td>{{ paciente.genero}}</td>
+                <td>{{ paciente.email|default:"N/A" }}</td>
+                <td>{{ paciente.edad|default:"N/A" }} {% if paciente.edad is not None %}años{% endif %}</td>
                 <td>
                     <div class="btn-group" role="group">
                         <a href="{% url 'pacientes:show' paciente.id %}" class="btn btn-outline-medical btn-sm" title="Ver detalles">

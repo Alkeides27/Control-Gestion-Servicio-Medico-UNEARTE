@@ -11,12 +11,6 @@
         </div>
         <div class="card-body">
             <div class="d-flex justify-content-end mb-3">
-                <a href="{% url 'historiales:exportar_historiales_excel' %}" class="btn btn-success me-2">
-                    <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
-                </a>
-                <a href="{% url 'historiales:exportar_historiales_pdf' %}" class="btn btn-danger me-2">
-                    <i class="bi bi-file-earmark-pdf"></i> Exportar a PDF
-                </a>
                 <form action="{% url 'historiales:search' %}" method="get" class="d-flex">
                     <input class="form-control me-2" type="search" placeholder="Buscar paciente, alergia..." name="q" value="{{ query|default:'' }}">
                     <button class="btn btn-outline-primary" type="submit">Buscar</button>

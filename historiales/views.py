@@ -1,104 +1,187 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
-from django.core.paginator import Paginator
-from django.db import transaction
-from django.db.models import Q
-from django.http import HttpResponse
-from django.template.loader import get_template
-from xhtml2pdf import pisa
-from io import BytesIO
-import datetime
-from sistema_medico.settings import BASE_DIR
+# En historiales/views.py
 
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.generic import CreateView, UpdateView, DetailView, ListView, DeleteView
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.db import transaction # Importante para guardar múltiples formularios
 
-from core.decorators import medico_required
+from .models import (
+    HistorialMedico, HistoriaGeneral, HistoriaNutricion,
+    DocumentoJustificativo, DocumentoReferencia, DocumentoReposo, DocumentoRecipe
+)
+from .forms import (
+    HistorialMedicoForm, HistoriaGeneralForm, HistoriaNutricionForm,
+    DocumentoJustificativoForm, DocumentoReferenciaForm, DocumentoReposoForm, DocumentoRecipeForm
+)
+from pacientes.models import Paciente
+from core.decorators import medico_required # Asegúrate de tener los decoradores
+from django.utils.decorators import method_decorator
 
-from .models import HistorialMedico
-from inventario.models import Medicamento
-from .forms import HistorialMedicoForm
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-import json
+# --- Vista de Creación ---
+@method_decorator(medico_required, name='dispatch')
+class HistorialMedicoCreateView(LoginRequiredMixin, CreateView):
+    model = HistorialMedico
+    form_class = HistorialMedicoForm # Usamos el formulario simple del contenedor
+    template_name = 'historiales/create_edit.html' # CREAREMOS ESTA PLANTILLA NUEVA
 
-@medico_required
-def index(request):
-    historiales_list = HistorialMedico.objects.select_related('paciente').order_by('-fecha')
-    
-    paginator = Paginator(historiales_list, 10)
-    page_number = request.GET.get('page')
-    historiales = paginator.get_page(page_number)
-    
-    return render(request, 'historiales/index.html', {'historiales': historiales})
-
-from inventario.forms import MedicamentoModalForm
-
-# ... (existing code) ...
-
-@medico_required
-@transaction.atomic
-def create(request):
-    if request.method == 'POST':
-        form = HistorialMedicoForm(request.POST)
-        if form.is_valid():
-            historial = form.save(commit=False)
-            historial.medico = request.user
-            historial.save()
-            form.save_m2m()  # Guardar las relaciones ManyToMany
-            messages.success(request, 'Historial médico creado correctamente.')
-            return redirect('historiales:index')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        paciente_id = self.request.GET.get('paciente_id')
+        if paciente_id:
+             # Pasamos el paciente al contexto para mostrar su nombre
+            context['paciente'] = get_object_or_404(Paciente, pk=paciente_id)
         else:
-            messages.error(request, 'Por favor, corrija los errores en el formulario.')
-    else:
-        form = HistorialMedicoForm()
-    
-    medicamento_form = MedicamentoModalForm()
-    return render(request, 'historiales/create.html', {'form': form, 'medicamento_form': medicamento_form})
+            context['paciente'] = None
 
-@medico_required
-def show(request, historial_id):
-    historial = get_object_or_404(
-        HistorialMedico.objects.select_related('paciente'),
-        id=historial_id
-    )
-    return render(request, 'historiales/show.html', {'historial': historial})
-
-@medico_required
-@transaction.atomic
-def edit(request, historial_id):
-    historial = get_object_or_404(HistorialMedico, id=historial_id, medico=request.user)
-    
-    if request.method == 'POST':
-        form = HistorialMedicoForm(request.POST, instance=historial)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Historial médico actualizado correctamente.')
-            return redirect('historiales:index')
+        if self.request.POST:
+            context['general_form'] = HistoriaGeneralForm(self.request.POST, prefix='general')
+            context['nutricion_form'] = HistoriaNutricionForm(self.request.POST, prefix='nutricion')
         else:
-            messages.error(request, 'Por favor, corrija los errores en el formulario.')
-    else:
-        form = HistorialMedicoForm(instance=historial)
-    
-    medicamento_form = MedicamentoModalForm()
-    return render(request, 'historiales/edit.html', {'form': form, 'historial': historial, 'medicamento_form': medicamento_form})
+            context['general_form'] = HistoriaGeneralForm(prefix='general')
+            context['nutricion_form'] = HistoriaNutricionForm(prefix='nutricion')
+        context['titulo'] = "Crear Nuevo Historial Médico"
+        return context
 
-@medico_required
-@transaction.atomic
-def destroy(request, historial_id):
-    historial = get_object_or_404(HistorialMedico, id=historial_id, medico=request.user)
-    
-    if request.method == 'POST':
-        paciente_info = str(historial.paciente)
-        historial.delete()
-        messages.success(request, f'Historial médico de {paciente_info} eliminado correctamente.')
-        return redirect('historiales:index')
-    
-    return render(request, 'historiales/destroy.html', {'historial': historial})
+    def form_valid(self, form):
+        context = self.get_context_data()
+        general_form = context['general_form']
+        nutricion_form = context['nutricion_form']
+        paciente_id = self.request.GET.get('paciente_id')
 
-@medico_required
+        if not paciente_id:
+            form.add_error(None, "No se especificó el paciente.")
+            return self.form_invalid(form)
+        
+        paciente = get_object_or_404(Paciente, pk=paciente_id)
+
+        if general_form.is_valid() and nutricion_form.is_valid():
+            with transaction.atomic(): # Asegura que todo se guarde o nada
+                # Guardamos el contenedor principal (HistorialMedico)
+                historial = form.save(commit=False)
+                historial.paciente = paciente
+                historial.medico = self.request.user # Asignamos al médico logueado
+                historial.save()
+
+                # Guardamos el formato general
+                general = general_form.save(commit=False)
+                general.historial_padre = historial
+                general.save()
+
+                # Guardamos el formato de nutrición
+                nutricion = nutricion_form.save(commit=False)
+                nutricion.historial_padre = historial
+                nutricion.save()
+
+            return redirect(self.get_success_url(historial.id)) # Redirigimos al detalle del historial
+        else:
+            # Si algún formulario anidado no es válido
+            return self.form_invalid(form)
+
+    def get_initial(self):
+        initial = super().get_initial()
+         # Pre-populamos el paciente si viene por GET
+        paciente_id = self.request.GET.get('paciente_id')
+        if paciente_id:
+            initial['paciente'] = paciente_id
+        return initial
+        
+    def get_success_url(self, historial_id):
+         # Redirigir a la vista de detalle del NUEVO historial
+        return reverse_lazy('historiales:show', kwargs={'pk': historial_id})
+
+# --- Vista de Edición ---
+@method_decorator(medico_required, name='dispatch')
+class HistorialMedicoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = HistorialMedico
+    form_class = HistorialMedicoForm # Seguimos usando el form simple
+    template_name = 'historiales/create_edit.html' # REUTILIZAMOS LA PLANTILLA
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        historial = self.get_object()
+        context['paciente'] = historial.paciente # Pasamos el paciente
+
+        if self.request.POST:
+            context['general_form'] = HistoriaGeneralForm(self.request.POST, instance=historial.historia_general, prefix='general')
+            context['nutricion_form'] = HistoriaNutricionForm(self.request.POST, instance=historial.historia_nutricion, prefix='nutricion')
+        else:
+            # Cargamos los datos existentes de los formatos relacionados
+            context['general_form'] = HistoriaGeneralForm(instance=historial.historia_general, prefix='general')
+            context['nutricion_form'] = HistoriaNutricionForm(instance=historial.historia_nutricion, prefix='nutricion')
+        context['titulo'] = f"Editar Historial de {historial.paciente}"
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        general_form = context['general_form']
+        nutricion_form = context['nutricion_form']
+
+        if general_form.is_valid() and nutricion_form.is_valid():
+            with transaction.atomic():
+                # Guardamos el contenedor (no debería cambiar mucho, quizás 'updated_at')
+                historial = form.save()
+                # Guardamos los formatos relacionados
+                general_form.save()
+                nutricion_form.save()
+            return redirect(self.get_success_url())
+        else:
+            return self.form_invalid(form)
+
+    # Verificación de permisos: Solo el dueño puede editar
+    def test_func(self):
+        historial = self.get_object()
+        return historial.medico == self.request.user
+
+    def get_success_url(self):
+        # Redirigir a la vista de detalle del historial que se editó
+        return reverse_lazy('historiales:show', kwargs={'pk': self.object.pk})
+
+# --- Vista de Detalle (Show) ---
+# La modificaremos para mostrar los datos de los nuevos modelos
+@method_decorator(medico_required, name='dispatch')
+class HistorialMedicoDetailView(LoginRequiredMixin, DetailView):
+    model = HistorialMedico
+    template_name = 'historiales/show.html' # La plantilla actual
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        historial = self.get_object()
+        context['historia_general'] = getattr(historial, 'historia_general', None)
+        context['historia_nutricion'] = getattr(historial, 'historia_nutricion', None)
+        # También pasamos los documentos relacionados para listarlos
+        context['justificativos'] = historial.justificativos.all()
+        context['referencias'] = historial.referencias.all()
+        context['reposos'] = historial.reposos.all()
+        context['recipes'] = historial.recipes.all()
+        
+        # Formularios para crear documentos (los mostraremos en modales o secciones)
+        context['justificativo_form'] = DocumentoJustificativoForm(prefix='just')
+        context['referencia_form'] = DocumentoReferenciaForm(prefix='ref')
+        context['reposo_form'] = DocumentoReposoForm(prefix='repo')
+        context['recipe_form'] = DocumentoRecipeForm(prefix='reci')
+
+        context['titulo'] = f"Detalle Historial - {historial.paciente}"
+        return context
+        
+# --- Vista de Lista y Borrado (ListView, DeleteView) ---
+# Estas vistas probablemente no necesiten grandes cambios ahora,
+# pero asegúrate de que DeleteView siga verificando los permisos (test_func).
+
+@method_decorator(medico_required, name='dispatch')
+class HistorialMedicoListView(LoginRequiredMixin, ListView):
+    model = HistorialMedico
+    template_name = 'historiales/index.html'
+    context_object_name = 'historiales'
+
+    def get_queryset(self):
+        # Mostramos solo los historiales del médico logueado
+        return HistorialMedico.objects.filter(medico=self.request.user).order_by('-fecha')
+
+@method_decorator(medico_required, name='dispatch')
 def search(request):
     query = request.GET.get('q', '')
-    historiales = HistorialMedico.objects.select_related('paciente').order_by('-updated_at')
+    historiales = HistorialMedico.objects.filter(medico=request.user).order_by('-fecha')
     
     if query:
         historiales = historiales.filter(
@@ -116,112 +199,67 @@ def search(request):
         'query': query
     })
 
-from openpyxl import Workbook
-from openpyxl.styles import Font, Alignment, PatternFill
+@method_decorator(medico_required, name='dispatch')
+class HistorialMedicoDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = HistorialMedico
+    template_name = 'historiales/destroy.html'
+    success_url = reverse_lazy('historiales:index')
 
-import os
+    # Verificación de permisos: Solo el dueño puede borrar
+    def test_func(self):
+        historial = self.get_object()
+        return historial.medico == self.request.user
 
-# --- Vistas de Exportación --- #
+# --- VISTAS PARA CREAR LOS DOCUMENTOS ---
+# Necesitamos vistas separadas para manejar la creación de cada documento.
+# Usaremos CreateView simples.
 
-@medico_required
-def exportar_historial_individual_pdf(request, historial_id):
-    historial = get_object_or_404(HistorialMedico, id=historial_id)
-    logo_path = str(BASE_DIR / 'static/img/logo.png')
+@method_decorator(medico_required, name='dispatch')
+class DocumentoCreateViewBase(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    """ Clase base para crear documentos asociados a un historial """
+    template_name = 'historiales/documentos/create_form.html' # Plantilla genérica para docs
     
-    context = {
-        'historial': historial,
-        'logo_path': logo_path,
-        'generation_date': datetime.datetime.now().strftime('%d/%m/%Y %H:%M')
-    }
+    def dispatch(self, request, *args, **kwargs):
+         # Obtenemos el historial padre desde la URL
+        self.historial_padre = get_object_or_404(HistorialMedico, pk=self.kwargs['historial_pk'])
+        return super().dispatch(request, *args, **kwargs)
 
-    template = get_template('historiales/pdf_template.html')
-    html = template.render(context)
-    result = BytesIO()
-    pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), result)
-
-    if not pdf.err:
-        response = HttpResponse(result.getvalue(), content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="historial_{}_{}.pdf"'.format(historial.paciente.numero_documento, datetime.datetime.now().strftime("%Y%m%d"))
-        return response
-    
-    return HttpResponse("Error al generar el PDF.", status=400)
-
-@medico_required
-def exportar_historiales_pdf(request):
-    historiales = HistorialMedico.objects.select_related('paciente').prefetch_related('alergias', 'enfermedades_preexistentes', 'medicamentos_actuales').all()
-    logo_path = str(BASE_DIR / 'static/img/logo.png')
-    
-    context = {
-        'historiales': historiales,
-        'logo_path': logo_path,
-        'generation_date': datetime.datetime.now().strftime('%d/%m/%Y %H:%M')
-    }
-
-    template = get_template('historiales/pdf/historiales_template.html')
-    html = template.render(context)
-    result = BytesIO()
-    pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), result)
-
-    if not pdf.err:
-        response = HttpResponse(result.getvalue(), content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="reporte_historiales_{}.pdf"'.format(datetime.datetime.now().strftime("%Y%m%d"))
-        return response
-    
-    return HttpResponse("Error al generar el PDF.", status=400)
-
-@medico_required
-def exportar_historiales_excel(request):
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename="listado_historiales_{}.xlsx"'.format(datetime.datetime.now().strftime("%Y%m%d"))
-    wb = Workbook()
-    ws = wb.active
-    ws.title = "Historiales Médicos"
-    ws.freeze_panes = 'A2'
-    
-    headers = ['Paciente', 'Cédula', 'Fecha de Creación', 'Última Actualización', 'Medicamentos Actuales']
-    ws.append(headers)
-    
-    header_font = Font(bold=True, color="FFFFFF")
-    header_fill = PatternFill(start_color="0d6efd", end_color="0d6efd", fill_type="solid")
-    header_alignment = Alignment(horizontal="center", vertical="center")
-    
-    for col_num, header in enumerate(headers, 1):
-        cell = ws.cell(row=1, column=col_num)
-        cell.font = header_font
-        cell.fill = header_fill
-        cell.alignment = header_alignment
-
-    historiales = HistorialMedico.objects.select_related('paciente').prefetch_related('medicamentos_actuales').all()
-
-    for historial in historiales:
-        medicamentos = ", ".join([m.nombre for m in historial.medicamentos_actuales.all()]) or "N/A"
+    # Permiso: Solo el dueño del historial padre puede crear documentos
+    def test_func(self):
+        return self.historial_padre.medico == self.request.user
         
-        ws.append([
-            str(historial.paciente),
-            historial.paciente.numero_documento,
-            historial.created_at.strftime('%d/%m/%Y %H:%M'),
-            historial.updated_at.strftime('%d/%m/%Y %H:%M'),
-            medicamentos
-        ])
+    def form_valid(self, form):
+        documento = form.save(commit=False)
+        documento.historial_padre = self.historial_padre
+        documento.save()
+        return redirect(self.get_success_url())
 
-    for row in ws.iter_rows():
-        for cell in row:
-            cell.alignment = Alignment(horizontal="center", vertical="center")
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['historial'] = self.historial_padre
+        context['paciente'] = self.historial_padre.paciente
+        context['titulo'] = f"Crear {self.model._meta.verbose_name}"
+        return context
 
-    for col in ws.columns:
-        max_length = 0
-        column = col[0].column_letter
-        for cell in col:
-            try:
-                if len(str(cell.value)) > max_length:
-                    max_length = len(str(cell.value))
-            except:
-                pass
-        adjusted_width = (max_length + 2)
-        ws.column_dimensions[column].width = adjusted_width
+    def get_success_url(self):
+        # Volver al detalle del historial padre
+        return reverse_lazy('historiales:show', kwargs={'pk': self.historial_padre.pk})
 
-    wb.save(response)
-    return response
+# Vistas específicas que heredan de la base
+class JustificativoCreateView(DocumentoCreateViewBase):
+    model = DocumentoJustificativo
+    form_class = DocumentoJustificativoForm
 
+class ReferenciaCreateView(DocumentoCreateViewBase):
+    model = DocumentoReferencia
+    form_class = DocumentoReferenciaForm
 
+class ReposoCreateView(DocumentoCreateViewBase):
+    model = DocumentoReposo
+    form_class = DocumentoReposoForm
 
+class RecipeCreateView(DocumentoCreateViewBase):
+    model = DocumentoRecipe
+    form_class = DocumentoRecipeForm
+    
+# Añadir vistas de Update y Delete para los documentos si es necesario...

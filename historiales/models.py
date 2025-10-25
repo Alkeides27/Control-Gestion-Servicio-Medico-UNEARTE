@@ -40,7 +40,7 @@ class HistorialMedico(models.Model):
     
     # Campos ManyToManyField para relaciones estructuradas
     alergias = models.ManyToManyField(Alergia, blank=True, related_name='historiales')
-    enfermedades_preexistentes = models.ManyToManyField(Enfermedad, blank=True, related_name='historiales')
+    enfermedades_preexistentes = models.ManyToManyField(Enfermedad, blank=True, related_name='historiales', verbose_name="Antecedentes Personales")
     medicamentos_actuales = models.ManyToManyField(Medicamento, blank=True, related_name='historiales_medicamentos')
 
     created_at = models.DateTimeField(auto_now_add=True)

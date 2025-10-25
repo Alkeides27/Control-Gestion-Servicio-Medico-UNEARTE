@@ -71,16 +71,6 @@ class PacienteForm(forms.ModelForm):
                 raise ValidationError('El número de cédula debe tener exactamente 8 dígitos.')
         return numero_documento
 
-    def clean_nombre(self):
-        nombre = self.cleaned_data.get('nombre')
-        if nombre:
-            # Permite letras, espacios y apóstrofes/guiones (común en nombres/apellidos)
-            if not all(c.isalpha() or c.isspace() or c in "-'" for c in nombre):
-                 raise ValidationError('Los nombres solo deben contener letras, espacios, apóstrofes o guiones.')
-            if len(nombre) > 30:
-                raise ValidationError('El nombre no debe exceder los 30 caracteres.')
-        return nombre
-
     def clean_apellido(self):
         apellido = self.cleaned_data.get('apellido')
         if apellido:

@@ -52,8 +52,8 @@ body.medical-body {
 }
 
 .navbar-brand-medical img.medical-logo {
-    height: 45px;
-    width: 45px;
+    height: 60px;
+    width: 60px;
     border-radius: 50%;
     border: 2px solid rgba(255, 255, 255, 0.3);
     padding: 2px;

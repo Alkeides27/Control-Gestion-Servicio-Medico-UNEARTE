@@ -68,8 +68,10 @@
         </div>
         <div class="card-footer d-flex justify-content-end">
             <a href="{% url 'historiales:exportar_historial_individual_pdf' historial.id %}" class="btn btn-info me-2">Exportar a PDF</a>
-            <a href="{% url 'historiales:edit' historial.id %}" class="btn btn-success me-2">Editar</a>
-            <a href="{% url 'historiales:destroy' historial.id %}" class="btn btn-danger">Eliminar</a>
+            {% if historial.medico == request.user %}
+                <a href="{% url 'historiales:edit' historial.id %}" class="btn btn-success me-2">Editar</a>
+                <a href="{% url 'historiales:destroy' historial.id %}" class="btn btn-danger">Eliminar</a>
+            {% endif %}
         </div>
     </div>
 </div>

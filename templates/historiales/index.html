@@ -59,8 +59,10 @@
                                 <td>{{ historial.updated_at|date:"d/m/Y H:i" }}</td>
                                 <td>
                                     <a href="{% url 'historiales:show' historial.id %}" class="btn btn-info btn-sm">Ver</a>
-                                    <a href="{% url 'historiales:edit' historial.id %}" class="btn btn-success btn-sm">Editar</a>
-                                    <a href="{% url 'historiales:destroy' historial.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                                    {% if historial.medico == request.user %}
+                                        <a href="{% url 'historiales:edit' historial.id %}" class="btn btn-success btn-sm">Editar</a>
+                                        <a href="{% url 'historiales:destroy' historial.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% empty %}

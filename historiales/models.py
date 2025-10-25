@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 from pacientes.models import Paciente
 from inventario.models import Medicamento
@@ -36,7 +37,8 @@ class Enfermedad(models.Model):
 
 # Modelo HistorialMedico modificado
 class HistorialMedico(models.Model):
-    paciente = models.OneToOneField(Paciente, on_delete=models.CASCADE, related_name='historial_medico')
+    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='historiales')
+    medico = models.ForeignKey(User, on_delete=models.CASCADE, related_name='historiales_creados')
     
     # Campos ManyToManyField para relaciones estructuradas
     alergias = models.ManyToManyField(Alergia, blank=True, related_name='historiales')

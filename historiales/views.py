@@ -43,7 +43,10 @@ def create(request):
     if request.method == 'POST':
         form = HistorialMedicoForm(request.POST)
         if form.is_valid():
-            form.save()
+            historial = form.save(commit=False)
+            historial.medico = request.user
+            historial.save()
+            form.save_m2m()  # Guardar las relaciones ManyToMany
             messages.success(request, 'Historial médico creado correctamente.')
             return redirect('historiales:index')
         else:
@@ -67,7 +70,7 @@ def show(request, historial_id):
 @medico_required
 @transaction.atomic
 def edit(request, historial_id):
-    historial = get_object_or_404(HistorialMedico, id=historial_id)
+    historial = get_object_or_404(HistorialMedico, id=historial_id, medico=request.user)
     
     if request.method == 'POST':
         form = HistorialMedicoForm(request.POST, instance=historial)
@@ -86,7 +89,7 @@ def edit(request, historial_id):
 @medico_required
 @transaction.atomic
 def destroy(request, historial_id):
-    historial = get_object_or_404(HistorialMedico, id=historial_id)
+    historial = get_object_or_404(HistorialMedico, id=historial_id, medico=request.user)
     
     if request.method == 'POST':
         paciente_info = str(historial.paciente)

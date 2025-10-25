@@ -14,7 +14,4 @@ urlpatterns = [
     path('<int:historial_id>/exportar/pdf/', views.exportar_historial_individual_pdf, name='exportar_historial_individual_pdf'),
     path('exportar/pdf/', views.exportar_historiales_pdf, name='exportar_historiales_pdf'),
     path('exportar/excel/', views.exportar_historiales_excel, name='exportar_historiales_excel'),
-    # URLs para AJAX
-    path('ajax/crear-alergia/', views.crear_alergia_ajax, name='crear_alergia_ajax'),
-    path('ajax/crear-enfermedad/', views.crear_enfermedad_ajax, name='crear_enfermedad_ajax'),
 ]

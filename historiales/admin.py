@@ -3,6 +3,6 @@ from .models import HistorialMedico
 
 @admin.register(HistorialMedico)
 class HistorialMedicoAdmin(admin.ModelAdmin):
-    list_display = ('paciente', 'created_at', 'updated_at')
-    search_fields = ('paciente__nombre', 'paciente__apellido', 'paciente__numero_documento')
-    readonly_fields = ('created_at', 'updated_at')
+    list_display = ('paciente', 'medico', 'fecha')
+    search_fields = ('paciente__nombre', 'paciente__apellido', 'paciente__numero_documento', 'medico__username')
+    readonly_fields = ()

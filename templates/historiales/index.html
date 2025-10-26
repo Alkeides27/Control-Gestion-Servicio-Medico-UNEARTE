@@ -11,12 +11,6 @@
         </div>
         <div class="card-body">
             <div class="d-flex justify-content-end mb-3">
-                <a href="{% url 'historiales:exportar_historiales_excel' %}" class="btn btn-success me-2">
-                    <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
-                </a>
-                <a href="{% url 'historiales:exportar_historiales_pdf' %}" class="btn btn-danger me-2">
-                    <i class="bi bi-file-earmark-pdf"></i> Exportar a PDF
-                </a>
                 <form action="{% url 'historiales:search' %}" method="get" class="d-flex">
                     <input class="form-control me-2" type="search" placeholder="Buscar paciente, alergia..." name="q" value="{{ query|default:'' }}">
                     <button class="btn btn-outline-primary" type="submit">Buscar</button>
@@ -29,9 +23,7 @@
                         <tr>
                             <th>Paciente</th>
                             <th>Cédula</th>
-                            <th>Alergias</th>
-                            <th>Enfermedades</th>
-                            <th>Última Actualización</th>
+                            <th>Fecha</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -40,27 +32,13 @@
                             <tr>
                                 <td>{{ historial.paciente.nombre }} {{ historial.paciente.apellido }}</td>
                                 <td>{{ historial.paciente.numero_documento }}</td>
-                                <td>
-                                    {% for alergia in historial.alergias.all|slice:":2" %}
-                                        <span class="badge bg-danger">{{ alergia.nombre }}</span>
-                                    {% endfor %}
-                                    {% if historial.alergias.all|length > 2 %}
-                                        <span class="badge bg-secondary">+{{ historial.alergias.all|length|add:"-2" }}</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% for enfermedad in historial.enfermedades_preexistentes.all|slice:":2" %}
-                                        <span class="badge bg-warning text-dark">{{ enfermedad.nombre }}</span>
-                                    {% endfor %}
-                                    {% if historial.enfermedades_preexistentes.all|length > 2 %}
-                                        <span class="badge bg-secondary">+{{ historial.enfermedades_preexistentes.all|length|add:"-2" }}</span>
-                                    {% endif %}
-                                </td>
-                                <td>{{ historial.updated_at|date:"d/m/Y H:i" }}</td>
+                                <td>{{ historial.fecha|date:"d/m/Y H:i" }}</td>
                                 <td>
                                     <a href="{% url 'historiales:show' historial.id %}" class="btn btn-info btn-sm">Ver</a>
-                                    <a href="{% url 'historiales:edit' historial.id %}" class="btn btn-success btn-sm">Editar</a>
-                                    <a href="{% url 'historiales:destroy' historial.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                                    {% if historial.medico == request.user %}
+                                        <a href="{% url 'historiales:edit' historial.id %}" class="btn btn-success btn-sm">Editar</a>
+                                        <a href="{% url 'historiales:destroy' historial.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% empty %}

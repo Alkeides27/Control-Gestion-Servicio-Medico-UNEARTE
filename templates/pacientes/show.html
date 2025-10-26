@@ -133,6 +133,44 @@
 </div>
 
 <div class="mt-4">
+    <h3>Historiales Clínicos del Paciente</h3>
+    <div class="list-group">
+        {% for historial in historiales_del_paciente %}
+            <div class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">Consulta del {{ historial.created_at|date:"d/m/Y" }}</h5>
+                    <small>Médico: {{ historial.medico.get_full_name }}</small>
+                </div>
+                <p class="mb-1">
+                    Motivo: {{ historial.motivo_consulta|truncatewords:20 }}
+                </p>
+                
+                <div>
+                    <a href="{% url 'historiales:show' historial.id %}" class="btn btn-info btn-sm">
+                        <i class="bi bi-eye-fill"></i> Ver
+                    </a>
+                    
+                    {% if historial.medico == request.user %}
+                        <a href="{% url 'historiales:edit' historial.id %}" class="btn btn-primary btn-sm">
+                            <i class="bi bi-pencil-fill"></i> Editar
+                        </a>
+                        <a href="{% url 'historiales:destroy' historial.id %}" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash-fill"></i> Borrar
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <p>Este paciente aún no tiene historiales médicos registrados.</p>
+        {% endfor %}
+    </div>
+
+    <a href="{% url 'historiales:create' %}?paciente_id={{ paciente.id }}" class="btn btn-success mt-3">
+        <i class="bi bi-plus-circle-fill"></i> Crear Nuevo Historial
+    </a>
+</div>
+
+<div class="mt-4">
     <a href="{% url 'pacientes:index' %}" class="btn btn-outline-medical">
         <i class="bi bi-arrow-left"></i> Volver al listado
     </a>

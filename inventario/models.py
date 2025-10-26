@@ -39,7 +39,6 @@ class Medicamento(models.Model):
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     proveedor = models.ForeignKey(Proveedor, on_delete=models.CASCADE)
     codigo = models.CharField(max_length=50, unique=True, blank=True)
-    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
     stock_minimo = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -1,76 +1,93 @@
 {% extends 'base.html' %}
-
-{% block title %}Historial de {{ historial.paciente }}{% endblock %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 <div class="container mt-4">
-    <div class="card shadow-sm">
-        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">Historial Médico de: <strong>{{ historial.paciente }}</strong></h4>
-            <a href="{% url 'historiales:index' %}" class="btn btn-light btn-sm">Volver al Listado</a>
+    <h2>{{ titulo }}</h2>
+    <p><strong>Fecha:</strong> {{ object.fecha|date:"d/m/Y H:i" }}</p>
+    <p><strong>Médico:</strong> {{ object.medico.get_full_name }}</p>
+    <p><strong>Paciente:</strong> <a href="{% url 'pacientes:show' object.paciente.pk %}">{{ object.paciente.get_full_name }}</a> (CI: {{ object.paciente.cedula }})</p>
+    <hr>
+
+    <ul class="nav nav-tabs" id="showHistorialTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="show-general-tab" data-bs-toggle="tab" data-bs-target="#show-general" type="button" role="tab" aria-controls="show-general" aria-selected="true">Historia General</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="show-nutricion-tab" data-bs-toggle="tab" data-bs-target="#show-nutricion" type="button" role="tab" aria-controls="show-nutricion" aria-selected="false">Nutrición</button>
+        </li>
+         <li class="nav-item" role="presentation">
+            <button class="nav-link" id="show-documentos-tab" data-bs-toggle="tab" data-bs-target="#show-documentos" type="button" role="tab" aria-controls="show-documentos" aria-selected="false">Documentos</button>
+        </li>
+    </ul>
+
+    <div class="tab-content pt-3" id="showHistorialTabsContent">
+        <div class="tab-pane fade show active" id="show-general" role="tabpanel" aria-labelledby="show-general-tab">
+            {% if historia_general %}
+                <h4>Datos Generales</h4>
+                <p><strong>Peso:</strong> {{ historia_general.peso|default:"N/A" }} kg</p>
+                <p><strong>Talla:</strong> {{ historia_general.talla|default:"N/A" }} cm</p>
+                <p><strong>Tensión Arterial:</strong> {{ historia_general.ta|default:"N/A" }}</p>
+                <p><strong>Motivo Consulta:</strong> {{ historia_general.motivo_consulta|linebreaksbr|default:"N/A" }}</p>
+                <p><strong>Enfermedad Actual (HEA):</strong> {{ historia_general.enfermedad_actual|linebreaksbr|default:"N/A" }}</p>
+                <p><strong>Antecedentes Personales:</strong> {{ historia_general.antecedentes_personales|linebreaksbr|default:"N/A" }}</p>
+                <p><strong>Antecedentes Familiares:</strong> {{ historia_general.antecedentes_familiares|linebreaksbr|default:"N/A" }}</p>
+                <p><strong>Examen Físico:</strong> {{ historia_general.examen_fisico|linebreaksbr|default:"N/A" }}</p>
+                <p><strong>Diagnóstico (IDX):</strong> {{ historia_general.diagnostico|linebreaksbr|default:"N/A" }}</p>
+                <p><strong>Plan y Tratamiento:</strong> {{ historia_general.plan|linebreaksbr|default:"N/A" }}</p>
+            {% else %}
+                <p class="text-muted">No se registraron datos de Historia General.</p>
+            {% endif %}
         </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <p><strong>Paciente:</strong> {{ historial.paciente.nombre }} {{ historial.paciente.apellido }}</p>
-                    <p><strong>Cédula:</strong> {{ historial.paciente.numero_documento }}</p>
-                    <p><strong>Email:</strong> {{ historial.paciente.email|default:"No especificado" }}</p>
-                </div>
-                <div class="col-md-6">
-                    <p><strong>Fecha de Nacimiento:</strong> {{ historial.paciente.fecha_nacimiento }} ({{ historial.paciente.edad }} años)</p>
-                    <p><strong>Género:</strong> {{ historial.paciente.get_genero_display }}</p>
-                    <p><strong>Fecha de Creación:</strong> {{ historial.created_at|date:"d/m/Y H:i" }}</p>
-                    <p><strong>Última Actualización:</strong> {{ historial.updated_at|date:"d/m/Y H:i" }}</p>
-                </div>
-            </div>
+
+        <div class="tab-pane fade" id="show-nutricion" role="tabpanel" aria-labelledby="show-nutricion-tab">
+            {% if historia_nutricion %}
+                <h4>Datos de Nutrición</h4>
+                <p><strong>Peso Usual:</strong> {{ historia_nutricion.antropo_peso_usual|default:"N/A" }} kg</p>
+                <p><strong>Hábitos Cafeicos:</strong> {{ historia_nutricion.cafeicos|default:"N/A" }}</p>
+                 <p><strong>Dx Nutricional:</strong> {{ historia_nutricion.dx_nutricional|linebreaksbr|default:"N/A" }}</p>
+                {% else %}
+                <p class="text-muted">No se registraron datos de Nutrición.</p>
+            {% endif %}
+        </div>
+
+         <div class="tab-pane fade" id="show-documentos" role="tabpanel" aria-labelledby="show-documentos-tab">
+            <h4>Documentos Asociados</h4>
+            
+            <h5>Justificativos</h5>
+            <ul>{% for doc in justificativos %}<li>{{ doc }} - <a href="#">Ver/Imprimir</a></li>{% empty %}<li>Ninguno</li>{% endfor %}</ul>
+            <h5>Referencias</h5>
+            <ul>{% for doc in referencias %}<li>{{ doc }} - <a href="#">Ver/Imprimir</a></li>{% empty %}<li>Ninguna</li>{% endfor %}</ul>
+            <h5>Reposos</h5>
+            <ul>{% for doc in reposos %}<li>{{ doc }} - <a href="#">Ver/Imprimir</a></li>{% empty %}<li>Ninguno</li>{% endfor %}</ul>
+             <h5>Récipes</h5>
+            <ul>{% for doc in recipes %}<li>{{ doc }} - <a href="#">Ver/Imprimir</a></li>{% empty %}<li>Ninguno</li>{% endfor %}</ul>
 
             <hr>
-
-            <div class="mt-4">
-                <h5>Alergias Conocidas</h5>
-                {% if historial.alergias.all %}
-                    <p>
-                        {% for alergia in historial.alergias.all %}
-                            <span class="badge bg-danger me-1">{{ alergia.nombre }}</span>
-                        {% endfor %}
-                    </p>
-                {% else %}
-                    <p class="text-muted">No se han registrado alergias.</p>
+            {% if object.medico == request.user %}
+                <h5>Generar Nuevo Documento</h5>
+                <a href="{% url 'historiales:justificativo_create' historial_pk=object.pk %}" class="btn btn-outline-primary btn-sm mb-2">Crear Justificativo</a>
+                <a href="{% url 'historiales:referencia_create' historial_pk=object.pk %}" class="btn btn-outline-primary btn-sm mb-2">Crear Referencia</a>
+                <a href="{% url 'historiales:reposo_create' historial_pk=object.pk %}" class="btn btn-outline-primary btn-sm mb-2">Crear Reposo</a>
+                <a href="{% url 'historiales:recipe_create' historial_pk=object.pk %}" class="btn btn-outline-primary btn-sm mb-2">Crear Récipe</a>
+                
                 {% endif %}
-            </div>
-
-            <div class="mt-4">
-                <h5>Enfermedades Preexistentes</h5>
-                {% if historial.enfermedades_preexistentes.all %}
-                    <p>
-                        {% for enfermedad in historial.enfermedades_preexistentes.all %}
-                            <span class="badge bg-warning text-dark me-1">{{ enfermedad.nombre }}</span>
-                        {% endfor %}
-                    </p>
-                {% else %}
-                    <p class="text-muted">No se han registrado enfermedades preexistentes.</p>
-                {% endif %}
-            </div>
-
-            <div class="mt-4">
-                <h5>Medicamentos Actuales</h5>
-                {% if historial.medicamentos_actuales.all %}
-                    <ul class="list-group">
-                        {% for medicamento in historial.medicamentos_actuales.all %}
-                            <li class="list-group-item">{{ medicamento.nombre }} ({{ medicamento.codigo }})</li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p class="text-muted">No se han registrado medicamentos actuales.</p>
-                {% endif %}
-            </div>
-
-        </div>
-        <div class="card-footer d-flex justify-content-end">
-            <a href="{% url 'historiales:exportar_historial_individual_pdf' historial.id %}" class="btn btn-info me-2">Exportar a PDF</a>
-            <a href="{% url 'historiales:edit' historial.id %}" class="btn btn-success me-2">Editar</a>
-            <a href="{% url 'historiales:destroy' historial.id %}" class="btn btn-danger">Eliminar</a>
         </div>
     </div>
+
+    <hr>
+    <a href="{% url 'pacientes:show' object.paciente.pk %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left-circle-fill"></i> Volver al Paciente
+    </a>
+    {% if object.medico == request.user %}
+        <a href="{% url 'historiales:edit' object.pk %}" class="btn btn-primary">
+            <i class="bi bi-pencil-fill"></i> Editar Historial (General/Nutrición)
+        </a>
+        <a href="{% url 'historiales:destroy' object.pk %}" class="btn btn-danger">
+            <i class="bi bi-trash-fill"></i> Borrar Historial Completo
+        </a>
+    {% endif %}
+
 </div>
+
 {% endblock %}

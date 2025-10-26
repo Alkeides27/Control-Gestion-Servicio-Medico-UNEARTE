@@ -48,21 +48,14 @@ class ProveedorForm(forms.ModelForm):
 class MedicamentoForm(forms.ModelForm):
     class Meta:
         model = Medicamento
-        fields = ['nombre', 'descripcion', 'categoria', 'proveedor', 'precio_unitario', 'stock_minimo']
+        fields = ['nombre', 'descripcion', 'categoria', 'proveedor', 'stock_minimo']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'categoria': forms.Select(attrs={'class': 'form-control'}),
             'proveedor': forms.Select(attrs={'class': 'form-control'}),
-            'precio_unitario': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
             'stock_minimo': forms.NumberInput(attrs={'class': 'form-control'}),
         }
-    
-    def clean_precio_unitario(self):
-        precio = self.cleaned_data.get('precio_unitario')
-        if precio <= 0:
-            raise forms.ValidationError("El precio unitario debe ser mayor que cero.")
-        return precio
     
     def clean_stock_minimo(self):
         stock = self.cleaned_data.get('stock_minimo')
@@ -98,19 +91,12 @@ class InventarioForm(forms.ModelForm):
 class MedicamentoModalForm(forms.ModelForm):
     class Meta:
         model = Medicamento
-        fields = ['nombre', 'categoria', 'proveedor', 'precio_unitario']
+        fields = ['nombre', 'categoria', 'proveedor']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'categoria': forms.Select(attrs={'class': 'form-control'}),
             'proveedor': forms.Select(attrs={'class': 'form-control'}),
-            'precio_unitario': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
         }
-
-    def clean_precio_unitario(self):
-        precio = self.cleaned_data.get('precio_unitario')
-        if precio is not None and precio <= 0:
-            raise forms.ValidationError("El precio unitario debe ser mayor que cero.")
-        return precio
 
 # Formulario para el modal de creación de categorías
 class CategoriaModalForm(forms.ModelForm):

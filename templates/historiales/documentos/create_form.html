@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ titulo }}</h2>
+    <p><strong>Paciente:</strong> {{ paciente.get_full_name }}</p>
+    <p><strong>Historial del:</strong> {{ historial.fecha|date:"d/m/Y" }}</p>
+    <hr>
+
+    <form method="post">
+        {% csrf_token %}
+        {% crispy form %}
+        <button type="submit" class="btn btn-success">Guardar Documento</button>
+        <a href="{% url 'historiales:show' historial.pk %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

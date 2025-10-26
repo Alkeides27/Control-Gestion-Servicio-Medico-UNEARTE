@@ -3,6 +3,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import CreateView, UpdateView, DetailView, ListView, DeleteView
 from django.urls import reverse_lazy
+from django.db.models import Q
+from django.core.paginator import Paginator
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import transaction # Importante para guardar múltiples formularios
 
@@ -28,39 +30,46 @@ class HistorialMedicoCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         paciente_id = self.request.GET.get('paciente_id')
+        paciente = None
         if paciente_id:
-             # Pasamos el paciente al contexto para mostrar su nombre
-            context['paciente'] = get_object_or_404(Paciente, pk=paciente_id)
-        else:
-            context['paciente'] = None
+            paciente = get_object_or_404(Paciente, pk=paciente_id)
+            context['paciente'] = paciente
+
+        # Obtener el médico actual
+        medico = self.request.user.medico if hasattr(self.request.user, 'medico') else None
 
         if self.request.POST:
-            context['general_form'] = HistoriaGeneralForm(self.request.POST, prefix='general')
-            context['nutricion_form'] = HistoriaNutricionForm(self.request.POST, prefix='nutricion')
+            # Pasar paciente y médico al inicializar
+            context['general_form'] = HistoriaGeneralForm(self.request.POST, prefix='general', paciente=paciente, medico=medico)
+            context['nutricion_form'] = HistoriaNutricionForm(self.request.POST, prefix='nutricion') # Nutricion no necesita estos datos extra
         else:
-            context['general_form'] = HistoriaGeneralForm(prefix='general')
+            # Pasar paciente y médico al inicializar
+            context['general_form'] = HistoriaGeneralForm(prefix='general', paciente=paciente, medico=medico)
             context['nutricion_form'] = HistoriaNutricionForm(prefix='nutricion')
         context['titulo'] = "Crear Nuevo Historial Médico"
         return context
 
     def form_valid(self, form):
         context = self.get_context_data()
+        # Ya tenemos paciente y medico en el contexto si todo va bien
         general_form = context['general_form']
         nutricion_form = context['nutricion_form']
-        paciente_id = self.request.GET.get('paciente_id')
+        paciente = context.get('paciente')  # Obtener de contexto
 
-        if not paciente_id:
+        if not paciente:  # Doble chequeo por si acaso
             form.add_error(None, "No se especificó el paciente.")
             return self.form_invalid(form)
-        
-        paciente = get_object_or_404(Paciente, pk=paciente_id)
 
-        if general_form.is_valid() and nutricion_form.is_valid():
-            with transaction.atomic(): # Asegura que todo se guarde o nada
+        # Validar ANTES de guardar
+        is_general_valid = general_form.is_valid()
+        is_nutricion_valid = nutricion_form.is_valid()
+
+        if is_general_valid and is_nutricion_valid:
+            with transaction.atomic():  # Asegura que todo se guarde o nada
                 # Guardamos el contenedor principal (HistorialMedico)
                 historial = form.save(commit=False)
                 historial.paciente = paciente
-                historial.medico = self.request.user # Asignamos al médico logueado
+                historial.medico = self.request.user  # Asignamos al médico logueado
                 historial.save()
 
                 # Guardamos el formato general
@@ -73,9 +82,11 @@ class HistorialMedicoCreateView(LoginRequiredMixin, CreateView):
                 nutricion.historial_padre = historial
                 nutricion.save()
 
-            return redirect(self.get_success_url(historial.id)) # Redirigimos al detalle del historial
+            return redirect(self.get_success_url(historial.id))  # Redirigimos al detalle del historial
         else:
             # Si algún formulario anidado no es válido
+            print("Errores General:", general_form.errors)  # DEBUG
+            print("Errores Nutrición:", nutricion_form.errors)  # DEBUG
             return self.form_invalid(form)
 
     def get_initial(self):

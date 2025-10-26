@@ -6,7 +6,7 @@
     <h2>{{ titulo }}</h2>
     <p><strong>Fecha:</strong> {{ object.fecha|date:"d/m/Y H:i" }}</p>
     <p><strong>Médico:</strong> {{ object.medico.get_full_name }}</p>
-    <p><strong>Paciente:</strong> <a href="{% url 'pacientes:show' object.paciente.pk %}">{{ object.paciente.get_full_name }}</a> (CI: {{ object.paciente.cedula }})</p>
+    <p><strong>Paciente:</strong> <a href="{% url 'pacientes:show' object.paciente.pk %}">{{ object.paciente }}</a> (CI: {{ object.paciente.numero_documento }})</p>
     <hr>
 
     <ul class="nav nav-tabs" id="showHistorialTabs" role="tablist">
@@ -29,9 +29,31 @@
                 <p><strong>Talla:</strong> {{ historia_general.talla|default:"N/A" }} cm</p>
                 <p><strong>Tensión Arterial:</strong> {{ historia_general.ta|default:"N/A" }}</p>
                 <p><strong>Motivo Consulta:</strong> {{ historia_general.motivo_consulta|linebreaksbr|default:"N/A" }}</p>
-                <p><strong>Enfermedad Actual (HEA):</strong> {{ historia_general.enfermedad_actual|linebreaksbr|default:"N/A" }}</p>
-                <p><strong>Antecedentes Personales:</strong> {{ historia_general.antecedentes_personales|linebreaksbr|default:"N/A" }}</p>
-                <p><strong>Antecedentes Familiares:</strong> {{ historia_general.antecedentes_familiares|linebreaksbr|default:"N/A" }}</p>
+                <p><strong>Enfermedad Actual (HEA):</strong> {{ historia_general.hea|linebreaksbr|default:"N/A" }}</p>
+                <p><strong>Antecedentes Personales:</strong></p>
+                <ul>
+                    {% if historia_general.antp_diabetes %}<li>Diabetes</li>{% endif %}
+                    {% if historia_general.antp_hepatitis %}<li>Hepatitis</li>{% endif %}
+                    {% if historia_general.antp_cardiovascular %}<li>Cardiovascular</li>{% endif %}
+                    {% if historia_general.antp_respiratoria %}<li>Respiratoria</li>{% endif %}
+                    {% if historia_general.antp_neurologica %}<li>Neurológica</li>{% endif %}
+                    {% if historia_general.antp_cirugia %}<li>Cirugía</li>{% endif %}
+                    {% if historia_general.antp_alergias %}<li>Alergias</li>{% endif %}
+                    {% if historia_general.antp_its %}<li>ITS</li>{% endif %}
+                    {% if historia_general.antp_osteomusculares %}<li>Osteomusculares</li>{% endif %}
+                    {% if historia_general.antp_habitos %}<li>Hábitos</li>{% endif %}
+                </ul>
+                <p>{{ historia_general.antp_otros|linebreaksbr|default:"" }}</p>
+
+                <p><strong>Antecedentes Familiares:</strong></p>
+                <ul>
+                    {% if historia_general.antf_diabetes %}<li>Diabetes</li>{% endif %}
+                    {% if historia_general.antf_hepatitis %}<li>Hepatitis</li>{% endif %}
+                    {% if historia_general.antf_cardiovascular %}<li>Cardiovascular</li>{% endif %}
+                    {% if historia_general.antf_respiratoria %}<li>Respiratoria</li>{% endif %}
+                    {% if historia_general.antf_neurologica %}<li>Neurológica</li>{% endif %}
+                </ul>
+                <p>{{ historia_general.antf_otros|linebreaksbr|default:"" }}</p>
                 <p><strong>Examen Físico:</strong> {{ historia_general.examen_fisico|linebreaksbr|default:"N/A" }}</p>
                 <p><strong>Diagnóstico (IDX):</strong> {{ historia_general.diagnostico|linebreaksbr|default:"N/A" }}</p>
                 <p><strong>Plan y Tratamiento:</strong> {{ historia_general.plan|linebreaksbr|default:"N/A" }}</p>

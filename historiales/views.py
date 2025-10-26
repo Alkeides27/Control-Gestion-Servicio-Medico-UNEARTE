@@ -16,7 +16,7 @@ from .forms import (
     HistorialMedicoForm, HistoriaGeneralForm, HistoriaNutricionForm,
     DocumentoJustificativoForm, DocumentoReferenciaForm, DocumentoReposoForm, DocumentoRecipeForm
 )
-from pacientes.models import Paciente
+from pacientes.models import Paciente, Telefono
 from core.decorators import medico_required # Asegúrate de tener los decoradores
 from django.utils.decorators import method_decorator
 
@@ -24,103 +24,113 @@ from django.utils.decorators import method_decorator
 @method_decorator(medico_required, name='dispatch')
 class HistorialMedicoCreateView(LoginRequiredMixin, CreateView):
     model = HistorialMedico
-    form_class = HistorialMedicoForm # Usamos el formulario simple del contenedor
-    template_name = 'historiales/create_edit.html' # CREAREMOS ESTA PLANTILLA NUEVA
+    form_class = HistorialMedicoForm # Formulario del contenedor
+    template_name = 'historiales/create_edit.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         paciente_id = self.request.GET.get('paciente_id')
         paciente = None
+        creating_patient = not bool(paciente_id) # True si no hay paciente_id
+        medico = self.request.user
+
         if paciente_id:
             paciente = get_object_or_404(Paciente, pk=paciente_id)
             context['paciente'] = paciente
-
-        # Obtener el médico actual
-        medico = self.request.user.medico if hasattr(self.request.user, 'medico') else None
-
-        if self.request.POST:
-            # Pasar paciente y médico al inicializar
-            context['general_form'] = HistoriaGeneralForm(self.request.POST, prefix='general', paciente=paciente, medico=medico)
-            context['nutricion_form'] = HistoriaNutricionForm(self.request.POST, prefix='nutricion') # Nutricion no necesita estos datos extra
+            context['titulo'] = f"Crear Nuevo Historial para {paciente}"
         else:
-            # Pasar paciente y médico al inicializar
-            context['general_form'] = HistoriaGeneralForm(prefix='general', paciente=paciente, medico=medico)
+            context['titulo'] = "Crear Nuevo Historial y Paciente"
+
+        # Inicializar formularios secundarios
+        form_kwargs = {'prefix': 'general', 'paciente': paciente, 'medico': medico, 'create_patient': creating_patient}
+        if self.request.POST:
+            context['general_form'] = HistoriaGeneralForm(self.request.POST, **form_kwargs)
+            context['nutricion_form'] = HistoriaNutricionForm(self.request.POST, prefix='nutricion')
+        else:
+            context['general_form'] = HistoriaGeneralForm(**form_kwargs)
             context['nutricion_form'] = HistoriaNutricionForm(prefix='nutricion')
-        context['titulo'] = "Crear Nuevo Historial Médico"
+            
+        context['creating_patient'] = creating_patient
         return context
 
     def form_valid(self, form):
         context = self.get_context_data()
-        # Ya tenemos paciente y medico en el contexto si todo va bien
         general_form = context['general_form']
-        nutricion_form = context['nutricion_form']
-        paciente = context.get('paciente')  # Obtener de contexto
+        creating_patient = context['creating_patient']
+        paciente = context.get('paciente')
 
-        if not paciente:  # Doble chequeo por si acaso
-            form.add_error(None, "No se especificó el paciente.")
+        if not general_form.is_valid():
+            print("Errores General:", general_form.errors)
+            form.add_error(None, "Por favor corrija los errores en el formulario de Historia General.")
             return self.form_invalid(form)
 
-        # Validar ANTES de guardar
-        is_general_valid = general_form.is_valid()
-        is_nutricion_valid = nutricion_form.is_valid()
+        with transaction.atomic():
+            if creating_patient:
+                try:
+                    paciente = Paciente.objects.create(
+                        numero_documento=general_form.cleaned_data['create_cedula'],
+                        nombre=general_form.cleaned_data['create_nombre'],
+                        apellido=general_form.cleaned_data['create_apellido'],
+                        genero=general_form.cleaned_data['create_sexo'],
+                        fecha_nacimiento=general_form.cleaned_data['create_fecha_nacimiento'],
+                    )
+                    Telefono.objects.create(
+                        paciente=paciente,
+                        numero=general_form.cleaned_data['create_telefono'],
+                        es_principal=True
+                    )
+                except Exception as e:
+                    form.add_error(None, f"Error al crear el paciente: {e}")
+                    return self.form_invalid(form)
 
-        if is_general_valid and is_nutricion_valid:
-            with transaction.atomic():  # Asegura que todo se guarde o nada
-                # Guardamos el contenedor principal (HistorialMedico)
-                historial = form.save(commit=False)
-                historial.paciente = paciente
-                historial.medico = self.request.user  # Asignamos al médico logueado
-                historial.save()
+            if not paciente:
+                form.add_error(None, "No se pudo determinar el paciente para este historial.")
+                return self.form_invalid(form)
 
-                # Guardamos el formato general
-                general = general_form.save(commit=False)
-                general.historial_padre = historial
-                general.save()
+            historial = form.save(commit=False)
+            historial.paciente = paciente
+            historial.medico = self.request.user
+            historial.save()
 
-                # Guardamos el formato de nutrición
-                nutricion = nutricion_form.save(commit=False)
-                nutricion.historial_padre = historial
-                nutricion.save()
+            general = general_form.save(commit=False)
+            general.historial_padre = historial
+            general.save()
 
-            return redirect(self.get_success_url(historial.id))  # Redirigimos al detalle del historial
-        else:
-            # Si algún formulario anidado no es válido
-            print("Errores General:", general_form.errors)  # DEBUG
-            print("Errores Nutrición:", nutricion_form.errors)  # DEBUG
-            return self.form_invalid(form)
+        return redirect(self.get_success_url(historial.id)) # Redirigir al detalle
 
-    def get_initial(self):
-        initial = super().get_initial()
-         # Pre-populamos el paciente si viene por GET
-        paciente_id = self.request.GET.get('paciente_id')
-        if paciente_id:
-            initial['paciente'] = paciente_id
-        return initial
-        
+    # get_initial ya no es necesario aquí para el paciente
+    
     def get_success_url(self, historial_id):
-         # Redirigir a la vista de detalle del NUEVO historial
         return reverse_lazy('historiales:show', kwargs={'pk': historial_id})
 
-# --- Vista de Edición ---
+# --- HistorialMedicoUpdateView ---
+# Asegúrate de que también pasa 'paciente' y 'medico' al inicializar HistoriaGeneralForm
 @method_decorator(medico_required, name='dispatch')
 class HistorialMedicoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = HistorialMedico
-    form_class = HistorialMedicoForm # Seguimos usando el form simple
-    template_name = 'historiales/create_edit.html' # REUTILIZAMOS LA PLANTILLA
+    form_class = HistorialMedicoForm
+    template_name = 'historiales/create_edit.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         historial = self.get_object()
-        context['paciente'] = historial.paciente # Pasamos el paciente
+        paciente = historial.paciente
+        medico = historial.medico
+        context['paciente'] = paciente
+        
+        # Siempre pasamos create_patient=False en edición
+        form_kwargs = {'prefix': 'general', 'paciente': paciente, 'medico': medico, 'create_patient': False}
 
         if self.request.POST:
-            context['general_form'] = HistoriaGeneralForm(self.request.POST, instance=historial.historia_general, prefix='general')
-            context['nutricion_form'] = HistoriaNutricionForm(self.request.POST, instance=historial.historia_nutricion, prefix='nutricion')
+            context['general_form'] = HistoriaGeneralForm(self.request.POST, instance=getattr(historial, 'historia_general', None), **form_kwargs)
+            context['nutricion_form'] = HistoriaNutricionForm(self.request.POST, instance=getattr(historial, 'historia_nutricion', None), prefix='nutricion')
         else:
-            # Cargamos los datos existentes de los formatos relacionados
-            context['general_form'] = HistoriaGeneralForm(instance=historial.historia_general, prefix='general')
-            context['nutricion_form'] = HistoriaNutricionForm(instance=historial.historia_nutricion, prefix='nutricion')
-        context['titulo'] = f"Editar Historial de {historial.paciente}"
+            context['general_form'] = HistoriaGeneralForm(instance=getattr(historial, 'historia_general', None), **form_kwargs)
+            context['nutricion_form'] = HistoriaNutricionForm(instance=getattr(historial, 'historia_nutricion', None), prefix='nutricion')
+            
+        context['titulo'] = f"Editar Historial de {paciente}"
+        # No estamos creando paciente en modo edición
+        context['creating_patient'] = False
         return context
 
     def form_valid(self, form):
@@ -128,24 +138,25 @@ class HistorialMedicoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateV
         general_form = context['general_form']
         nutricion_form = context['nutricion_form']
 
-        if general_form.is_valid() and nutricion_form.is_valid():
+        is_general_valid = general_form.is_valid()
+        is_nutricion_valid = nutricion_form.is_valid()
+
+        if is_general_valid and is_nutricion_valid:
             with transaction.atomic():
-                # Guardamos el contenedor (no debería cambiar mucho, quizás 'updated_at')
                 historial = form.save()
-                # Guardamos los formatos relacionados
                 general_form.save()
                 nutricion_form.save()
             return redirect(self.get_success_url())
         else:
+            print("Errores General:", general_form.errors) # DEBUG
+            print("Errores Nutrición:", nutricion_form.errors) # DEBUG
             return self.form_invalid(form)
 
-    # Verificación de permisos: Solo el dueño puede editar
     def test_func(self):
         historial = self.get_object()
         return historial.medico == self.request.user
 
     def get_success_url(self):
-        # Redirigir a la vista de detalle del historial que se editó
         return reverse_lazy('historiales:show', kwargs={'pk': self.object.pk})
 
 # --- Vista de Detalle (Show) ---

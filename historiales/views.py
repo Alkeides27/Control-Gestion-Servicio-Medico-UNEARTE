@@ -246,6 +246,12 @@ class DocumentoCreateViewBase(LoginRequiredMixin, UserPassesTestMixin, CreateVie
         self.historial_padre = get_object_or_404(HistorialMedico, pk=self.kwargs['historial_pk'])
         return super().dispatch(request, *args, **kwargs)
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['historial'] = self.historial_padre
+        kwargs['paciente'] = self.historial_padre.paciente
+        return kwargs
+
     # Permiso: Solo el dueño del historial padre puede crear documentos
     def test_func(self):
         return self.historial_padre.medico == self.request.user
@@ -260,7 +266,7 @@ class DocumentoCreateViewBase(LoginRequiredMixin, UserPassesTestMixin, CreateVie
         context = super().get_context_data(**kwargs)
         context['historial'] = self.historial_padre
         context['paciente'] = self.historial_padre.paciente
-        context['titulo'] = f"Crear {self.model._meta.verbose_name}"
+        context['titulo'] = f"Crear {self.model._meta.verbose_name} para {self.historial_padre.paciente}"
         return context
 
     def get_success_url(self):

@@ -23,9 +23,11 @@
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="general" aria-selected="true">Historia General</button>
             </li>
+            {% if object %}
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="nutricion-tab" data-bs-toggle="tab" data-bs-target="#nutricion" type="button" role="tab" aria-controls="nutricion" aria-selected="false">Nutrición</button>
             </li>
+            {% endif %}
         </ul>
 
         <div class="tab-content pt-3" id="historialTabsContent">
@@ -33,9 +35,11 @@
                 {% crispy general_form %}
             </div>
 
+            {% if object %}
             <div class="tab-pane fade" id="nutricion" role="tabpanel" aria-labelledby="nutricion-tab">
                 {% crispy nutricion_form %}
             </div>
+            {% endif %}
         </div>
 
         <hr>

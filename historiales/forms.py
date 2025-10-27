@@ -63,7 +63,7 @@ class HistoriaGeneralForm(forms.ModelForm):
         create_patient = kwargs.pop('create_patient', False) # Flag para saber si creamos paciente
 
         super().__init__(*args, **kwargs)
-        
+
         if medico:
             self.fields['medico_nombre'].initial = medico.get_full_name()
 
@@ -180,30 +180,28 @@ class HistoriaGeneralForm(forms.ModelForm):
                  return telefono[:11] # Truncar silenciosamente
          return telefono
 
-# --- Formulario Historia Nutrición (Sin cambios funcionales, solo revisar layout) ---
+# --- Formulario Historia Nutrición (REVISADO Layout basado en Págs. 1 y 3) ---
 class HistoriaNutricionForm(forms.ModelForm):
-    # ... (El código anterior para HistoriaNutricionForm se mantiene) ...
-    # Asegúrate de que el layout definido aquí use los nombres de campo correctos del modelo.
     class Meta:
         model = HistoriaNutricion
         exclude = ['historial_padre']
         widgets = {
-            'motivo_consulta_nutricion': forms.Textarea(attrs={'rows': 3}),
-            'antp_nutri_otros': forms.Textarea(attrs={'rows': 2}),
-            'antf_nutri_otros': forms.Textarea(attrs={'rows': 2}),
-            'hab_medicamentos': forms.Textarea(attrs={'rows': 2}),
-            'alim_alergias': forms.Textarea(attrs={'rows': 2}),
-            'alim_intolerancias': forms.Textarea(attrs={'rows': 2}),
-            'recordatorio_24h_d': forms.Textarea(attrs={'rows': 2}),
+            'motivo_consulta_nutricion': forms.Textarea(attrs={'rows': 2}), # Más pequeño en Pág 1
+            'antp_nutri_otros': forms.Textarea(attrs={'rows': 1}),
+            'antf_nutri_otros': forms.Textarea(attrs={'rows': 1}),
+            'hab_medicamentos': forms.Textarea(attrs={'rows': 1}),
+            'alim_alergias': forms.Textarea(attrs={'rows': 1}),
+            'alim_intolerancias': forms.Textarea(attrs={'rows': 1}),
+            'recordatorio_24h_d': forms.Textarea(attrs={'rows': 1}),
             'recordatorio_24h_m1': forms.Textarea(attrs={'rows': 1}),
-            'recordatorio_24h_a': forms.Textarea(attrs={'rows': 2}),
+            'recordatorio_24h_a': forms.Textarea(attrs={'rows': 1}),
             'recordatorio_24h_m2': forms.Textarea(attrs={'rows': 1}),
-            'recordatorio_24h_c': forms.Textarea(attrs={'rows': 2}),
-            'datos_laboratorio': forms.Textarea(attrs={'rows': 4}),
-            'tabla_antropometrica': forms.Textarea(attrs={'rows': 6}),
-            'dx_nutricional': forms.Textarea(attrs={'rows': 3}),
-            'observaciones': forms.Textarea(attrs={'rows': 4}),
-            'evolucion': forms.Textarea(attrs={'rows': 4}),
+            'recordatorio_24h_c': forms.Textarea(attrs={'rows': 1}),
+            'datos_laboratorio': forms.Textarea(attrs={'rows': 3}),
+            'tabla_antropometrica': forms.Textarea(attrs={'rows': 8}), # Más grande para tabla
+            'dx_nutricional': forms.Textarea(attrs={'rows': 2}),
+            'observaciones': forms.Textarea(attrs={'rows': 3}),
+            'evolucion': forms.Textarea(attrs={'rows': 3}),
             'otros_basicos': forms.Textarea(attrs={'rows': 1}),
         }
 
@@ -211,44 +209,296 @@ class HistoriaNutricionForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
-        # IMPORTANTE: Revisa que este Layout coincida con el modelo final de HistoriaNutricion
         self.helper.layout = Layout(
-            Fieldset('Información Adicional (Nutrición)', Row(Column('numero_historia_clinica', css_class='col-md-4'), Column('estado_civil', css_class='col-md-4'), Column('empleo', css_class='col-md-4')), Row(Column('es_docente', css_class='col-md-2'), Column('ceca', css_class='col-md-3'), Column('mencion', css_class='col-md-4'), Column('semestre', css_class='col-md-3')), 'otros_basicos', css_class='border rounded p-3 mb-3'),
+
+            # --- PÁGINA 1 ---
+            Fieldset(
+                'Información Adicional (Nutrición)', # Grupo superior Pág 1
+                Row(
+                    Column('numero_historia_clinica', css_class='col-md-4'),
+                    # Fecha está en el historial padre
+                    # Nombre, Edad, Fecha Nac, CI, Teléfono, Dirección están en Paciente
+                    Column('estado_civil', css_class='col-md-2'),
+                    Column('empleo', css_class='col-md-3'),
+                    Column('es_docente', css_class='col-md-1 form-check'), # Checkbox más pequeño
+                    Column('otros_basicos', css_class='col-md-2'),
+                ),
+                Row(
+                    Column('ceca', css_class='col-md-4'),
+                    Column('mencion', css_class='col-md-4'),
+                    Column('semestre', css_class='col-md-4'),
+                ),
+                 css_class='border rounded p-3 mb-3'
+            ),
+
             Field('motivo_consulta_nutricion', css_class='mb-3'),
-            Fieldset('Antecedentes Médicos (Nutrición)', Row(Column(HTML('<h6>Personales</h6>'), Row(Column('antp_nutri_diabetes', css_class='col-6 col-sm-4 form-check'), Column('antp_nutri_hta', css_class='col-6 col-sm-4 form-check'), Column('antp_nutri_cardiopatias', css_class='col-6 col-sm-4 form-check'), Column('antp_nutri_cancer', css_class='col-6 col-sm-4 form-check'), Column('antp_nutri_gastritis', css_class='col-6 col-sm-4 form-check'), Column('antp_nutri_hipertiroidismo', css_class='col-6 col-sm-4 form-check'), Column('antp_nutri_hipotiroidismo', css_class='col-6 col-sm-4 form-check')), Field('antp_nutri_otros', placeholder="Especifique otros..."), css_class='col-md-6 border-end'), Column(HTML('<h6>Familiares</h6>'), Row( Column('antf_nutri_diabetes', css_class='col-6 col-sm-4 form-check'), Column('antf_nutri_hta', css_class='col-6 col-sm-4 form-check'), Column('antf_nutri_cardiopatias', css_class='col-6 col-sm-4 form-check'), Column('antf_nutri_cancer', css_class='col-6 col-sm-4 form-check'), Column('antf_nutri_gastritis', css_class='col-6 col-sm-4 form-check'), Column('antf_nutri_hipertiroidismo', css_class='col-6 col-sm-4 form-check'), Column('antf_nutri_hipotiroidismo', css_class='col-6 col-sm-4 form-check')), Field('antf_nutri_otros', placeholder="Especifique otros..."), css_class='col-md-6')), css_class='border rounded p-3 mb-3'),
-            Fieldset('Hábitos Psicobiológicos', Row(Column('hab_medicamentos', css_class='col-md-6'), Column(Row(Column('hab_cafeicos', css_class='col-md-6'), Column('hab_sueno', css_class='col-md-6')), Row(Column('hab_cigarros', css_class='col-md-6'), Column('hab_apetito', css_class='col-md-6')), Row(Column('hab_oh', css_class='col-md-6'), Column('hab_act_fisica', css_class='col-md-6')), css_class='col-md-6')), css_class='border rounded p-3 mb-3'),
-            Fieldset('Hábitos Alimentarios', Row(Column('alim_n_comidas_dia', css_class='col-md-4'), Column('alim_n_meriendas_dia', css_class='col-md-4'), Column('alim_hidricos_vasos_dia', css_class='col-md-4')), 'alim_alergias', 'alim_intolerancias', css_class='border rounded p-3 mb-3'),
-            Fieldset('Examen Funcional', Row(Column(HTML('<strong>Síntomas:</strong>'), css_class='col-12 mb-2'), Column('func_masticacion', css_class='col-6 col-sm-4 col-md-2 form-check'), Column('func_disfagia', css_class='col-6 col-sm-4 col-md-2 form-check'), Column('func_nauseas', css_class='col-6 col-sm-4 col-md-2 form-check'), Column('func_vomitos', css_class='col-6 col-sm-4 col-md-2 form-check'), Column('func_pirosis', css_class='col-6 col-sm-4 col-md-2 form-check'), Column('func_rge', css_class='col-6 col-sm-4 col-md-2 form-check'), Column('func_periodos_menstruales', css_class='col-12 col-sm-4 col-md-3 form-check')), Row(Column('func_micciones', css_class='col-md-6'), Column('func_evacuaciones', css_class='col-md-6')), css_class='border rounded p-3 mb-3'),
-            Fieldset('Frecuencia de Consumo de Alimentos', HTML('<h6 class="mt-2">Lácteos (Lista 1)</h6>'), Row(Column('frec_leche_comp', css_class='col-6 col-sm-3'), Column('frec_leche_des', css_class='col-6 col-sm-3'), Column('frec_yogurt_nat', css_class='col-6 col-sm-3'), Column('frec_yogurt_des', css_class='col-6 col-sm-3')), HTML('<h6 class="mt-2">Vegetales (Lista 2)</h6>'), Row(Column('frec_vegetales_crudos', css_class='col-4'), Column('frec_vegetales_cocidos', css_class='col-4'), Column('frec_vegetales_licuados', css_class='col-4')), HTML('<h6 class="mt-2">Frutas (Lista 3)</h6>'), Row(Column('frec_frutas_enteras', css_class='col-6'), Column('frec_frutas_licuadas', css_class='col-6')), HTML('<h6 class="mt-2">Carbohidratos (Lista 4)</h6>'), Row(Column('frec_arepa', css_class='col-6 col-sm-4 col-md-3'), Column('frec_pan_blanco', css_class='col-6 col-sm-4 col-md-3'), Column('frec_pan_integral', css_class='col-6 col-sm-4 col-md-3'), Column('frec_pasta', css_class='col-6 col-sm-4 col-md-3'), Column('frec_arroz', css_class='col-6 col-sm-4 col-md-3'), Column('frec_casabe', css_class='col-6 col-sm-4 col-md-3'), Column('frec_tuberculos', css_class='col-6 col-sm-4 col-md-3'), Column('frec_platano', css_class='col-6 col-sm-4 col-md-3'), Column('frec_granos', css_class='col-6 col-sm-4 col-md-3'), Column('frec_galletas', css_class='col-6 col-sm-4 col-md-3'), Column('frec_dulces', css_class='col-6 col-sm-4 col-md-3'), Column('frec_salados', css_class='col-6 col-sm-4 col-md-3')), HTML('<h6 class="mt-2">Proteínas (Lista 5)</h6>'), Row(Column('frec_pollo_c_piel', css_class='col-6 col-sm-4 col-md-3'), Column('frec_pollo_s_piel', css_class='col-6 col-sm-4 col-md-3'), Column('frec_pescado', css_class='col-6 col-sm-4 col-md-3'), Column('frec_res', css_class='col-6 col-sm-4 col-md-3'), Column('frec_pavo', css_class='col-6 col-sm-4 col-md-3'), Column('frec_cerdo', css_class='col-6 col-sm-4 col-md-3'), Column('frec_huevos', css_class='col-6 col-sm-4 col-md-3'), Column('frec_embutidos', css_class='col-6 col-sm-4 col-md-3'), Column('frec_visceras', css_class='col-6 col-sm-4 col-md-3'), Column('frec_otros_lista5', css_class='col-6 col-sm-4 col-md-3')), HTML('<h6 class="mt-2">Grasas (Lista 6)</h6>'), Row(Column('frec_aceite', css_class='col-6 col-sm-4 col-md-2'), Column('frec_mayonesa', css_class='col-6 col-sm-4 col-md-2'), Column('frec_mantequilla', css_class='col-6 col-sm-4 col-md-2'), Column('frec_margarina', css_class='col-6 col-sm-4 col-md-2'), Column('frec_frutos_secos', css_class='col-6 col-sm-4 col-md-2'), Column('frec_frituras', css_class='col-6 col-sm-4 col-md-2')), HTML('<h6 class="mt-2">Otros</h6>'), Row(Column('frec_azucar', css_class='col-6 col-sm-4 col-md-3'), Column('frec_dulces_otros', css_class='col-6 col-sm-4 col-md-3'), Column('frec_refrescos', css_class='col-6 col-sm-4 col-md-3'), Column('frec_malta', css_class='col-6 col-sm-4 col-md-3'), Column('frec_te_frio', css_class='col-6 col-sm-4 col-md-3'), Column('frec_jugos_envasados', css_class='col-6 col-sm-4 col-md-3'), Column('frec_sal', css_class='col-6 col-sm-4 col-md-3'), Column('frec_enlatados', css_class='col-6 col-sm-4 col-md-3'), Column('frec_cubitos', css_class='col-6 col-sm-4 col-md-3'), Column('frec_otros_final', css_class='col-6 col-sm-4 col-md-3')), css_class='border rounded p-3 mb-3'),
-            Fieldset('Recordatorio de 24 Horas', Row(Column('recordatorio_24h_d', css_class='col-md-4'), Column('recordatorio_24h_m1', css_class='col-md-4'), Column('recordatorio_24h_a', css_class='col-md-4')), Row(Column('recordatorio_24h_m2', css_class='col-md-4 offset-md-4'), Column('recordatorio_24h_c', css_class='col-md-4')), css_class='border rounded p-3 mb-3'),
-            Fieldset('Datos de Laboratorio', 'datos_laboratorio', css_class='border rounded p-3 mb-3'),
-            Fieldset('Datos Antropométricos', Row(Column('antropo_peso_usual', css_class='col-sm-6 col-md-3'), Column('antropo_peso_graso', css_class='col-sm-6 col-md-3'), Column('antropo_peso_max', css_class='col-sm-6 col-md-3'), Column('antropo_peso_magro', css_class='col-sm-6 col-md-3')), Row(Column('antropo_peso_min', css_class='col-sm-6 col-md-3'), Column('antropo_porc_grasa', css_class='col-sm-6 col-md-3'), Column('antropo_porc_grasa_rcom', css_class='col-sm-6 col-md-3'), Column('antropo_peso_rcom', css_class='col-sm-6 col-md-3')), 'tabla_antropometrica', css_class='border rounded p-3 mb-3'),
-            Fieldset('Diagnóstico y Requerimiento Nutricional', 'dx_nutricional', Row(Column('req_rct', css_class='col-md-6'), Column('req_kcal_kg', css_class='col-md-6')), Row(Column('req_cho_porc', css_class='col-md-4'), Column('req_prot_porc', css_class='col-md-4'), Column('req_grasa_porc', css_class='col-md-4')), css_class='border rounded p-3 mb-3'),
-            Fieldset('Observaciones y Evolución', 'observaciones', 'evolucion', css_class='border rounded p-3 mb-3')
+
+            # Antecedentes Pág 1 (Layout similar a HistoriaGeneral pero con campos _nutri)
+             Fieldset(
+                'Antecedentes Médicos (Nutrición)',
+                Row(
+                    Column(
+                        HTML('<h6>Personales</h6>'),
+                        Row(
+                            Column('antp_nutri_diabetes', css_class='col-6 col-sm-4 form-check'), Column('antp_nutri_hta', css_class='col-6 col-sm-4 form-check'), Column('antp_nutri_cardiopatias', css_class='col-6 col-sm-4 form-check'),
+                            Column('antp_nutri_cancer', css_class='col-6 col-sm-4 form-check'), Column('antp_nutri_gastritis', css_class='col-6 col-sm-4 form-check'), Column('antp_nutri_hipertiroidismo', css_class='col-6 col-sm-4 form-check'),
+                            Column('antp_nutri_hipotiroidismo', css_class='col-6 col-sm-4 form-check'),
+                        ),
+                        Field('antp_nutri_otros', placeholder="Especifique otros..."),
+                        css_class='col-md-6 border-end'
+                    ),
+                    Column(
+                         HTML('<h6>Familiares</h6>'),
+                         Row(
+                            Column('antf_nutri_diabetes', css_class='col-6 col-sm-4 form-check'), Column('antf_nutri_hta', css_class='col-6 col-sm-4 form-check'), Column('antf_nutri_cardiopatias', css_class='col-6 col-sm-4 form-check'),
+                            Column('antf_nutri_cancer', css_class='col-6 col-sm-4 form-check'), Column('antf_nutri_gastritis', css_class='col-6 col-sm-4 form-check'), Column('antf_nutri_hipertiroidismo', css_class='col-6 col-sm-4 form-check'),
+                            Column('antf_nutri_hipotiroidismo', css_class='col-6 col-sm-4 form-check'),
+                         ),
+                        Field('antf_nutri_otros', placeholder="Especifique otros..."),
+                        css_class='col-md-6'
+                    ),
+                ),
+                 css_class='border rounded p-3 mb-3'
+            ),
+
+            # Hábitos Psicobiológicos Pág 1 (Layout en 2 columnas principales)
+             Fieldset(
+                'Hábitos Psicobiológicos',
+                 Row(
+                     Column( # Columna Izquierda
+                         'hab_medicamentos',
+                         'hab_cafeicos',
+                         'hab_sueno',
+                         'hab_cigarros',
+                         'hab_oh',
+                         css_class='col-md-6 border-end'
+                     ),
+                      Column( # Columna Derecha
+                         'hab_apetito',
+                         'hab_act_fisica',
+                         # Dejamos espacio vacío para equilibrar
+                         HTML('&nbsp;'),
+                          HTML('&nbsp;'),
+                           HTML('&nbsp;'),
+                         css_class='col-md-6'
+                     )
+                 ),
+                 css_class='border rounded p-3 mb-3'
+            ),
+
+             # Hábitos Alimentarios Pág 1
+             Fieldset(
+                'Hábitos Alimentarios',
+                 Row( # Fila superior
+                     Column('alim_n_comidas_dia', css_class='col-md-4'),
+                     Column('alim_n_meriendas_dia', css_class='col-md-4'),
+                     Column('alim_hidricos_vasos_dia', css_class='col-md-4'),
+                 ),
+                 # Fila inferior (TextAreas)
+                 Row(
+                     Column('alim_alergias', css_class='col-md-6'),
+                     Column('alim_intolerancias', css_class='col-md-6'),
+                 ),
+                 css_class='border rounded p-3 mb-3'
+            ),
+
+            # Examen Funcional Pág 1
+            Fieldset(
+                'Examen Funcional',
+                Row( # Checkboxes agrupados como en el PDF
+                    Column(HTML('<strong>Síntomas:</strong>'), css_class='col-12 mb-2'),
+                    Column('func_masticacion', css_class='col-auto form-check'), Column('func_disfagia', css_class='col-auto form-check'), Column('func_nauseas', css_class='col-auto form-check'),
+                    Column('func_vomitos', css_class='col-auto form-check'), Column('func_pirosis', css_class='col-auto form-check'), Column('func_rge', css_class='col-auto form-check'),
+                    css_class='d-flex flex-wrap'
+                ),
+                Row( # Fila inferior
+                    Column('func_micciones', css_class='col-md-4'),
+                    Column('func_evacuaciones', css_class='col-md-4'),
+                    Column('func_periodos_menstruales', css_class='col-md-4 form-check align-self-center'), # Checkbox al final
+                ),
+                 css_class='border rounded p-3 mb-3'
+            ),
+
+            # Frecuencia de Consumo Pág 1 (Más compacto)
+             Fieldset(
+                'Frecuencia de Consumo de Alimentos',
+                 Row( # Lista 1 y 2
+                    Column(HTML('<h6>Lácteos (L1)</h6>'), 'frec_leche_comp', 'frec_leche_des', 'frec_yogurt_nat', 'frec_yogurt_des', css_class='col-md-4 border-end'),
+                    Column(HTML('<h6>Vegetales (L2)</h6>'), 'frec_vegetales_crudos', 'frec_vegetales_cocidos', 'frec_vegetales_licuados', css_class='col-md-4 border-end'),
+                    Column(HTML('<h6>Frutas (L3)</h6>'), 'frec_frutas_enteras', 'frec_frutas_licuadas', css_class='col-md-4'),
+                 ),
+                 HTML('<hr>'),
+                 Row( # Lista 4
+                     Column(HTML('<h6>Carbohidratos (L4)</h6>'), css_class='col-12'),
+                     Column('frec_arepa', css_class='col-6 col-sm-4 col-md-2'), Column('frec_pan_blanco', css_class='col-6 col-sm-4 col-md-2'), Column('frec_pan_integral', css_class='col-6 col-sm-4 col-md-2'),
+                     Column('frec_pasta', css_class='col-6 col-sm-4 col-md-2'), Column('frec_arroz', css_class='col-6 col-sm-4 col-md-2'), Column('frec_casabe', css_class='col-6 col-sm-4 col-md-2'),
+                     Column('frec_tuberculos', css_class='col-6 col-sm-4 col-md-2'), Column('frec_platano', css_class='col-6 col-sm-4 col-md-2'), Column('frec_granos', css_class='col-6 col-sm-4 col-md-2'),
+                     Column('frec_galletas', css_class='col-6 col-sm-4 col-md-2'), Column('frec_dulces', css_class='col-6 col-sm-4 col-md-2'), Column('frec_salados', css_class='col-6 col-sm-4 col-md-2'),
+                 ),
+                 HTML('<hr>'),
+                 Row( # Lista 5
+                     Column(HTML('<h6>Proteínas (L5)</h6>'), css_class='col-12'),
+                     Column('frec_pollo_c_piel', css_class='col-6 col-sm-4 col-md-2'), Column('frec_pollo_s_piel', css_class='col-6 col-sm-4 col-md-2'), Column('frec_pescado', css_class='col-6 col-sm-4 col-md-2'),
+                     Column('frec_res', css_class='col-6 col-sm-4 col-md-2'), Column('frec_pavo', css_class='col-6 col-sm-4 col-md-2'), Column('frec_cerdo', css_class='col-6 col-sm-4 col-md-2'),
+                     Column('frec_huevos', css_class='col-6 col-sm-4 col-md-2'), Column('frec_embutidos', css_class='col-6 col-sm-4 col-md-2'), Column('frec_visceras', css_class='col-6 col-sm-4 col-md-2'),
+                     Column('frec_otros_lista5', css_class='col-6 col-sm-4 col-md-2'),
+                 ),
+                 HTML('<hr>'),
+                 Row( # Lista 6 y Otros
+                     Column(HTML('<h6>Grasas (L6)</h6>'), 'frec_aceite', 'frec_mayonesa', 'frec_mantequilla', 'frec_margarina', 'frec_frutos_secos', 'frec_frituras', css_class='col-md-5 border-end'),
+                     Column(HTML('<h6>Otros</h6>'), 'frec_azucar', 'frec_dulces_otros', 'frec_refrescos', 'frec_malta', 'frec_te_frio', 'frec_jugos_envasados', css_class='col-md-3 border-end'),
+                     Column(HTML('<h6>&nbsp;</h6>'), 'frec_sal', 'frec_enlatados', 'frec_cubitos', 'frec_otros_final', css_class='col-md-4'),
+                 ),
+                 css_class='border rounded p-3 mb-3'
+            ),
+
+            # Recordatorio 24h Pág 1
+             Fieldset(
+                'Recordatorio de 24 Horas',
+                 Row(
+                     Column('recordatorio_24h_d', css_class='col-md-4', placeholder="Desayuno..."),
+                     Column('recordatorio_24h_m1', css_class='col-md-4', placeholder="Media Mañana..."),
+                     Column('recordatorio_24h_a', css_class='col-md-4', placeholder="Almuerzo..."),
+                 ),
+                 Row(
+                     Column('recordatorio_24h_m2', css_class='col-md-4 offset-md-4', placeholder="Media Tarde..."),
+                     Column('recordatorio_24h_c', css_class='col-md-4', placeholder="Cena..."),
+                 ),
+                 css_class='border rounded p-3 mb-3'
+            ),
+
+            # --- PÁGINA 3 ---
+             Fieldset(
+                'Datos de Laboratorio (Pág. 3)',
+                 'datos_laboratorio',
+                 css_class='border rounded p-3 mb-3'
+            ),
+
+             Fieldset(
+                'Datos Antropométricos (Pág. 3)',
+                 Row( # Primera fila de datos
+                     Column('antropo_peso_usual', css_class='col-sm-6 col-md-3'),
+                     Column('antropo_peso_max', css_class='col-sm-6 col-md-3'),
+                     Column('antropo_peso_min', css_class='col-sm-6 col-md-3'),
+                      Column('antropo_peso_rcom', css_class='col-sm-6 col-md-3'),
+                 ),
+                 Row( # Segunda fila de datos
+                     Column('antropo_peso_graso', css_class='col-sm-6 col-md-3'),
+                      Column('antropo_peso_magro', css_class='col-sm-6 col-md-3'),
+                     Column('antropo_porc_grasa', css_class='col-sm-6 col-md-3'),
+                     Column('antropo_porc_grasa_rcom', css_class='col-sm-6 col-md-3'),
+                 ),
+                 'tabla_antropometrica', # Textarea para la tabla
+                 css_class='border rounded p-3 mb-3'
+            ),
+
+             Fieldset(
+                'Diagnóstico y Requerimiento Nutricional (Pág. 3)',
+                 'dx_nutricional',
+                 Row( # Fila superior requerimientos
+                     Column('req_rct', css_class='col-md-6'), Column('req_kcal_kg', css_class='col-md-6')
+                 ),
+                 Row( # Fila inferior porcentajes
+                     Column('req_cho_porc', css_class='col-md-4'), Column('req_prot_porc', css_class='col-md-4'), Column('req_grasa_porc', css_class='col-md-4')
+                 ),
+                 css_class='border rounded p-3 mb-3'
+            ),
+
+            Fieldset(
+                'Observaciones y Evolución (Pág. 3)',
+                Row(
+                    Column('observaciones', css_class='col-md-6'),
+                    Column('evolucion', css_class='col-md-6'),
+                ),
+                 css_class='border rounded p-3 mb-3'
+            ),
         )
 
 
-# --- Formularios para Documentos (Sin cambios) ---
+# --- Formularios para Documentos (Layouts Revisados) ---
+
 class DocumentoJustificativoForm(forms.ModelForm):
-     class Meta: model = DocumentoJustificativo; exclude = ['historial_padre']
-     widgets = {'hora_entrada': forms.TimeInput(attrs={'type': 'time', 'step': '900'}), 'hora_salida': forms.TimeInput(attrs={'type': 'time', 'step': '900'}),}
+     class Meta:
+        model = DocumentoJustificativo
+        exclude = ['historial_padre']
+        widgets = {
+            'hora_entrada': forms.TimeInput(attrs={'type': 'time', 'step': '900'}),
+            'hora_salida': forms.TimeInput(attrs={'type': 'time', 'step': '900'}),
+        }
      def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs); self.helper = FormHelper();
-        self.helper.layout = Layout('motivo_consulta', Row(Column('hora_entrada', css_class='col-md-6'), Column('hora_salida', css_class='col-md-6'),))
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False # Quitar <form> tag si se usa en modal o dentro de otro form
+        self.helper.layout = Layout(
+            # Imitando Pág 4
+            Field('motivo_consulta'),
+             Row(
+                 Column( PrependedText('hora_entrada', 'De:'), css_class='col-md-6'),
+                 Column( PrependedText('hora_salida', 'A:'), css_class='col-md-6'),
+                 css_class='mb-3'
+             ),
+             # Los datos del paciente (Nombre, CI) se añadirán en la plantilla PDF
+        )
 
 class DocumentoReferenciaForm(forms.ModelForm):
-    class Meta: model = DocumentoReferencia; exclude = ['historial_padre']
-    widgets = {'motivo_referencia': forms.Textarea(attrs={'rows': 4}),}
-    def __init__(self, *args, **kwargs): super().__init__(*args, **kwargs); self.helper = FormHelper()
+    class Meta:
+        model = DocumentoReferencia
+        exclude = ['historial_padre']
+        widgets = {
+            'motivo_referencia': forms.Textarea(attrs={'rows': 5}), # Más espacio para motivo
+        }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            # Imitando Pág 5
+            Field('referido_a'),
+            Field('motivo_referencia')
+             # Los datos del paciente (Nombre, CI) se añadirán en la plantilla PDF
+        )
 
 class DocumentoReposoForm(forms.ModelForm):
-    class Meta: model = DocumentoReposo; exclude = ['historial_padre']
-    widgets = {'fecha_inicio': forms.DateInput(attrs={'type': 'date'}), 'fecha_fin': forms.DateInput(attrs={'type': 'date'}), 'debe_volver': forms.DateInput(attrs={'type': 'date'}), 'diagnostico': forms.Textarea(attrs={'rows': 3}),}
+    class Meta:
+        model = DocumentoReposo
+        exclude = ['historial_padre']
+        widgets = {
+            'fecha_inicio': forms.DateInput(attrs={'type': 'date'}),
+            'fecha_fin': forms.DateInput(attrs={'type': 'date'}),
+            'debe_volver': forms.DateInput(attrs={'type': 'date'}),
+            'diagnostico': forms.Textarea(attrs={'rows': 3}),
+        }
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs); self.helper = FormHelper()
-        self.helper.layout = Layout('consulta', 'diagnostico', Row(Column('duracion_dias', css_class='col-md-4'), Column('fecha_inicio', css_class='col-md-4'), Column('fecha_fin', css_class='col-md-4'),), 'debe_volver')
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            # Imitando Pág 6
+            Field('consulta'),
+            Field('diagnostico'),
+            Row(
+                 Column( AppendedText('duracion_dias', 'Días'), css_class='col-md-4'),
+                 Column( PrependedText('fecha_inicio', 'Del'), css_class='col-md-4'),
+                 Column( PrependedText('fecha_fin', 'Al'), css_class='col-md-4'),
+                 css_class='mb-3'
+            ),
+            Field('debe_volver')
+             # Los datos del paciente (Nombre, CI) se añadirán en la plantilla PDF
+        )
 
 class DocumentoRecipeForm(forms.ModelForm):
-    class Meta: model = DocumentoRecipe; exclude = ['historial_padre']
-    widgets = {'texto_recipe': forms.Textarea(attrs={'rows': 10}),}
-    def __init__(self, *args, **kwargs): super().__init__(*args, **kwargs); self.helper = FormHelper()
+    class Meta:
+        model = DocumentoRecipe
+        exclude = ['historial_padre']
+        widgets = {
+            'texto_recipe': forms.Textarea(attrs={'rows': 10}),
+        }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            # Imitando Pág 8 (similar a Pág 7 Indicaciones)
+            Field('texto_recipe')
+            # Los datos del paciente (Nombre, CI, Edad) se añadirán en la plantilla PDF
+        )

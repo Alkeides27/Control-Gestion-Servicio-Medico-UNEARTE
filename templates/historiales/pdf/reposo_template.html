@@ -4,39 +4,105 @@
     <meta charset="UTF-8">
     <title>Reposo Médico</title>
     <style>
-        body { font-family: 'Helvetica', 'Arial', sans-serif; font-size: 12pt; color: #333; }
-        .header, .footer { text-align: center; }
-        .header img { height: 70px; }
-        .header h1, .header p { margin: 0; }
-        .content { margin-top: 40px; text-align: justify; line-height: 2; }
-        .signature { margin-top: 80px; text-align: center; }
+        @page {
+            size: letter;
+            margin: 1.5cm;
+        }
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 12pt;
+            color: #333;
+            text-align: center; /* Centrar todo el contenido por defecto */
+        }
+        .header img {
+            /* --- LOGO SUPERIOR --- */
+            height: 80px;
+        }
+        .header h2, .header h3, .header p {
+            margin: 5px 0;
+        }
+        .header h2 {
+            font-size: 16pt;
+        }
+        .header h3 {
+            font-size: 14pt;
+            font-weight: normal;
+        }
+        .content {
+            margin-top: 30px;
+            text-align: left; /* Alineamos el contenido principal a la izquierda */
+        }
+        .content table {
+            width: 100%;
+            border-collapse: collapse;
+            line-height: 2.5; /* Aumenta el espacio entre líneas */
+        }
+        .content td {
+            padding: 5px 0;
+        }
+        .content .label {
+            font-weight: bold;
+            width: 25%; /* Ancho para las etiquetas */
+        }
+        .content .data {
+            border-bottom: 1px solid #555; /* Línea para rellenar */
+        }
+        .signature {
+            margin-top: 80px;
+        }
+        .signature p {
+            margin: 0;
+        }
     </style>
 </head>
 <body>
+
     <div class="header">
+        <!-- Ubicación del logo superior -->
         <img src="file://{{ logo_path }}" alt="Logo UNEARTE">
-        <h3>UNIVERSIDAD NACIONAL EXPERIMENTAL DE LAS ARTES</h3>
-        <p>DIRECCIÓN GENERAL DE SALUD INTEGRAL</p>
+        <h2>UNIVERSIDAD NACIONAL EXPERIMENTAL DE LAS ARTES</h2>
+        <h3>DIRECCIÓN GENERAL DE SALUD INTEGRAL</h3>
         <p>SERVICIO MÉDICO</p>
+        <br>
         <h2>REPOSO MÉDICO</h2>
     </div>
 
     <div class="content">
-        <p><strong>Fecha:</strong> {{ historial.fecha|date:"d/m/Y" }}</p>
-        <p><strong>Apellidos y Nombres:</strong> {{ paciente.apellido }}, {{ paciente.nombre }}</p>
-        <p><strong>Cédula de Identidad:</strong> {{ paciente.numero_documento }}</p>
-        <p><strong>Consulta:</strong> {{ documento.consulta|default:"N/A" }}</p>
-        <p><strong>Diagnóstico:</strong> {{ documento.diagnostico|default:"N/A" }}</p>
-        <p>Se indica reposo médico por <strong>{{ documento.duracion_dias }}</strong> día(s), desde el <strong>{{ documento.fecha_inicio|date:"d/m/Y" }}</strong> hasta el <strong>{{ documento.fecha_fin|date:"d/m/Y" }}</strong>.</p>
-        {% if documento.debe_volver %}
-        <p>Debe volver a consulta el día: <strong>{{ documento.debe_volver|date:"d/m/Y" }}</strong>.</p>
-        {% endif %}
+        <p style="text-align: right;"><strong>Fecha:</strong> {{ historial.fecha|date:"d / m / Y" }}</p>
+        <br>
+        <table>
+            <tr>
+                <td class="label">Apellidos y Nombres:</td>
+                <td class="data">{{ paciente.apellido }}, {{ paciente.nombre }}</td>
+            </tr>
+            <tr>
+                <td class="label">Cédula de Identidad:</td>
+                <td class="data">{{ paciente.numero_documento }}</td>
+            </tr>
+            <tr>
+                <td class="label">Consulta:</td>
+                <td class="data">{{ documento.consulta|default:"&nbsp;" }}</td>
+            </tr>
+            <tr>
+                <td class="label">Diagnóstico:</td>
+                <td class="data">{{ documento.diagnostico|default:"&nbsp;" }}</td>
+            </tr>
+            <tr>
+                <td class="label">Duración:</td>
+                <td class="data">{{ documento.duracion_dias }} Días. &nbsp;&nbsp;&nbsp; <strong>Del:</strong> {{ documento.fecha_inicio|date:"d/m/Y" }} &nbsp;&nbsp;&nbsp; <strong>al:</strong> {{ documento.fecha_fin|date:"d/m/Y" }}</td>
+            </tr>
+            <tr>
+                <td class="label">Debe volver:</td>
+                <td class="data">{% if documento.debe_volver %}{{ documento.debe_volver|date:"d/m/Y" }}{% else %}&nbsp;{% endif %}</td>
+            </tr>
+        </table>
     </div>
 
     <div class="signature">
         <p>_________________________</p>
-        <p><strong>Dr(a). {{ medico.first_name }} {{ medico.last_name }}</strong></p>
-        <p>Nombre-Apellido y Sello del Médico</p>
+        <p><strong>Nombre-Apellido y Sello del Médico</strong></p>
+        <p>Dr(a). {{ medico.first_name }} {{ medico.last_name }}</p>
     </div>
+
 </body>
 </html>

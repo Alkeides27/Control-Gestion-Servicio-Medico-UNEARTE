@@ -4,38 +4,95 @@
     <meta charset="UTF-8">
     <title>Referencia Médica</title>
     <style>
-        body { font-family: 'Helvetica', 'Arial', sans-serif; font-size: 12pt; color: #333; }
-        .header, .footer { text-align: center; }
-        .header img { height: 70px; }
-        .header h1, .header p { margin: 0; }
-        .content { margin-top: 40px; text-align: justify; line-height: 2; }
-        .signature { margin-top: 80px; text-align: center; }
+        @page {
+            size: letter;
+            margin: 1.5cm;
+        }
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 12pt;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header img {
+            /* --- LOGO SUPERIOR --- */
+            height: 70px;
+        }
+        .header h2, .header h3, .header p {
+            margin: 5px 0;
+        }
+        .header h2 {
+            font-size: 16pt;
+        }
+        .header h3 {
+            font-size: 14pt;
+            font-weight: bold;
+        }
+        .content {
+            margin-top: 30px;
+            text-align: justify;
+            line-height: 2.2;
+        }
+        .content .data-line {
+            display: flex;
+            border-bottom: 1px solid #555;
+            margin-bottom: 20px;
+            padding-bottom: 5px;
+        }
+        .content .label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .signature {
+            margin-top: 100px;
+            text-align: center;
+        }
+        .signature p {
+            margin: 0;
+        }
     </style>
 </head>
 <body>
+
     <div class="header">
+        <!-- Ubicación del logo superior -->
         <img src="file://{{ logo_path }}" alt="Logo UNEARTE">
-        <h3>UNIVERSIDAD NACIONAL EXPERIMENTAL DE LAS ARTES</h3>
-        <p>DIRECCIÓN GENERAL DE SALUD INTEGRAL</p>
-        <p>SERVICIO MÉDICO</p>
-        <h2>REFERENCIA MÉDICA</h2>
+        <h2>UNIVERSIDAD NACIONAL EXPERIMENTAL DE LAS ARTES</h2>
+        <p>DIRECCION GENERAL DE SALUD INTEGRAL</p>
+        <p>SERVICIO MEDICO</p>
+        <br>
+        <h3>Referencia Medica</h3>
     </div>
 
+    <p style="text-align: right;"><strong>Fecha:</strong> {{ historial.fecha|date:"d / m / Y" }}</p>
+
     <div class="content">
-        <p><strong>Fecha:</strong> {{ historial.fecha|date:"d/m/Y" }}</p>
-        <p><strong>Apellidos y Nombres:</strong> {{ paciente.apellido }}, {{ paciente.nombre }}</p>
-        <p><strong>Cédula de Identidad:</strong> {{ paciente.numero_documento }}</p>
-        <br>
-        <p>Quien suscribe, hace constar que el paciente antes mencionado fue evaluado en este servicio, y se decide referir a la consulta de:</p>
-        <p><strong>Referido a Consulta:</strong> {{ documento.referido_a|default:"N/A" }}</p>
-        <p><strong>Motivo de Referencia:</strong></p>
-        <p>{{ documento.motivo_referencia|linebreaksbr|default:"N/A" }}</p>
+        <div class="data-line">
+            <span class="label">Apellidos y Nombres:</span>
+            <span>{{ paciente.apellido }}, {{ paciente.nombre }}</span>
+        </div>
+        <div class="data-line">
+            <span class="label">Cédula de Identidad:</span>
+            <span>{{ paciente.numero_documento }}</span>
+        </div>
+        <div class="data-line">
+            <span class="label">Referido a Consulta:</span>
+            <span>{{ documento.referido_a|default:"&nbsp;" }}</span>
+        </div>
+        <div>
+            <p class="label">Motivo de Referencia:</p>
+            <p>{{ documento.motivo_referencia|linebreaksbr|default:"Sin motivo especificado." }}</p>
+        </div>
     </div>
 
     <div class="signature">
         <p>_________________________</p>
-        <p><strong>Dr(a). {{ medico.first_name }} {{ medico.last_name }}</strong></p>
-        <p>Médico(a) (Nombre-Apellido/Firma/Sello)</p>
+        <p><strong>Medico(a) (Nombre-Apellido/Firma/Sello)</strong></p>
+        <p>Dr(a). {{ medico.first_name }} {{ medico.last_name }}</p>
     </div>
+
 </body>
 </html>

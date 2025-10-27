@@ -161,7 +161,7 @@ class DocumentoJustificativoForm(forms.ModelForm):
         paciente = kwargs.pop('paciente', None)
         historial = kwargs.pop('historial', None)
         super().__init__(*args, **kwargs)
-        if paciente: self.fields['display_nombre_paciente'].initial = f"{paciente.apellido}, {paciente.nombre}"; self.fields['display_cedula_paciente'].initial = getattr(paciente, 'numero_documento', paciente.cedula);
+        if paciente: self.fields['display_nombre_paciente'].initial = f"{paciente.apellido}, {paciente.nombre}"; self.fields['display_cedula_paciente'].initial = paciente.numero_documento;
         if historial: self.fields['display_fecha_historial'].initial = historial.fecha.strftime('%d/%m/%Y');
         self.helper = FormHelper(); self.helper.form_tag = False
         self.helper.layout = Layout(
@@ -185,7 +185,7 @@ class DocumentoReferenciaForm(forms.ModelForm):
         paciente = kwargs.pop('paciente', None)
         historial = kwargs.pop('historial', None)
         super().__init__(*args, **kwargs);
-        if paciente: self.fields['display_nombre_paciente'].initial = f"{paciente.apellido}, {paciente.nombre}"; self.fields['display_cedula_paciente'].initial = getattr(paciente, 'numero_documento', paciente.cedula);
+        if paciente: self.fields['display_nombre_paciente'].initial = f"{paciente.apellido}, {paciente.nombre}"; self.fields['display_cedula_paciente'].initial = paciente.numero_documento;
         if historial: self.fields['display_fecha_historial'].initial = historial.fecha.strftime('%d/%m/%Y');
         self.helper = FormHelper(); self.helper.form_tag = False
         self.helper.layout = Layout(
@@ -208,7 +208,7 @@ class DocumentoReposoForm(forms.ModelForm):
         paciente = kwargs.pop('paciente', None)
         historial = kwargs.pop('historial', None)
         super().__init__(*args, **kwargs);
-        if paciente: self.fields['display_nombre_paciente'].initial = f"{paciente.apellido}, {paciente.nombre}"; self.fields['display_cedula_paciente'].initial = getattr(paciente, 'numero_documento', paciente.cedula);
+        if paciente: self.fields['display_nombre_paciente'].initial = f"{paciente.apellido}, {paciente.nombre}"; self.fields['display_cedula_paciente'].initial = paciente.numero_documento;
         if historial: self.fields['display_fecha_historial'].initial = historial.fecha.strftime('%d/%m/%Y');
         self.helper = FormHelper(); self.helper.form_tag = False
         self.helper.layout = Layout(
@@ -234,7 +234,7 @@ class DocumentoRecipeForm(forms.ModelForm):
         paciente = kwargs.pop('paciente', None)
         historial = kwargs.pop('historial', None)
         super().__init__(*args, **kwargs);
-        if paciente: self.fields['display_nombre_paciente'].initial = f"{paciente.nombre} {paciente.apellido}"; self.fields['display_cedula_paciente'].initial = getattr(paciente, 'numero_documento', paciente.cedula); self.fields['display_edad_paciente'].initial = paciente.edad;
+        if paciente: self.fields['display_nombre_paciente'].initial = f"{paciente.nombre} {paciente.apellido}"; self.fields['display_cedula_paciente'].initial = paciente.numero_documento; self.fields['display_edad_paciente'].initial = paciente.edad;
         if historial: self.fields['display_fecha_historial'].initial = historial.fecha.strftime('%d/%m/%Y');
         self.helper = FormHelper(); self.helper.form_tag = False
         self.helper.layout = Layout(

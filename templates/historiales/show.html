@@ -68,8 +68,10 @@
                 <p><strong>Peso Usual:</strong> {{ historia_nutricion.antropo_peso_usual|default:"N/A" }} kg</p>
                 <p><strong>Hábitos Cafeicos:</strong> {{ historia_nutricion.cafeicos|default:"N/A" }}</p>
                  <p><strong>Dx Nutricional:</strong> {{ historia_nutricion.dx_nutricional|linebreaksbr|default:"N/A" }}</p>
-                {% else %}
-                <p class="text-muted">No se registraron datos de Nutrición.</p>
+                <a href="{% url 'historiales:nutricion_create_or_update' historial_pk=object.pk %}" class="btn btn-primary">Editar Nutrición</a>
+            {% else %}
+                <p class="text-muted">No se han registrado datos de Nutrición.</p>
+                <a href="{% url 'historiales:nutricion_create_or_update' historial_pk=object.pk %}" class="btn btn-success">Crear Formulario de Nutrición</a>
             {% endif %}
         </div>
 

@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import transaction # Importante para guardar múltiples formularios
+from django.http import HttpResponseForbidden
 
 from .models import (
     HistorialMedico, HistoriaGeneral, HistoriaNutricion,
@@ -291,6 +292,34 @@ class ReposoCreateView(DocumentoCreateViewBase):
 class RecipeCreateView(DocumentoCreateViewBase):
     model = DocumentoRecipe
     form_class = DocumentoRecipeForm
+
+@medico_required
+def nutricion_create_or_update(request, historial_pk):
+    historial = get_object_or_404(HistorialMedico, pk=historial_pk)
+    if historial.medico != request.user:
+        return HttpResponseForbidden()
+
+    try:
+        nutricion = historial.historia_nutricion
+    except HistoriaNutricion.DoesNotExist:
+        nutricion = None
+
+    if request.method == 'POST':
+        form = HistoriaNutricionForm(request.POST, instance=nutricion)
+        if form.is_valid():
+            nutricion = form.save(commit=False)
+            nutricion.historial_padre = historial
+            nutricion.save()
+            return redirect('historiales:show', pk=historial.pk)
+    else:
+        form = HistoriaNutricionForm(instance=nutricion)
+
+    return render(request, 'historiales/nutricion_form.html', {
+        'form': form,
+        'historial': historial,
+        'paciente': historial.paciente,
+        'titulo': f"Crear/Editar Nutrición para {historial.paciente}"
+    })
     
 # --- VISTAS PARA GENERACIÓN DE PDF ---
 

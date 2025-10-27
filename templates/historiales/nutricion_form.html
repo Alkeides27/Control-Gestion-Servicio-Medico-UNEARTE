@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ titulo }}</h2>
+    <hr>
+
+    <form method="post">
+        {% csrf_token %}
+        {% crispy form %}
+        <button type="submit" class="btn btn-success">Guardar</button>
+    </form>
+</div>
+{% endblock %}

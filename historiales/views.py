@@ -347,15 +347,18 @@ def generar_recipe_pdf(request, recipe_pk):
     except DocumentoRecipe.DoesNotExist:
         return HttpResponse("El récipe no existe.", status=404)
 
-    # Ruta al logo
-    logo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'logo.png')
+    cintillo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'CINTILLO-INSTITUCIONAL-PDF.png')
+    unearte_logo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'UNEARTE-LOGO-PDF.png')
+    alma_mater_logo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'ALMA-MATER-LOGO-PDF.png')
 
     context = {
         'recipe': recipe,
         'historial': historial,
         'paciente': paciente,
         'medico': medico,
-        'logo_path': logo_path,
+        'cintillo_path': cintillo_path,
+        'unearte_logo_path': unearte_logo_path,
+        'alma_mater_logo_path': alma_mater_logo_path,
     }
     
     # Renderizar el template HTML a una cadena
@@ -384,13 +387,18 @@ def generar_reposo_pdf(request, reposo_pk):
     except DocumentoReposo.DoesNotExist:
         return HttpResponse("El reposo no existe.", status=404)
 
-    logo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'logo.png')
+    cintillo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'CINTILLO-INSTITUCIONAL-PDF.png')
+    unearte_logo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'UNEARTE-LOGO-PDF.png')
+    alma_mater_logo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'ALMA-MATER-LOGO-PDF.png')
+
     context = {
         'documento': reposo,
         'historial': historial,
         'paciente': paciente,
         'medico': medico,
-        'logo_path': logo_path,
+        'cintillo_path': cintillo_path,
+        'unearte_logo_path': unearte_logo_path,
+        'alma_mater_logo_path': alma_mater_logo_path,
     }
     html_string = render_to_string('historiales/pdf/reposo_template.html', context, request=request)
     pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri('/')).write_pdf()
@@ -411,13 +419,18 @@ def generar_justificativo_pdf(request, justificativo_pk):
     except DocumentoJustificativo.DoesNotExist:
         return HttpResponse("El justificativo no existe.", status=404)
 
-    logo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'logo.png')
+    cintillo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'CINTILLO-INSTITUCIONAL-PDF.png')
+    unearte_logo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'UNEARTE-LOGO-PDF.png')
+    alma_mater_logo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'ALMA-MATER-LOGO-PDF.png')
+
     context = {
         'documento': justificativo,
         'historial': historial,
         'paciente': paciente,
         'medico': medico,
-        'logo_path': logo_path,
+        'cintillo_path': cintillo_path,
+        'unearte_logo_path': unearte_logo_path,
+        'alma_mater_logo_path': alma_mater_logo_path,
     }
     html_string = render_to_string('historiales/pdf/justificativo_template.html', context, request=request)
     pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri('/')).write_pdf()
@@ -438,13 +451,18 @@ def generar_referencia_pdf(request, referencia_pk):
     except DocumentoReferencia.DoesNotExist:
         return HttpResponse("La referencia no existe.", status=404)
 
-    logo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'logo.png')
+    cintillo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'CINTILLO-INSTITUCIONAL-PDF.png')
+    unearte_logo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'UNEARTE-LOGO-PDF.png')
+    alma_mater_logo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'ALMA-MATER-LOGO-PDF.png')
+
     context = {
         'documento': referencia,
         'historial': historial,
         'paciente': paciente,
         'medico': medico,
-        'logo_path': logo_path,
+        'cintillo_path': cintillo_path,
+        'unearte_logo_path': unearte_logo_path,
+        'alma_mater_logo_path': alma_mater_logo_path,
     }
     html_string = render_to_string('historiales/pdf/referencia_template.html', context, request=request)
     pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri('/')).write_pdf()

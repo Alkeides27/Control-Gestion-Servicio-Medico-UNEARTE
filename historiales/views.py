@@ -280,8 +280,143 @@ class ReposoCreateView(DocumentoCreateViewBase):
     model = DocumentoReposo
     form_class = DocumentoReposoForm
 
+# ... (código existente) ...
+
 class RecipeCreateView(DocumentoCreateViewBase):
     model = DocumentoRecipe
     form_class = DocumentoRecipeForm
+    
+# --- VISTAS PARA GENERACIÓN DE PDF ---
+
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from weasyprint import HTML
+from django.conf import settings
+import os
+
+@medico_required
+def generar_recipe_pdf(request, recipe_pk):
+    """
+    Genera la vista en PDF de un récipe médico.
+    """
+    try:
+        recipe = get_object_or_404(DocumentoRecipe, pk=recipe_pk)
+        historial = recipe.historial_padre
+        paciente = historial.paciente
+        medico = historial.medico
+
+        # Verificar permiso: solo el médico tratante puede generar el PDF
+        if historial.medico != request.user:
+            return HttpResponse("No tiene permiso para ver este documento.", status=403)
+
+    except DocumentoRecipe.DoesNotExist:
+        return HttpResponse("El récipe no existe.", status=404)
+
+    # Ruta al logo
+    logo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'logo.png')
+
+    context = {
+        'recipe': recipe,
+        'historial': historial,
+        'paciente': paciente,
+        'medico': medico,
+        'logo_path': logo_path,
+    }
+    
+    # Renderizar el template HTML a una cadena
+    # Usamos request.build_absolute_uri() para que WeasyPrint pueda encontrar archivos estáticos si se referencian con URL completa
+    html_string = render_to_string('historiales/pdf/recipe_template.html', context, request=request)
+
+    # Generar el PDF
+    pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri('/')).write_pdf()
+
+    # Devolver el PDF como una respuesta HTTP
+    response = HttpResponse(pdf_file, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="recipe_{paciente.numero_documento}_{historial.fecha.strftime("%Y-%m-%d")}.pdf"'
+    
+    return response
+
+### REPOSO ###
+@medico_required
+def generar_reposo_pdf(request, reposo_pk):
+    try:
+        reposo = get_object_or_404(DocumentoReposo, pk=reposo_pk)
+        historial = reposo.historial_padre
+        paciente = historial.paciente
+        medico = historial.medico
+        if historial.medico != request.user:
+            return HttpResponse("No tiene permiso para ver este documento.", status=403)
+    except DocumentoReposo.DoesNotExist:
+        return HttpResponse("El reposo no existe.", status=404)
+
+    logo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'logo.png')
+    context = {
+        'documento': reposo,
+        'historial': historial,
+        'paciente': paciente,
+        'medico': medico,
+        'logo_path': logo_path,
+    }
+    html_string = render_to_string('historiales/pdf/reposo_template.html', context, request=request)
+    pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri('/')).write_pdf()
+    response = HttpResponse(pdf_file, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="reposo_{paciente.numero_documento}_{historial.fecha.strftime("%Y-%m-%d")}.pdf"'
+    return response
+
+### JUSTIFICATIVO ###
+@medico_required
+def generar_justificativo_pdf(request, justificativo_pk):
+    try:
+        justificativo = get_object_or_404(DocumentoJustificativo, pk=justificativo_pk)
+        historial = justificativo.historial_padre
+        paciente = historial.paciente
+        medico = historial.medico
+        if historial.medico != request.user:
+            return HttpResponse("No tiene permiso para ver este documento.", status=403)
+    except DocumentoJustificativo.DoesNotExist:
+        return HttpResponse("El justificativo no existe.", status=404)
+
+    logo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'logo.png')
+    context = {
+        'documento': justificativo,
+        'historial': historial,
+        'paciente': paciente,
+        'medico': medico,
+        'logo_path': logo_path,
+    }
+    html_string = render_to_string('historiales/pdf/justificativo_template.html', context, request=request)
+    pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri('/')).write_pdf()
+    response = HttpResponse(pdf_file, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="justificativo_{paciente.numero_documento}_{historial.fecha.strftime("%Y-%m-%d")}.pdf"'
+    return response
+
+### REFERENCIA ###
+@medico_required
+def generar_referencia_pdf(request, referencia_pk):
+    try:
+        referencia = get_object_or_404(DocumentoReferencia, pk=referencia_pk)
+        historial = referencia.historial_padre
+        paciente = historial.paciente
+        medico = historial.medico
+        if historial.medico != request.user:
+            return HttpResponse("No tiene permiso para ver este documento.", status=403)
+    except DocumentoReferencia.DoesNotExist:
+        return HttpResponse("La referencia no existe.", status=404)
+
+    logo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'logo.png')
+    context = {
+        'documento': referencia,
+        'historial': historial,
+        'paciente': paciente,
+        'medico': medico,
+        'logo_path': logo_path,
+    }
+    html_string = render_to_string('historiales/pdf/referencia_template.html', context, request=request)
+    pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri('/')).write_pdf()
+    response = HttpResponse(pdf_file, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="referencia_{paciente.numero_documento}_{historial.fecha.strftime("%Y-%m-%d")}.pdf"'
+    return response
+
+
     
 # Añadir vistas de Update y Delete para los documentos si es necesario...

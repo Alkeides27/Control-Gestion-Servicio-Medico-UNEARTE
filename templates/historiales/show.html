@@ -77,13 +77,13 @@
             <h4>Documentos Asociados</h4>
             
             <h5>Justificativos</h5>
-            <ul>{% for doc in justificativos %}<li>{{ doc }} - <a href="#">Ver/Imprimir</a></li>{% empty %}<li>Ninguno</li>{% endfor %}</ul>
+            <ul>{% for doc in justificativos %}<li>{{ doc }} - <a href="{% url 'historiales:justificativo_pdf' doc.pk %}" target="_blank" class="btn btn-info btn-sm"><i class="bi bi-file-earmark-pdf"></i> Ver/Imprimir PDF</a></li>{% empty %}<li>Ninguno</li>{% endfor %}</ul>
             <h5>Referencias</h5>
-            <ul>{% for doc in referencias %}<li>{{ doc }} - <a href="#">Ver/Imprimir</a></li>{% empty %}<li>Ninguna</li>{% endfor %}</ul>
+            <ul>{% for doc in referencias %}<li>{{ doc }} - <a href="{% url 'historiales:referencia_pdf' doc.pk %}" target="_blank" class="btn btn-info btn-sm"><i class="bi bi-file-earmark-pdf"></i> Ver/Imprimir PDF</a></li>{% empty %}<li>Ninguna</li>{% endfor %}</ul>
             <h5>Reposos</h5>
-            <ul>{% for doc in reposos %}<li>{{ doc }} - <a href="#">Ver/Imprimir</a></li>{% empty %}<li>Ninguno</li>{% endfor %}</ul>
+            <ul>{% for doc in reposos %}<li>{{ doc }} - <a href="{% url 'historiales:reposo_pdf' doc.pk %}" target="_blank" class="btn btn-info btn-sm"><i class="bi bi-file-earmark-pdf"></i> Ver/Imprimir PDF</a></li>{% empty %}<li>Ninguno</li>{% endfor %}</ul>
              <h5>Récipes</h5>
-            <ul>{% for doc in recipes %}<li>{{ doc }} - <a href="#">Ver/Imprimir</a></li>{% empty %}<li>Ninguno</li>{% endfor %}</ul>
+            <ul>{% for doc in recipes %}<li>{{ doc }} - <a href="{% url 'historiales:recipe_pdf' doc.pk %}" target="_blank" class="btn btn-danger btn-sm"><i class="bi bi-file-earmark-pdf"></i> Ver/Imprimir PDF</a></li>{% empty %}<li>Ninguno</li>{% endfor %}</ul>
 
             <hr>
             {% if object.medico == request.user %}

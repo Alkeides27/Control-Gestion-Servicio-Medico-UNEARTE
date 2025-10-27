@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Récipe Médico</title>
+    <style>
+        @page {
+            size: letter;
+            margin: 1.5cm;
+        }
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 12pt;
+            color: #333;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .header img {
+            height: 70px;
+        }
+        .header .title {
+            text-align: right;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 16pt;
+            font-weight: normal;
+        }
+        .info-paciente {
+            margin-bottom: 25px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .info-paciente table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .info-paciente td {
+            padding: 4px;
+        }
+        .recipe-body {
+            padding-top: 10px;
+            min-height: 400px;
+        }
+        .recipe-body h3 {
+            font-size: 14pt;
+            margin-top: 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        .footer {
+            position: fixed;
+            bottom: -1.2cm;
+            left: 0;
+            right: 0;
+            height: 1cm;
+            text-align: center;
+        }
+        .signature {
+            margin-top: 60px;
+            text-align: center;
+        }
+        .signature p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="file://{{ logo_path }}" alt="Logo UNEARTE">
+        <div class="title">
+            <h1>Servicio de Salud Integral</h1>
+            <p>UNIVERSIDAD NACIONAL EXPERIMENTAL DE LAS ARTES</p>
+        </div>
+    </div>
+
+    <h3>Récipe Médico</h3>
+
+    <div class="info-paciente">
+        <table>
+            <tr>
+                <td><strong>Paciente:</strong> {{ paciente.nombre }} {{ paciente.apellido }}</td>
+                <td><strong>Cédula:</strong> {{ paciente.numero_documento }}</td>
+            </tr>
+            <tr>
+                <td><strong>Edad:</strong> {{ paciente.edad }} años</td>
+                <td><strong>Fecha:</strong> {{ historial.fecha|date:"d/m/Y" }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="recipe-body">
+        <h3>Indicaciones:</h3>
+        <div>
+            {{ recipe.texto_recipe|linebreaksbr }}
+        </div>
+    </div>
+
+    <div class="signature">
+        <p>_________________________</p>
+        <p><strong>Dr(a). {{ medico.first_name }} {{ medico.last_name }}</strong></p>
+        <p>Médico Tratante</p>
+        <!-- Aquí podrías añadir más datos del médico si los tuvieras, como el MPPS -->
+    </div>
+
+    <div class="footer">
+        <p style="font-size: 9pt; color: #777;">
+            Edif. Unearte, Av. México, entre UNEARTE y Teatro Teresa Carreño.
+        </p>
+    </div>
+</body>
+</html>

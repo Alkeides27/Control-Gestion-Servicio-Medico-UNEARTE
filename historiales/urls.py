@@ -5,6 +5,10 @@ from .views import (
     # Importa las nuevas vistas de documentos
     JustificativoCreateView, ReferenciaCreateView, ReposoCreateView, RecipeCreateView,
     search,
+    generar_recipe_pdf, # ¡Añade esta!
+    generar_reposo_pdf,
+    generar_justificativo_pdf,
+    generar_referencia_pdf,
 )
 
 app_name = 'historiales'
@@ -23,4 +27,10 @@ urlpatterns = [
     path('<int:historial_pk>/documentos/referencia/crear/', ReferenciaCreateView.as_view(), name='referencia_create'),
     path('<int:historial_pk>/documentos/reposo/crear/', ReposoCreateView.as_view(), name='reposo_create'),
     path('<int:historial_pk>/documentos/recipe/crear/', RecipeCreateView.as_view(), name='recipe_create'),
+
+    # --- URLs para generar PDFs ---
+    path('documentos/recipe/<int:recipe_pk>/pdf/', generar_recipe_pdf, name='recipe_pdf'),
+    path('documentos/reposo/<int:reposo_pk>/pdf/', generar_reposo_pdf, name='reposo_pdf'),
+    path('documentos/justificativo/<int:justificativo_pk>/pdf/', generar_justificativo_pdf, name='justificativo_pdf'),
+    path('documentos/referencia/<int:referencia_pk>/pdf/', generar_referencia_pdf, name='referencia_pdf'),
 ]

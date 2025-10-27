@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Referencia Médica</title>
+    <style>
+        body { font-family: 'Helvetica', 'Arial', sans-serif; font-size: 12pt; color: #333; }
+        .header, .footer { text-align: center; }
+        .header img { height: 70px; }
+        .header h1, .header p { margin: 0; }
+        .content { margin-top: 40px; text-align: justify; line-height: 2; }
+        .signature { margin-top: 80px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="file://{{ logo_path }}" alt="Logo UNEARTE">
+        <h3>UNIVERSIDAD NACIONAL EXPERIMENTAL DE LAS ARTES</h3>
+        <p>DIRECCIÓN GENERAL DE SALUD INTEGRAL</p>
+        <p>SERVICIO MÉDICO</p>
+        <h2>REFERENCIA MÉDICA</h2>
+    </div>
+
+    <div class="content">
+        <p><strong>Fecha:</strong> {{ historial.fecha|date:"d/m/Y" }}</p>
+        <p><strong>Apellidos y Nombres:</strong> {{ paciente.apellido }}, {{ paciente.nombre }}</p>
+        <p><strong>Cédula de Identidad:</strong> {{ paciente.numero_documento }}</p>
+        <br>
+        <p>Quien suscribe, hace constar que el paciente antes mencionado fue evaluado en este servicio, y se decide referir a la consulta de:</p>
+        <p><strong>Referido a Consulta:</strong> {{ documento.referido_a|default:"N/A" }}</p>
+        <p><strong>Motivo de Referencia:</strong></p>
+        <p>{{ documento.motivo_referencia|linebreaksbr|default:"N/A" }}</p>
+    </div>
+
+    <div class="signature">
+        <p>_________________________</p>
+        <p><strong>Dr(a). {{ medico.first_name }} {{ medico.last_name }}</strong></p>
+        <p>Médico(a) (Nombre-Apellido/Firma/Sello)</p>
+    </div>
+</body>
+</html>

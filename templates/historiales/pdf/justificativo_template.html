@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Justificativo Médico</title>
+    <style>
+        body { font-family: 'Helvetica', 'Arial', sans-serif; font-size: 12pt; color: #333; }
+        .header, .footer { text-align: center; }
+        .header img { height: 70px; }
+        .header h1, .header p { margin: 0; }
+        .content { margin-top: 40px; text-align: justify; line-height: 2.5; }
+        .signature { margin-top: 80px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="file://{{ logo_path }}" alt="Logo UNEARTE">
+        <h3>UNIVERSIDAD NACIONAL EXPERIMENTAL DE LAS ARTES</h3>
+        <p>DIRECCIÓN GENERAL DE SALUD INTEGRAL</p>
+        <p>SERVICIO MÉDICO</p>
+        <h2>JUSTIFICATIVO MÉDICO</h2>
+    </div>
+
+    <div class="content">
+        <p><strong>Fecha:</strong> {{ historial.fecha|date:"d/m/Y" }}</p>
+        <p>Por medio de la presente se hace constar que el(la) ciudadano(a):</p>
+        <p><strong>Apellidos y Nombres:</strong> {{ paciente.apellido }}, {{ paciente.nombre }}</p>
+        <p><strong>Cédula de Identidad:</strong> {{ paciente.numero_documento }}</p>
+        <p>
+            Acudió a la consulta del Servicio Médico en el horario de: 
+            <strong>{{ documento.hora_entrada|time:"h:i A" }}</strong> a 
+            <strong>{{ documento.hora_salida|time:"h:i A" }}</strong> 
+            el día <strong>{{ historial.fecha|date:"d/m/Y" }}</strong>.
+        </p>
+        <p><strong>Motivo de Consulta:</strong> {{ documento.motivo_consulta|default:"Evaluación médica." }}</p>
+        <p>Constancia que se expide a petición de la parte interesada.</p>
+    </div>
+
+    <div class="signature">
+        <p>_________________________</p>
+        <p><strong>Dr(a). {{ medico.first_name }} {{ medico.last_name }}</strong></p>
+        <p>Médico(a) (Nombre-Apellido/Firma/Sello)</p>
+    </div>
+</body>
+</html>

@@ -11,7 +11,7 @@ DB_PORT=5432
 
 El archivo .env ya maneja estos datos, con solo configurar su maquina a ellos, correrá perfectamente.
 
-ES MUY RECOMENDABLE USAR UN VENV PARA LA INSTALACIÓN DE REQUIREMENTS.TX
+ES MUY RECOMENDABLE USAR UN VENV PARA LA INSTALACIÓN DE REQUIREMENTS.TXT
 (NOTA la contraseña "postgres" es para el usuario "postgres" que viene por defecto al instalar la BBDD)
 
 (NOTA 2: Está Deshabilitado el modo DEBUG de Django, para habilitarlo tan simple como pasarlo de FALSE a TRUE)

@@ -135,8 +135,10 @@ class HistoriaNutricion(models.Model):
 
     # --- Campos Pág. 1: Información Básica Adicional ---
     numero_historia_clinica = models.CharField(max_length=50, verbose_name="N° Historia Clínica", null=True, blank=True)
-    estado_civil = models.CharField(max_length=50, verbose_name="Est. (Estado Civil)", null=True, blank=True)
-    empleo = models.CharField(max_length=100, verbose_name="Empleo", null=True, blank=True)
+    
+    # Campos como checkboxes según lo solicitado
+    es_estudiante = models.BooleanField(verbose_name="Est.", default=False)
+    es_empleado = models.BooleanField(verbose_name="Empleado", default=False)
     es_docente = models.BooleanField(verbose_name="Docente", default=False)
     otros_basicos = models.TextField(verbose_name="Otros (Datos Básicos)", null=True, blank=True)
     ceca = models.CharField(max_length=100, verbose_name="C.E.C.A. (Nutrición)", null=True, blank=True) # Campo diferente al de Pág 9

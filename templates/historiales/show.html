@@ -120,7 +120,7 @@
 
                                 <p><strong>Dx Nutricional:</strong> {{ historia_nutricion.dx_nutricional|linebreaksbr|default:"N/A" }}</p>
 
-                                <a href="{% url 'historiales:edit' pk=object.pk %}" class="btn btn-primary btn-sm mt-2">Editar Datos de Nutrición</a>
+                                <a href="{% url 'historiales:nutricion_edit' historial_pk=object.pk %}" class="btn btn-primary btn-sm mt-2">Editar Datos de Nutrición</a>
 
                             {% else %}
 
@@ -130,7 +130,7 @@
 
                                 </div>
 
-                                <a href="{% url 'historiales:edit' pk=object.pk %}" class="btn btn-success">+ Añadir Datos de Nutrición</a>
+                                <a href="{% url 'historiales:nutricion_edit' historial_pk=object.pk %}" class="btn btn-success">+ Añadir Datos de Nutrición</a>
 
                             {% endif %}
 

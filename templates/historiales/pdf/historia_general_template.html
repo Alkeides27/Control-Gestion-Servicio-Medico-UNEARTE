@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Informe Médico</title>
+    <style>
+        @page {
+            size: letter;
+            margin: 1cm;
+        }
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 10pt;
+            color: #333;
+        }
+        .main-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 2px solid #000;
+        }
+        .main-table td, .main-table th {
+            border: 1px solid #000;
+            padding: 5px;
+            vertical-align: top;
+        }
+        .section-title {
+            background-color: #e0e0e0;
+            font-weight: bold;
+            text-align: center;
+        }
+        .field-label {
+            font-weight: bold;
+            width: 30%; /* Ancho para las etiquetas de campos principales */
+        }
+        .field-content {
+            min-height: 30px;
+        }
+        .sub-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .sub-table td {
+            border: none;
+            padding: 2px;
+        }
+        .antecedentes-list {
+            list-style-type: none;
+            padding-left: 10px;
+            margin: 0;
+        }
+        .antecedentes-list li::before {
+            content: "- ";
+        }
+    </style>
+</head>
+<body>
+
+    <table class="main-table">
+        <!-- Fila del Encabezado -->
+        <tr>
+            <td style="width: 25%; text-align: center; border-right: none;">
+                <img src="file://{{ logo_path }}" alt="Logo" style="width: 120px;">
+            </td>
+            <td style="text-align: center; vertical-align: middle; border-left: none;">
+                <h2>UNIDAD DE SERVICIOS MEDICO</h2>
+                <h1>INFORME MÉDICO</h1>
+            </td>
+        </tr>
+
+        <!-- Fila de Datos Personales -->
+        <tr>
+            <td colspan="2" class="section-title">DATOS PERSONALES</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <table class="sub-table">
+                    <tr>
+                        <td><strong>Nombre:</strong> {{ paciente.nombre }} {{ paciente.apellido }}</td>
+                        <td><strong>Cédula:</strong> {{ paciente.numero_documento }}</td>
+                        <td><strong>Fecha de Nac:</strong> {{ paciente.fecha_nacimiento|date:"d/m/Y" }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Edad:</strong> {{ paciente.edad }} años</td>
+                        <td><strong>Teléfono:</strong> {{ paciente.telefonos.first.numero|default:"N/A" }}</td>
+                        <td><strong>Sexo:</strong> {{ paciente.get_genero_display }}</td>
+                    </tr>
+                     <tr>
+                        <td><strong>Peso:</strong> {{ documento.peso|default:"N/A" }} kg</td>
+                        <td><strong>Talla:</strong> {{ documento.talla|default:"N/A" }} cm</td>
+                        <td><strong>TA:</strong> {{ documento.ta|default:"N/A" }}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        <!-- Fila de Antecedentes -->
+        <tr>
+            <td class="field-label">Antecedentes Familiares y Personales:</td>
+            <td class="field-content">
+                <strong>Personales:</strong>
+                <ul class="antecedentes-list">
+                    {% if documento.antp_diabetes %}<li>Diabetes</li>{% endif %}
+                    {% if documento.antp_hepatitis %}<li>Hepatitis</li>{% endif %}
+                    {% if documento.antp_cardiovascular %}<li>Cardiovascular</li>{% endif %}
+                    {% if documento.antp_respiratoria %}<li>Respiratoria</li>{% endif %}
+                    {% if documento.antp_neurologica %}<li>Neurológica</li>{% endif %}
+                    {% if documento.antp_cirugia %}<li>Cirugía</li>{% endif %}
+                    {% if documento.antp_alergias %}<li>Alergias</li>{% endif %}
+                    {% if documento.antp_its %}<li>ITS</li>{% endif %}
+                    {% if documento.antp_osteomusculares %}<li>Osteomusculares</li>{% endif %}
+                    {% if documento.antp_habitos %}<li>Hábitos</li>{% endif %}
+                </ul>
+                {{ documento.antp_otros|linebreaksbr|default:"" }}
+                <br>
+                <strong>Familiares:</strong>
+                <ul class="antecedentes-list">
+                    {% if documento.antf_diabetes %}<li>Diabetes</li>{% endif %}
+                    {% if documento.antf_hepatitis %}<li>Hepatitis</li>{% endif %}
+                    {% if documento.antf_cardiovascular %}<li>Cardiovascular</li>{% endif %}
+                    {% if documento.antf_respiratoria %}<li>Respiratoria</li>{% endif %}
+                    {% if documento.antf_neurologica %}<li>Neurológica</li>{% endif %}
+                </ul>
+                {{ documento.antf_otros|linebreaksbr|default:"" }}
+            </td>
+        </tr>
+
+        <!-- Filas de Contenido Principal -->
+        <tr>
+            <td class="field-label">Motivo de Consulta:</td>
+            <td class="field-content">{{ documento.motivo_consulta|linebreaksbr|default:"&nbsp;" }}</td>
+        </tr>
+        <tr>
+            <td class="field-label">HEA:</td>
+            <td class="field-content">{{ documento.hea|linebreaksbr|default:"&nbsp;" }}</td>
+        </tr>
+        <tr>
+            <td class="field-label">EXFIS:</td>
+            <td class="field-content">{{ documento.examen_fisico|linebreaksbr|default:"&nbsp;" }}</td>
+        </tr>
+        <tr>
+            <td class="field-label">IDX:</td>
+            <td class="field-content">{{ documento.diagnostico|linebreaksbr|default:"&nbsp;" }}</td>
+        </tr>
+        <tr>
+            <td class="field-label">PLAN:</td>
+            <td class="field-content">{{ documento.plan|linebreaksbr|default:"&nbsp;" }}</td>
+        </tr>
+
+        <!-- Fila de Firmas -->
+        <tr>
+            <td colspan="2" style="padding-top: 50px;">
+                <div style="float: left; width: 45%; text-align: center;">
+                    _________________________<br>
+                    <strong>MÉDICO</strong><br>
+                    {{ medico.get_full_name }}
+                </div>
+                <div style="float: right; width: 45%; text-align: center;">
+                    _________________________<br>
+                    <strong>ENFERMERO/A</strong><br>
+                    {{ documento.enfermero_nombre|default:"&nbsp;" }}
+                </div>
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>

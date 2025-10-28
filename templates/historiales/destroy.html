@@ -12,19 +12,19 @@
                 </h3>
             </div>
             <div class="card-body">
-                <p class="lead">
-                    ¿Está seguro que desea eliminar el historial médico del paciente <strong>{{ historial.paciente.nombre }} {{ historial.paciente.apellido }}</strong>?
-                </p>
-                <p>
-                    Esta acción no se puede deshacer y eliminará todos los datos del historial médico.
-                </p>
-                
-                <form method="POST">
-                    {% csrf_token %}
-                    <div class="d-flex justify-content-between">
-                        <a href="{% url 'historiales:show' historial.id %}" class="btn btn-secondary">
-                            <i class="bi bi-arrow-left"></i> Cancelar
-                        </a>
+                                <p class="lead">
+                                    ¿Está seguro que desea eliminar el historial médico del paciente <strong>{{ object.paciente.nombre }} {{ object.paciente.apellido }}</strong>?
+                                </p>
+                                <p>
+                                    Esta acción no se puede deshacer y eliminará todos los datos del historial médico.
+                                </p>
+                                
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    <div class="d-flex justify-content-between">
+                                        <a href="{% url 'historiales:show' object.pk %}" class="btn btn-secondary">
+                                            <i class="bi bi-arrow-left"></i> Cancelar
+                                        </a>
                         <button type="submit" class="btn btn-danger">
                             <i class="bi bi-trash"></i> Eliminar Historial
                         </button>

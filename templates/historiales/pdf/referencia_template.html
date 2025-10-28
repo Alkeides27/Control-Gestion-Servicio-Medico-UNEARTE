@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -31,6 +32,12 @@
             font-size: 14pt;
             font-weight: bold;
         }
+        .cintillo {
+            text-align: center;
+        }
+        .cintillo img {
+            height: 70px;
+        }
         .content {
             margin-top: 30px;
             text-align: justify;
@@ -57,9 +64,13 @@
 </head>
 <body>
 
+    <div class="cintillo">
+        <img src="{% static 'img/CINTILLO-INSTITUCIONAL-PDF.png' %}" alt="Cintillo Logos">
+    </div>
+
     <div class="header">
         <!-- Ubicación del logo superior -->
-        <img src="file://{{ logo_path }}" alt="Logo UNEARTE">
+        <img src="{% static 'img/UNEARTE-LOGO-PDF.png' %}" alt="Logo UNEARTE">
         <h2>UNIVERSIDAD NACIONAL EXPERIMENTAL DE LAS ARTES</h2>
         <p>DIRECCION GENERAL DE SALUD INTEGRAL</p>
         <p>SERVICIO MEDICO</p>
@@ -82,16 +93,11 @@
             <span class="label">Referido a Consulta:</span>
             <span>{{ documento.referido_a|default:"&nbsp;" }}</span>
         </div>
-        <div>
-            <p class="label">Motivo de Referencia:</p>
-            <p>{{ documento.motivo_referencia|linebreaksbr|default:"Sin motivo especificado." }}</p>
-        </div>
     </div>
 
     <div class="signature">
         <p>_________________________</p>
         <p><strong>Medico(a) (Nombre-Apellido/Firma/Sello)</strong></p>
-        <p>Dr(a). {{ medico.first_name }} {{ medico.last_name }}</p>
     </div>
 
 </body>

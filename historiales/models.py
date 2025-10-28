@@ -296,7 +296,6 @@ class DocumentoJustificativo(models.Model):
 class DocumentoReferencia(models.Model):
     historial_padre = models.ForeignKey(HistorialMedico, on_delete=models.CASCADE, related_name="referencias")
     referido_a = models.CharField(max_length=255, verbose_name="Referido a Consulta", null=True, blank=True)
-    motivo_referencia = models.TextField(verbose_name="Motivo de Referencia", null=True, blank=True)
     class Meta: verbose_name = "Documento: Referencia"; verbose_name_plural = "Documentos: Referencias"
     def __str__(self): return f"Referencia a {self.referido_a} para {self.historial_padre.paciente}"
 

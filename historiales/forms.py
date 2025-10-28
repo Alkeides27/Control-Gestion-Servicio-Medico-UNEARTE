@@ -179,7 +179,7 @@ class DocumentoReferenciaForm(forms.ModelForm):
     class Meta:
         model = DocumentoReferencia
         exclude = ['historial_padre']
-        widgets = { 'motivo_referencia': forms.Textarea(attrs={'rows': 5}), }
+        widgets = { 'referido_a': forms.TextInput(), }
 
     def __init__(self, *args, **kwargs):
         paciente = kwargs.pop('paciente', None)

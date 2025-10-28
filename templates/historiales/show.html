@@ -24,117 +24,186 @@
     <div class="tab-content pt-3" id="showHistorialTabsContent">
         <div class="tab-pane fade show active" id="show-general" role="tabpanel" aria-labelledby="show-general-tab">
             {% if historia_general %}
-                <h4>Datos Generales</h4>
-                <p><strong>Peso:</strong> {{ historia_general.peso|default:"N/A" }} kg</p>
-                <p><strong>Talla:</strong> {{ historia_general.talla|default:"N/A" }} cm</p>
-                <p><strong>Tensión Arterial:</strong> {{ historia_general.ta|default:"N/A" }}</p>
-                <p><strong>Motivo Consulta:</strong> {{ historia_general.motivo_consulta|linebreaksbr|default:"N/A" }}</p>
-                <p><strong>Enfermedad Actual (HEA):</strong> {{ historia_general.hea|linebreaksbr|default:"N/A" }}</p>
-                <p><strong>Antecedentes Personales:</strong></p>
-                <ul>
-                    {% if historia_general.antp_diabetes %}<li>Diabetes</li>{% endif %}
-                    {% if historia_general.antp_hepatitis %}<li>Hepatitis</li>{% endif %}
-                    {% if historia_general.antp_cardiovascular %}<li>Cardiovascular</li>{% endif %}
-                    {% if historia_general.antp_respiratoria %}<li>Respiratoria</li>{% endif %}
-                    {% if historia_general.antp_neurologica %}<li>Neurológica</li>{% endif %}
-                    {% if historia_general.antp_cirugia %}<li>Cirugía</li>{% endif %}
-                    {% if historia_general.antp_alergias %}<li>Alergias</li>{% endif %}
-                    {% if historia_general.antp_its %}<li>ITS</li>{% endif %}
-                    {% if historia_general.antp_osteomusculares %}<li>Osteomusculares</li>{% endif %}
-                    {% if historia_general.antp_habitos %}<li>Hábitos</li>{% endif %}
-                </ul>
-                <p>{{ historia_general.antp_otros|linebreaksbr|default:"" }}</p>
+                <div class="row">
+                    <!-- Signos Vitales y Medidas -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Signos Vitales y Medidas</h5>
+                                <p class="card-text"><strong>Peso:</strong> {{ historia_general.peso|default:"N/A" }} kg</p>
+                                <p class="card-text"><strong>Talla:</strong> {{ historia_general.talla|default:"N/A" }} cm</p>
+                                <p class="card-text"><strong>Tensión Arterial:</strong> {{ historia_general.ta|default:"N/A" }}</p>
+                            </div>
+                        </div>
+                    </div>
 
-                <p><strong>Antecedentes Familiares:</strong></p>
-                <ul>
-                    {% if historia_general.antf_diabetes %}<li>Diabetes</li>{% endif %}
-                    {% if historia_general.antf_hepatitis %}<li>Hepatitis</li>{% endif %}
-                    {% if historia_general.antf_cardiovascular %}<li>Cardiovascular</li>{% endif %}
-                    {% if historia_general.antf_respiratoria %}<li>Respiratoria</li>{% endif %}
-                    {% if historia_general.antf_neurologica %}<li>Neurológica</li>{% endif %}
-                </ul>
-                <p>{{ historia_general.antf_otros|linebreaksbr|default:"" }}</p>
-                <p><strong>Examen Físico:</strong> {{ historia_general.examen_fisico|linebreaksbr|default:"N/A" }}</p>
-                <p><strong>Diagnóstico (IDX):</strong> {{ historia_general.diagnostico|linebreaksbr|default:"N/A" }}</p>
-                <p><strong>Plan y Tratamiento:</strong> {{ historia_general.plan|linebreaksbr|default:"N/A" }}</p>
+                    <!-- Motivo de la Consulta -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Consulta</h5>
+                                <p class="card-text"><strong>Motivo:</strong> {{ historia_general.motivo_consulta|linebreaksbr|default:"N/A" }}</p>
+                                <p class="card-text"><strong>Enfermedad Actual (HEA):</strong> {{ historia_general.hea|linebreaksbr|default:"N/A" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Antecedentes Personales -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Antecedentes Personales</h5>
+                                <ul>
+                                    {% if historia_general.antp_diabetes %}<li>Diabetes</li>{% endif %}
+                                    {% if historia_general.antp_hepatitis %}<li>Hepatitis</li>{% endif %}
+                                    {% if historia_general.antp_cardiovascular %}<li>Cardiovascular</li>{% endif %}
+                                    {% if historia_general.antp_respiratoria %}<li>Respiratoria</li>{% endif %}
+                                    {% if historia_general.antp_neurologica %}<li>Neurológica</li>{% endif %}
+                                    {% if historia_general.antp_cirugia %}<li>Cirugía</li>{% endif %}
+                                    {% if historia_general.antp_alergias %}<li>Alergias</li>{% endif %}
+                                    {% if historia_general.antp_its %}<li>ITS</li>{% endif %}
+                                    {% if historia_general.antp_osteomusculares %}<li>Osteomusculares</li>{% endif %}
+                                    {% if historia_general.antp_habitos %}<li>Hábitos</li>{% endif %}
+                                </ul>
+                                <p>{{ historia_general.antp_otros|linebreaksbr|default:"" }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Antecedentes Familiares -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Antecedentes Familiares</h5>
+                                <ul>
+                                    {% if historia_general.antf_diabetes %}<li>Diabetes</li>{% endif %}
+                                    {% if historia_general.antf_hepatitis %}<li>Hepatitis</li>{% endif %}
+                                    {% if historia_general.antf_cardiovascular %}<li>Cardiovascular</li>{% endif %}
+                                    {% if historia_general.antf_respiratoria %}<li>Respiratoria</li>{% endif %}
+                                    {% if historia_general.antf_neurologica %}<li>Neurológica</li>{% endif %}
+                                </ul>
+                                <p>{{ historia_general.antf_otros|linebreaksbr|default:"" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Evaluación Médica -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Evaluación Médica</h5>
+                        <p class="card-text"><strong>Examen Físico:</strong> {{ historia_general.examen_fisico|linebreaksbr|default:"N/A" }}</p>
+                        <p class="card-text"><strong>Diagnóstico (IDX):</strong> {{ historia_general.diagnostico|linebreaksbr|default:"N/A" }}</p>
+                        <p class="card-text"><strong>Plan y Tratamiento:</strong> {{ historia_general.plan|linebreaksbr|default:"N/A" }}</p>
+                    </div>
+                </div>
             {% else %}
-                <p class="text-muted">No se registraron datos de Historia General.</p>
+                <div class="alert alert-info" role="alert">
+                    No se registraron datos de Historia General para esta consulta.
+                </div>
             {% endif %}
         </div>
 
         <div class="tab-pane fade" id="show-nutricion" role="tabpanel" aria-labelledby="show-nutricion-tab">
-            {% if historia_nutricion %}
-                <h4>Datos de Nutrición</h4>
-                <p><strong>Peso Usual:</strong> {{ historia_nutricion.antropo_peso_usual|default:"N/A" }} kg</p>
-                <p><strong>Dx Nutricional:</strong> {{ historia_nutricion.dx_nutricional|linebreaksbr|default:"N/A" }}</p>
-                <a href="{% url 'historiales:nutricion_form' historial_pk=object.pk %}" class="btn btn-primary btn-sm mt-2">Editar Datos de Nutrición</a>
-            {% else %}
-                <p class="text-muted">No se han registrado datos de Nutrición para este historial.</p>
-                <a href="{% url 'historiales:nutricion_form' historial_pk=object.pk %}" class="btn btn-success">+ Añadir Datos de Nutrición</a>
-            {% endif %}
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Datos de Nutrición</h5>
+                    {% if historia_nutricion %}
+                        <p><strong>Peso Usual:</strong> {{ historia_nutricion.antropo_peso_usual|default:"N/A" }} kg</p>
+                        <p><strong>Dx Nutricional:</strong> {{ historia_nutricion.dx_nutricional|linebreaksbr|default:"N/A" }}</p>
+                        <a href="{% url 'historiales:nutricion_form' historial_pk=object.pk %}" class="btn btn-primary btn-sm mt-2">Editar Datos de Nutrición</a>
+                    {% else %}
+                        <div class="alert alert-info" role="alert">
+                            No se han registrado datos de Nutrición para este historial.
+                        </div>
+                        <a href="{% url 'historiales:nutricion_form' historial_pk=object.pk %}" class="btn btn-success">+ Añadir Datos de Nutrición</a>
+                    {% endif %}
+                </div>
+            </div>
         </div>
 
-         <div class="tab-pane fade" id="show-documentos" role="tabpanel" aria-labelledby="show-documentos-tab">
-            <h4>Documentos Asociados</h4>
-            
-            <h5>Justificativos</h5>
-            {% for doc in justificativos %}
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span>{{ doc }}</span>
-                    <div>
-                        <a href="{% url 'historiales:justificativo_pdf' doc.pk %}" target="_blank" class="btn btn-info btn-sm me-2"><i class="bi bi-file-earmark-pdf"></i> Ver/Imprimir PDF</a>
-                        <a href="{% url 'historiales:justificativo_delete' documento_pk=doc.pk %}" class="btn btn-primary btn-sm">Borrar</a>
-                    </div>
+        <div class="tab-pane fade" id="show-documentos" role="tabpanel" aria-labelledby="show-documentos-tab">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Documentos Asociados</h5>
                 </div>
-            {% empty %}
-                <p class="text-muted">Ninguno</p>
-            {% endfor %}
-            <h5>Referencias</h5>
-            {% for doc in referencias %}
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span>{{ doc }}</span>
-                    <div>
-                        <a href="{% url 'historiales:referencia_pdf' doc.pk %}" target="_blank" class="btn btn-info btn-sm me-2"><i class="bi bi-file-earmark-pdf"></i> Ver/Imprimir PDF</a>
-                        <a href="{% url 'historiales:referencia_delete' documento_pk=doc.pk %}" class="btn btn-primary btn-sm">Borrar</a>
+                <div class="card-body">
+                    <!-- Justificativos -->
+                    <h6>Justificativos</h6>
+                    <div class="list-group mb-3">
+                        {% for doc in justificativos %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ doc }}
+                                <div>
+                                    <a href="{% url 'historiales:justificativo_pdf' doc.pk %}" target="_blank" class="btn btn-info btn-sm me-2" title="Ver/Imprimir PDF"><i class="bi bi-file-earmark-pdf"></i></a>
+                                    <a href="{% url 'historiales:justificativo_delete' documento_pk=doc.pk %}" class="btn btn-danger btn-sm" title="Borrar"><i class="bi bi-trash"></i></a>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <p class="text-muted px-3">No hay justificativos.</p>
+                        {% endfor %}
                     </div>
-                </div>
-            {% empty %}
-                <p class="text-muted">Ninguna</p>
-            {% endfor %}
-            <h5>Reposos</h5>
-            {% for doc in reposos %}
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span>{{ doc }}</span>
-                    <div>
-                        <a href="{% url 'historiales:reposo_pdf' doc.pk %}" target="_blank" class="btn btn-info btn-sm me-2"><i class="bi bi-file-earmark-pdf"></i> Ver/Imprimir PDF</a>
-                        <a href="{% url 'historiales:reposo_delete' documento_pk=doc.pk %}" class="btn btn-primary btn-sm">Borrar</a>
-                    </div>
-                </div>
-            {% empty %}
-                <p class="text-muted">Ninguno</p>
-            {% endfor %}
-             <h5>Récipes</h5>
-            {% for doc in recipes %}
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span>{{ doc }}</span>
-                    <div>
-                        <a href="{% url 'historiales:recipe_pdf' doc.pk %}" target="_blank" class="btn btn-info btn-sm me-2"><i class="bi bi-file-earmark-pdf"></i> Ver/Imprimir PDF</a>
-                        <a href="{% url 'historiales:recipe_delete' documento_pk=doc.pk %}" class="btn btn-primary btn-sm">Borrar</a>
-                    </div>
-                </div>
-            {% empty %}
-                <p class="text-muted">Ninguno</p>
-            {% endfor %}
 
-            <hr>
-            {% if object.medico == request.user %}
-                <h5>Generar Nuevo Documento</h5>
-                <a href="{% url 'historiales:justificativo_create' historial_pk=object.pk %}" class="btn btn-primary btn-sm mb-2 me-3">Crear Justificativo</a>
-                <a href="{% url 'historiales:referencia_create' historial_pk=object.pk %}" class="btn btn-primary btn-sm mb-2 me-3">Crear Referencia</a>
-                <a href="{% url 'historiales:reposo_create' historial_pk=object.pk %}" class="btn btn-primary btn-sm mb-2 me-3">Crear Reposo</a>
-                <a href="{% url 'historiales:recipe_create' historial_pk=object.pk %}" class="btn btn-primary btn-sm mb-2 me-3">Crear Récipe</a>
-                
-                {% endif %}
+                    <!-- Referencias -->
+                    <h6>Referencias</h6>
+                    <div class="list-group mb-3">
+                        {% for doc in referencias %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ doc }}
+                                <div>
+                                    <a href="{% url 'historiales:referencia_pdf' doc.pk %}" target="_blank" class="btn btn-info btn-sm me-2" title="Ver/Imprimir PDF"><i class="bi bi-file-earmark-pdf"></i></a>
+                                    <a href="{% url 'historiales:referencia_delete' documento_pk=doc.pk %}" class="btn btn-danger btn-sm" title="Borrar"><i class="bi bi-trash"></i></a>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <p class="text-muted px-3">No hay referencias.</p>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Reposos -->
+                    <h6>Reposos</h6>
+                    <div class="list-group mb-3">
+                        {% for doc in reposos %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ doc }}
+                                <div>
+                                    <a href="{% url 'historiales:reposo_pdf' doc.pk %}" target="_blank" class="btn btn-info btn-sm me-2" title="Ver/Imprimir PDF"><i class="bi bi-file-earmark-pdf"></i></a>
+                                    <a href="{% url 'historiales:reposo_delete' documento_pk=doc.pk %}" class="btn btn-danger btn-sm" title="Borrar"><i class="bi bi-trash"></i></a>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <p class="text-muted px-3">No hay reposos.</p>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Récipes -->
+                    <h6>Récipes</h6>
+                    <div class="list-group mb-3">
+                        {% for doc in recipes %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ doc }}
+                                <div>
+                                    <a href="{% url 'historiales:recipe_pdf' doc.pk %}" target="_blank" class="btn btn-info btn-sm me-2" title="Ver/Imprimir PDF"><i class="bi bi-file-earmark-pdf"></i></a>
+                                    <a href="{% url 'historiales:recipe_delete' documento_pk=doc.pk %}" class="btn btn-danger btn-sm" title="Borrar"><i class="bi bi-trash"></i></a>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <p class="text-muted px-3">No hay récipes.</p>
+                        {% endfor %}
+                    </div>
+
+                    {% if object.medico == request.user %}
+                        <hr>
+                        <h5>Generar Nuevo Documento</h5>
+                        <a href="{% url 'historiales:justificativo_create' historial_pk=object.pk %}" class="btn btn-primary btn-sm mb-2 me-2">Crear Justificativo</a>
+                        <a href="{% url 'historiales:referencia_create' historial_pk=object.pk %}" class="btn btn-primary btn-sm mb-2 me-2">Crear Referencia</a>
+                        <a href="{% url 'historiales:reposo_create' historial_pk=object.pk %}" class="btn btn-primary btn-sm mb-2 me-2">Crear Reposo</a>
+                        <a href="{% url 'historiales:recipe_create' historial_pk=object.pk %}" class="btn btn-primary btn-sm mb-2 me-2">Crear Récipe</a>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
 

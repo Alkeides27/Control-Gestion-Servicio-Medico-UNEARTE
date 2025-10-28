@@ -144,9 +144,10 @@ class HistorialMedicoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateV
             return self.form_invalid(form)
 
     def test_func(self):
-        historial = self.get_object()
-        return historial.medico == self.request.user
 
+        historial = self.get_object()
+
+        return hasattr(self.request.user, 'perfilusuario') and self.request.user.perfilusuario.rol == 'admin' or historial.medico == self.request.user
     def get_success_url(self):
         return reverse_lazy('historiales:show', kwargs={'pk': self.object.pk})
 
@@ -188,12 +189,16 @@ class HistorialMedicoListView(LoginRequiredMixin, ListView):
     context_object_name = 'historiales'
 
     def get_queryset(self):
-        # Mostramos solo los historiales del médico logueado
+        if hasattr(self.request.user, 'perfilusuario') and self.request.user.perfilusuario.rol == 'admin':
+            return HistorialMedico.objects.all().order_by('-fecha')
         return HistorialMedico.objects.filter(medico=self.request.user).order_by('-fecha')
 
 def search(request):
     query = request.GET.get('q', '')
-    historiales = HistorialMedico.objects.filter(medico=request.user).order_by('-fecha')
+    if hasattr(request.user, 'perfilusuario') and request.user.perfilusuario.rol == 'admin':
+        historiales = HistorialMedico.objects.all().order_by('-fecha')
+    else:
+        historiales = HistorialMedico.objects.filter(medico=request.user).order_by('-fecha')
     
     if query:
         historiales = historiales.filter(
@@ -220,7 +225,7 @@ class HistorialMedicoDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteV
     # Verificación de permisos: Solo el dueño puede borrar
     def test_func(self):
         historial = self.get_object()
-        return historial.medico == self.request.user
+        return hasattr(self.request.user, 'perfilusuario') and self.request.user.perfilusuario.rol == 'admin' or historial.medico == self.request.user
 
 # --- VISTAS PARA CREAR LOS DOCUMENTOS ---
 # Necesitamos vistas separadas para manejar la creación de cada documento.
@@ -244,7 +249,7 @@ class DocumentoCreateViewBase(LoginRequiredMixin, UserPassesTestMixin, CreateVie
 
     # Permiso: Solo el dueño del historial padre puede crear documentos
     def test_func(self):
-        return self.historial_padre.medico == self.request.user
+        return hasattr(self.request.user, 'perfilusuario') and self.request.user.perfilusuario.rol == 'admin' or self.historial_padre.medico == self.request.user
         
     def form_valid(self, form):
         documento = form.save(commit=False)
@@ -292,9 +297,8 @@ class DocumentoDeleteViewBase(LoginRequiredMixin, UserPassesTestMixin, DeleteVie
         return get_object_or_404(self.model, pk=self.kwargs['documento_pk'])
 
     def test_func(self):
-        # Solo el médico que creó el historial puede borrar el documento
         documento = self.get_object()
-        return documento.historial_padre.medico == self.request.user
+        return hasattr(self.request.user, 'perfilusuario') and self.request.user.perfilusuario.rol == 'admin' or documento.historial_padre.medico == self.request.user
 
     def get_success_url(self):
         # Redirigir de vuelta al detalle del historial
@@ -367,8 +371,7 @@ def generar_recipe_pdf(request, recipe_pk):
         paciente = historial.paciente
         medico = historial.medico
 
-        # Verificar permiso: solo el médico tratante puede generar el PDF
-        if historial.medico != request.user:
+        if not (hasattr(request.user, 'perfilusuario') and request.user.perfilusuario.rol == 'admin' or historial.medico == request.user):
             return HttpResponse("No tiene permiso para ver este documento.", status=403)
 
     except DocumentoRecipe.DoesNotExist:
@@ -412,7 +415,7 @@ def generar_reposo_pdf(request, reposo_pk):
         historial = reposo.historial_padre
         paciente = historial.paciente
         medico = historial.medico
-        if historial.medico != request.user:
+        if not (hasattr(request.user, 'perfilusuario') and request.user.perfilusuario.rol == 'admin' or historial.medico == request.user):
             return HttpResponse("No tiene permiso para ver este documento.", status=403)
     except DocumentoReposo.DoesNotExist:
         return HttpResponse("El reposo no existe.", status=404)
@@ -444,7 +447,7 @@ def generar_justificativo_pdf(request, justificativo_pk):
         historial = justificativo.historial_padre
         paciente = historial.paciente
         medico = historial.medico
-        if historial.medico != request.user:
+        if not (hasattr(request.user, 'perfilusuario') and request.user.perfilusuario.rol == 'admin' or historial.medico == request.user):
             return HttpResponse("No tiene permiso para ver este documento.", status=403)
     except DocumentoJustificativo.DoesNotExist:
         return HttpResponse("El justificativo no existe.", status=404)
@@ -476,7 +479,7 @@ def generar_referencia_pdf(request, referencia_pk):
         historial = referencia.historial_padre
         paciente = historial.paciente
         medico = historial.medico
-        if historial.medico != request.user:
+        if not (hasattr(request.user, 'perfilusuario') and request.user.perfilusuario.rol == 'admin' or historial.medico == request.user):
             return HttpResponse("No tiene permiso para ver este documento.", status=403)
     except DocumentoReferencia.DoesNotExist:
         return HttpResponse("La referencia no existe.", status=404)

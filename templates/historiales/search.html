@@ -58,10 +58,10 @@
                         {{ historial.paciente.nombre }} {{ historial.paciente.apellido }}
                     </a>
                 </td>
-                <td>{{ historial.alergias|truncatewords:10|default:"No registradas" }}</td>
-                <td>{{ historial.enfermedades_preexistentes|truncatewords:10|default:"Ninguna" }}</td>
-                <td>{{ historial.medicamentos_actuales|truncatewords:10|default:"Ninguno" }}</td>
-                <td>{{ historial.created_at|date:"d/m/Y" }}</td>
+                <td>{{ historial.historia_general.alergias|truncatewords:10|default:"No registradas" }}</td>
+                <td>{{ historial.historia_general.enfermedades_preexistentes|truncatewords:10|default:"Ninguna" }}</td>
+                <td>{{ historial.historia_general.medicamentos_actuales|truncatewords:10|default:"Ninguno" }}</td>
+                <td>{{ historial.fecha|date:"d/m/Y" }}</td>
                 <td>
                     <div class="btn-group" role="group">
                         <a href="{% url 'historiales:show' historial.id %}" class="btn btn-outline-medical btn-sm" title="Ver detalles">

@@ -182,7 +182,6 @@ body.medical-body {
 .table-medical {
     border-collapse: collapse;
     border-radius: 8px;
-    overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     background-color: var(--medical-card-bg);
 }

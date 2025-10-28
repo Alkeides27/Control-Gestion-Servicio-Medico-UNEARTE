@@ -189,16 +189,11 @@ class HistorialMedicoListView(LoginRequiredMixin, ListView):
     context_object_name = 'historiales'
 
     def get_queryset(self):
-        if hasattr(self.request.user, 'perfilusuario') and self.request.user.perfilusuario.rol == 'admin':
-            return HistorialMedico.objects.all().order_by('-fecha')
-        return HistorialMedico.objects.filter(medico=self.request.user).order_by('-fecha')
+        return HistorialMedico.objects.all().order_by('-fecha')
 
 def search(request):
     query = request.GET.get('q', '')
-    if hasattr(request.user, 'perfilusuario') and request.user.perfilusuario.rol == 'admin':
-        historiales = HistorialMedico.objects.all().order_by('-fecha')
-    else:
-        historiales = HistorialMedico.objects.filter(medico=request.user).order_by('-fecha')
+    historiales = HistorialMedico.objects.all().order_by('-fecha')
     
     if query:
         historiales = historiales.filter(

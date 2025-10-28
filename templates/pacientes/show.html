@@ -138,11 +138,11 @@
         {% for historial in historiales_del_paciente %}
             <div class="list-group-item list-group-item-action">
                 <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">Consulta del {{ historial.created_at|date:"d/m/Y" }}</h5>
+                    <h5 class="mb-1">Consulta del {{ historial.fecha|date:"d/m/Y" }}</h5>
                     <small>Médico: {{ historial.medico.get_full_name }}</small>
                 </div>
                 <p class="mb-1">
-                    Motivo: {{ historial.motivo_consulta|truncatewords:20 }}
+                    Motivo: {{ historial.historia_general.motivo_consulta|truncatewords:20|default:"Sin motivo registrado" }}
                 </p>
                 
                 <div>
@@ -150,7 +150,7 @@
                         <i class="bi bi-eye-fill"></i> Ver
                     </a>
                     
-                    {% if historial.medico == request.user %}
+                    {% if historial.medico == request.user or request.user.perfilusuario.rol == 'admin' %}
                         <a href="{% url 'historiales:edit' historial.id %}" class="btn btn-primary btn-sm">
                             <i class="bi bi-pencil-fill"></i> Editar
                         </a>

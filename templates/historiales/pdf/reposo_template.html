@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -14,9 +15,13 @@
             color: #333;
             text-align: center; /* Centrar todo el contenido por defecto */
         }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
         .header img {
             /* --- LOGO SUPERIOR --- */
-            height: 80px;
+            height: 180px;
         }
         .header h2, .header h3, .header p {
             margin: 5px 0;
@@ -59,7 +64,7 @@
 
     <div class="header">
         <!-- Ubicación del logo superior -->
-        <img src="file://{{ logo_path }}" alt="Logo UNEARTE">
+        <img src="{% static 'img/ALMA-MATER-LOGO-PDF.png' %}" alt="Logo Alma Mater">
         <h2>UNIVERSIDAD NACIONAL EXPERIMENTAL DE LAS ARTES</h2>
         <h3>DIRECCIÓN GENERAL DE SALUD INTEGRAL</h3>
         <p>SERVICIO MÉDICO</p>

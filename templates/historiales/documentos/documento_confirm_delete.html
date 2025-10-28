@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ titulo }}</h2>
+    <hr>
+    <p>¿Estás seguro de que quieres eliminar el siguiente documento?</p>
+    
+    <div class="alert alert-warning">
+        <strong>{{ documento }}</strong>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Confirmar Borrado</button>
+        <a href="{% url 'historiales:show' historial.pk %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+
+</div>
+{% endblock %}

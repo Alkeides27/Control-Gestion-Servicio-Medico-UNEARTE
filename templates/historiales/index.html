@@ -4,71 +4,41 @@
 
 {% block content %}
 <div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="mb-0">Historiales Médicos</h1>
+        <a href="{% url 'historiales:create' %}" class="btn btn-primary">Crear Nuevo Historial</a>
+    </div>
 
-    <!-- Historiales del Usuario Actual -->
-    {% if historiales_usuario %}
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">Mis Historiales Médicos</h4>
-            <a href="{% url 'historiales:create' %}" class="btn btn-light btn-sm">Crear Nuevo Historial</a>
+    <!-- Filtros -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="btn-group" role="group" aria-label="Filtros de historiales">
+            <a href="{% url 'historiales:index' %}?filtro=todos" class="btn {% if filtro_actual == 'todos' %}btn-primary{% else %}btn-outline-primary{% endif %}">Todos</a>
+            <a href="{% url 'historiales:index' %}?filtro=mios" class="btn {% if filtro_actual == 'mios' %}btn-primary{% else %}btn-outline-primary{% endif %}">Mis Historiales</a>
         </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover table-striped">
-                    <thead class="table-success">
-                        <tr>
-                            <th>Paciente</th>
-                            <th>Cédula</th>
-                            <th>Fecha</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for historial in historiales_usuario %}
-                            <tr>
-                                <td>{{ historial.paciente.nombre }} {{ historial.paciente.apellido }}</td>
-                                <td>{{ historial.paciente.numero_documento }}</td>
-                                <td>{{ historial.fecha|date:"d/m/Y H:i" }}</td>
-                                <td>
-                                    <a href="{% url 'historiales:show' historial.id %}" class="btn btn-info btn-sm">Ver</a>
-                                    <a href="{% url 'historiales:edit' historial.id %}" class="btn btn-success btn-sm">Editar</a>
-                                    <a href="{% url 'historiales:destroy' historial.id %}" class="btn btn-danger btn-sm">Eliminar</a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+        <div class="ms-auto">
+            <form action="{% url 'historiales:search' %}" method="get" class="d-flex">
+                <input class="form-control me-2" type="search" placeholder="Buscar paciente..." name="q" value="{{ query|default:'' }}">
+                <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+            </form>
         </div>
     </div>
-    {% endif %}
 
-    <!-- Todos los Historiales -->
+    <!-- Tabla Única de Historiales -->
     <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">Todos los Historiales Médicos</h4>
-        </div>
         <div class="card-body">
-            <div class="d-flex justify-content-end mb-3">
-                <form action="{% url 'historiales:search' %}" method="get" class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Buscar paciente, alergia..." name="q" value="{{ query|default:'' }}">
-                    <button class="btn btn-outline-primary" type="submit">Buscar</button>
-                </form>
-            </div>
-
             <div class="table-responsive">
                 <table class="table table-hover table-striped">
                     <thead class="table-dark">
                         <tr>
                             <th>Paciente</th>
                             <th>Cédula</th>
-                            <th>Médico Creador</th>
+                            <th>Médico Tratante</th>
                             <th>Fecha</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for historial in todos_historiales %}
+                        {% for historial in historiales %}
                             <tr>
                                 <td>{{ historial.paciente.nombre }} {{ historial.paciente.apellido }}</td>
                                 <td>{{ historial.paciente.numero_documento }}</td>
@@ -78,18 +48,36 @@
                                     <a href="{% url 'historiales:show' historial.id %}" class="btn btn-info btn-sm">Ver</a>
                                     {% if historial.medico == request.user or request.user.perfilusuario.rol == 'admin' %}
                                         <a href="{% url 'historiales:edit' historial.id %}" class="btn btn-success btn-sm">Editar</a>
-                                        <a href="{% url 'historiales:destroy' historial.id %}" class="btn btn-danger btn-sm">Eliminar</a>
                                     {% endif %}
                                 </td>
                             </tr>
                         {% empty %}
                             <tr>
-                                <td colspan="5" class="text-center">No hay historiales médicos registrados.</td>
+                                <td colspan="5" class="text-center">No se encontraron historiales.</td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
+
+            <!-- Controles de Paginación -->
+            {% if is_paginated %}
+            <nav aria-label="Navegación de páginas">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page=1&filtro={{ filtro_actual }}">&laquo; Primera</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&filtro={{ filtro_actual }}">Anterior</a></li>
+                    {% endif %}
+
+                    <li class="page-item active" aria-current="page"><span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span></li>
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&filtro={{ filtro_actual }}">Siguiente</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&filtro={{ filtro_actual }}">Última &raquo;</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
         </div>
     </div>
 </div>

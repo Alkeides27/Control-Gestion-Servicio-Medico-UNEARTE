@@ -134,36 +134,69 @@
 
 <div class="mt-4">
     <h3>Historiales Clínicos del Paciente</h3>
-    <div class="list-group">
-        {% for historial in historiales_del_paciente %}
-            <div class="list-group-item list-group-item-action">
-                <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">Consulta del {{ historial.fecha|date:"d/m/Y" }}</h5>
-                    <small>Médico: {{ historial.medico.get_full_name }}</small>
-                </div>
-                <p class="mb-1">
-                    Motivo: {{ historial.historia_general.motivo_consulta|truncatewords:20|default:"Sin motivo registrado" }}
-                </p>
-                
-                <div>
-                    <a href="{% url 'historiales:show' historial.id %}" class="btn btn-info btn-sm">
-                        <i class="bi bi-eye-fill"></i> Ver
-                    </a>
-                    
-                    {% if historial.medico == request.user or request.user.perfilusuario.rol == 'admin' %}
-                        <a href="{% url 'historiales:edit' historial.id %}" class="btn btn-primary btn-sm">
-                            <i class="bi bi-pencil-fill"></i> Editar
-                        </a>
-                        <a href="{% url 'historiales:destroy' historial.id %}" class="btn btn-danger btn-sm">
-                            <i class="bi bi-trash-fill"></i> Borrar
-                        </a>
-                    {% endif %}
+    {% if historiales_del_paciente %}
+        <div class="card card-medical">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Médico</th>
+                                <th>Tipo de Historia</th>
+                                <th>Motivo de Consulta</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for historial in historiales_del_paciente %}
+                                <tr>
+                                    <td>{{ historial.fecha|date:"d/m/Y H:i" }}</td>
+                                    <td>{{ historial.medico.get_full_name|default:"No asignado" }}</td>
+                                    <td>
+                                        {% if historial.historia_general %}
+                                            <span class="badge bg-primary">Historia General</span>
+                                        {% elif historial.historia_nutricion %}
+                                            <span class="badge bg-success">Historia Nutrición</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Consulta Básica</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if historial.historia_general %}
+                                            {{ historial.historia_general.motivo_consulta|truncatewords:10|default:"No registrado" }}
+                                        {% elif historial.historia_nutricion %}
+                                            {{ historial.historia_nutricion.motivo_consulta_nutricion|truncatewords:10|default:"No registrado" }}
+                                        {% else %}
+                                            Consulta sin detalles
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'historiales:show' historial.id %}" class="btn btn-info btn-sm" title="Ver historial">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </a>
+                                        
+                                        {% if historial.medico == request.user or request.user.perfilusuario.rol == 'admin' %}
+                                            <a href="{% url 'historiales:edit' historial.id %}" class="btn btn-primary btn-sm" title="Editar historial">
+                                                <i class="bi bi-pencil-fill"></i>
+                                            </a>
+                                            <a href="{% url 'historiales:destroy' historial.id %}" class="btn btn-danger btn-sm" title="Eliminar historial">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        {% empty %}
-            <p>Este paciente aún no tiene historiales médicos registrados.</p>
-        {% endfor %}
-    </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle"></i> Este paciente aún no tiene historiales médicos registrados.
+        </div>
+    {% endif %}
 
     <a href="{% url 'historiales:create' %}?paciente_id={{ paciente.id }}" class="btn btn-success mt-3">
         <i class="bi bi-plus-circle-fill"></i> Crear Nuevo Historial

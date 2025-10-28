@@ -78,7 +78,7 @@ def show(request, paciente_id):
     paciente = get_object_or_404(Paciente, id=paciente_id)
     direcciones = Direccion.objects.filter(paciente=paciente).select_related('ciudad__estado__pais')
     telefonos = Telefono.objects.filter(paciente=paciente).select_related('tipo_telefono')
-    historiales = HistorialMedico.objects.filter(paciente=paciente).order_by('-fecha')
+    historiales = HistorialMedico.objects.filter(paciente=paciente).order_by('-fecha').prefetch_related('historia_general', 'historia_nutricion')
     return render(request, 'pacientes/show.html', {
         'paciente': paciente,
         'direcciones': direcciones,

@@ -46,10 +46,8 @@ class HistorialMedicoCreateView(LoginRequiredMixin, CreateView):
         form_kwargs = {'prefix': 'general', 'paciente': paciente, 'medico': medico, 'create_patient': creating_patient}
         if self.request.POST:
             context['general_form'] = HistoriaGeneralForm(self.request.POST, **form_kwargs)
-            context['nutricion_form'] = HistoriaNutricionForm(self.request.POST, prefix='nutricion')
         else:
             context['general_form'] = HistoriaGeneralForm(**form_kwargs)
-            context['nutricion_form'] = HistoriaNutricionForm(prefix='nutricion')
             
         context['creating_patient'] = creating_patient
         return context
@@ -72,7 +70,7 @@ class HistorialMedicoCreateView(LoginRequiredMixin, CreateView):
                         numero_documento=general_form.cleaned_data['create_cedula'],
                         nombre=general_form.cleaned_data['create_nombre'],
                         apellido=general_form.cleaned_data['create_apellido'],
-                        genero=general_form.cleaned_data['create_sexo'],
+                        genero=general_form.cleaned_data['create_genero'],
                         fecha_nacimiento=general_form.cleaned_data['create_fecha_nacimiento'],
                     )
                     Telefono.objects.create(
@@ -124,12 +122,10 @@ class HistorialMedicoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateV
 
         if self.request.POST:
             context['general_form'] = HistoriaGeneralForm(self.request.POST, instance=getattr(historial, 'historia_general', None), **form_kwargs)
-            context['nutricion_form'] = HistoriaNutricionForm(self.request.POST, instance=getattr(historial, 'historia_nutricion', None), prefix='nutricion')
         else:
             context['general_form'] = HistoriaGeneralForm(instance=getattr(historial, 'historia_general', None), **form_kwargs)
-            context['nutricion_form'] = HistoriaNutricionForm(instance=getattr(historial, 'historia_nutricion', None), prefix='nutricion')
             
-        context['titulo'] = f"Editar Historial de {paciente}"
+        context['titulo'] = f"Editar Historia General de {paciente}"
         # No estamos creando paciente en modo edición
         context['creating_patient'] = False
         return context
@@ -137,20 +133,14 @@ class HistorialMedicoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateV
     def form_valid(self, form):
         context = self.get_context_data()
         general_form = context['general_form']
-        nutricion_form = context['nutricion_form']
 
-        is_general_valid = general_form.is_valid()
-        is_nutricion_valid = nutricion_form.is_valid()
-
-        if is_general_valid and is_nutricion_valid:
+        if general_form.is_valid():
             with transaction.atomic():
-                historial = form.save()
+                form.save()
                 general_form.save()
-                nutricion_form.save()
             return redirect(self.get_success_url())
         else:
             print("Errores General:", general_form.errors) # DEBUG
-            print("Errores Nutrición:", nutricion_form.errors) # DEBUG
             return self.form_invalid(form)
 
     def test_func(self):
@@ -292,6 +282,44 @@ class ReposoCreateView(DocumentoCreateViewBase):
 class RecipeCreateView(DocumentoCreateViewBase):
     model = DocumentoRecipe
     form_class = DocumentoRecipeForm
+
+# --- VISTAS PARA ELIMINAR LOS DOCUMENTOS ---
+@method_decorator(medico_required, name='dispatch')
+class DocumentoDeleteViewBase(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    template_name = 'historiales/documentos/documento_confirm_delete.html'
+
+    def get_object(self, queryset=None):
+        # Usamos el pk del documento de la URL
+        return get_object_or_404(self.model, pk=self.kwargs['documento_pk'])
+
+    def test_func(self):
+        # Solo el médico que creó el historial puede borrar el documento
+        documento = self.get_object()
+        return documento.historial_padre.medico == self.request.user
+
+    def get_success_url(self):
+        # Redirigir de vuelta al detalle del historial
+        documento = self.get_object()
+        return reverse_lazy('historiales:show', kwargs={'pk': documento.historial_padre.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = f"Confirmar Borrado de {self.object._meta.verbose_name.capitalize()}"
+        context['documento'] = self.object
+        context['historial'] = self.object.historial_padre
+        return context
+
+class JustificativoDeleteView(DocumentoDeleteViewBase):
+    model = DocumentoJustificativo
+
+class ReferenciaDeleteView(DocumentoDeleteViewBase):
+    model = DocumentoReferencia
+
+class ReposoDeleteView(DocumentoDeleteViewBase):
+    model = DocumentoReposo
+
+class RecipeDeleteView(DocumentoDeleteViewBase):
+    model = DocumentoRecipe
 
 @medico_required
 def nutricion_create_or_update(request, historial_pk):

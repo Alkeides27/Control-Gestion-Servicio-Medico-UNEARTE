@@ -5,11 +5,21 @@
 <div class="container mt-4">
     <h2>{{ titulo }}</h2>
     <hr>
+    <div class="alert alert-info">
+        Paciente: <strong>{{ paciente }} (CI: {{ paciente.numero_documento }})</strong>
+    </div>
 
     <form method="post">
         {% csrf_token %}
         {% crispy form %}
-        <button type="submit" class="btn btn-success">Guardar</button>
+        <hr>
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-check-circle-fill"></i> Guardar Datos de Nutrición
+        </button>
+        <a href="{% url 'historiales:show' historial.pk %}" class="btn btn-secondary">
+            <i class="bi bi-x-circle-fill"></i> Cancelar
+        </a>
     </form>
+
 </div>
 {% endblock %}

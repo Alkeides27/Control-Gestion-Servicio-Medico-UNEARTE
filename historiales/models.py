@@ -312,6 +312,6 @@ class DocumentoReposo(models.Model):
 
 class DocumentoRecipe(models.Model):
     historial_padre = models.ForeignKey(HistorialMedico, on_delete=models.CASCADE, related_name="recipes")
-    texto_recipe = models.TextField(verbose_name="Récipe / Indicaciones", null=True, blank=True)
+    texto_recipe = models.CharField(max_length=80, verbose_name="Récipe / Indicaciones", null=True, blank=True)
     class Meta: verbose_name = "Documento: Récipe/Indicaciones"; verbose_name_plural = "Documentos: Récipes/Indicaciones"
     def __str__(self): return f"Récipe ({self.historial_padre.fecha.strftime('%d/%m/%Y')}) para {self.historial_padre.paciente}"

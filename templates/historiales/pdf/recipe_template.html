@@ -1,142 +1,169 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" style="height: 100%;">
 <head>
     <meta charset="UTF-8">
     <title>Récipe Médico</title>
     <style>
-        @page {
-            size: letter;
-            margin: 1.5cm;
+        /* La directiva @page se define en la vista (views.py) */
+        
+        body { 
+            font-family: 'Helvetica', Arial, sans-serif; 
+            font-size: 10pt; 
+            color: #000;
+            margin: 0;
+            padding: 0;
+            min-height: 100%; 
+            display: flex;
+            flex-direction: column;
         }
-        body {
-            font-family: Helvetica, Arial, sans-serif;
-            font-size: 11pt;
-            color: #333;
+        
+        .header-cintillo {
+            width: 100%;
+            margin-bottom: 10px;
         }
-        .header {
+
+        .header-logos {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 20px;
+            line-height: 1.3;
+            margin-bottom: 10px;
         }
-        .header-logo img {
-            /* --- LOGO SUPERIOR IZQUIERDO --- */
-            /* Este es el logo principal de UNEARTE. */
-            /* Se controla su tamaño desde aquí. */
-            width: 160px; 
+        .header-logos .logo-left img { 
+            max-width: 130px; 
         }
-        .header-title {
-            text-align: right;
+        .header-logos .header-right { 
+            text-align: right; 
             font-size: 9pt;
-            color: #555;
-            padding-top: 10px;
         }
-        .main-content {
-            border: 1px solid #000;
-            padding: 0;
-        }
-        .patient-info table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .patient-info td {
-            border: 1px solid #000;
-            padding: 8px;
-            font-size: 10pt;
-        }
-        .recipe-body {
-            padding: 15px;
-            min-height: 500px; /* Asegura espacio suficiente para el contenido y empuja el pie de página */
-        }
-        .recipe-body h3 {
-            margin: 0;
-            font-size: 13pt;
+        .header-logos .header-right h4 { 
+            margin: 0; 
+            font-size: 1.1em; 
             font-weight: bold;
         }
-        .footer {
-            margin-top: 20px;
+
+        .content { 
+            margin-top: 10px; 
+            border: 1px solid #000; 
+            padding: 10px; 
+            
+            flex-grow: 1;
             display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
+            flex-direction: column;
         }
-        .signature-area {
-            width: 60%;
-            text-align: left;
-        }
-        .signature-area p {
-            margin: 0;
-            font-size: 10pt;
-        }
-        .footer-logo-area {
-            width: 40%;
-            text-align: right;
-        }
-        .footer-logo-area img {
-            /* --- LOGO INFERIOR DERECHO --- */
-            /* Este es el segundo logo, más pequeño, en el área de la firma. */
-            height: 70px;
-        }
-        .footer-address {
-            margin-top: 10px;
-            text-align: center;
+        .patient-info { 
+            display: flex; 
+            justify-content: space-between; 
+            flex-wrap: wrap; 
+            margin-bottom: 15px; 
             font-size: 9pt;
-            color: #777;
+            flex-shrink: 0; 
+        }
+        .patient-info .data-field { 
+            border-bottom: 1px dotted #333; 
+            padding: 0 5px;
+            width: 60%; 
+        }
+         .patient-info .data-field-small {
+            border-bottom: 1px dotted #333; 
+            padding: 0 5px;
+            width: 35%;
+         }
+
+        .recipe-body { 
+            line-height: 1.6; 
+            margin-top: 20px;
+            
+            flex-grow: 1; 
+            display: flex;
+            flex-direction: column;
+        }
+        .recipe-body h5 { 
+            margin: 5px 0 10px 0; 
+            font-weight: bold; 
+            text-decoration: underline; 
+            text-align: center; 
+        }
+        
+        .signature { 
+            width: 45%; 
+            text-align: center; 
+            align-self: flex-end; 
+            /* Se añade 'margin-top: auto' para empujarlo al fondo 
+               del '.recipe-body' después de que el texto crezca.
+            */
+            margin-top: auto;
+            padding-top: 20px; /* Un poco de espacio sobre la línea */
+        }
+        .signature .line { 
+            border-top: 1px dotted #333; 
+            width: 90%; 
+            margin: 0 auto; 
+        }
+        .signature p { 
+            margin: 5px 0 0 0; 
+            font-size: 9pt; 
+            font-weight: bold; 
+        }
+
+
+        .footer { 
+            margin-top: auto;
+            padding-top: 10px;
+            width: 100%;
+            flex-shrink: 0; 
+        }
+        .footer .address { 
+            font-size: 8pt; 
+            width: 100%; 
+            line-height: 1.2; 
+            text-align: center; 
         }
     </style>
 </head>
-<body>
-
-    <div class="header">
-        <div class="header-logo">
-            <!-- Ubicación del logo superior -->
-            <img src="file://{{ logo_path }}" alt="Logo UNEARTE">
+<body style="min-height: 100%;">
+    
+    <img src="file://{{ cintillo_path }}" alt="Cintillo" class="header-cintillo">
+    
+    <div class="header-logos">
+        <div class="logo-left">
+            <img src="file://{{ unearte_logo_path }}" alt="Logo UNEARTE">
         </div>
-        <div class="header-title">
-            <p>Gobierno Bolivariano de Venezuela</p>
-            <p>Ministerio del Poder Popular para la Cultura</p>
-            <p>Ministerio del Poder Popular para la Educación Universitaria</p>
-            <h3>Servicio de Salud Integral</h3>
+        <div class="header-right">
+            <h4>Servicio de Salud Integral</h4>
         </div>
     </div>
 
-    <div class="main-content">
+    <div class="content">
         <div class="patient-info">
-            <table>
-                <tr>
-                    <td style="width: 70%;"><strong>Nombre y Apellido:</strong> {{ paciente.nombre }} {{ paciente.apellido }}</td>
-                    <td style="width: 30%;"><strong>Edad:</strong> {{ paciente.edad|default:"N/A" }}</td>
-                </tr>
-                <tr>
-                    <td><strong>Cédula:</strong> {{ paciente.numero_documento }}</td>
-                    <td><strong>Fecha:</strong> {{ historial.fecha|date:"d/m/Y" }}</td>
-                </tr>
-            </table>
+            <span class="data-field"><strong>Nombre y Apellido:</strong> {{ paciente.get_full_name }}</span>
+            <span class="data-field-small"><strong>Fecha:</strong> {{ historial.fecha|date:"d/m/Y" }}</span>
         </div>
+        <div class="patient-info">
+            <span class="data-field"><strong>Cédula:</strong> {{ paciente.numero_documento }}</span>
+            <span class="data-field-small"><strong>Edad:</strong> {{ paciente.edad }}</span>
+        </div>
+
         <div class="recipe-body">
-            <h3>Récipe:</h3>
-            <br>
-            <div>
+            <h5>Récipe:</h5>
+            
+            <div style="padding-left: 10px; flex-grow: 1;">
                 {{ recipe.texto_recipe|linebreaksbr }}
+            </div>
+            
+            <div class="signature">
+                <div class="line"></div>
+                <p>Medico(a) (Nombre/Firma)</p>
+                <p>{{ medico.get_full_name }}</p>
             </div>
         </div>
     </div>
-
     <div class="footer">
-        <div class="signature-area">
-            <br><br><br>
-            <p>_________________________</p>
-            <p><strong>Medico(a) (Nombre/Firma):</strong></p>
-            <p>Dr(a). {{ medico.first_name }} {{ medico.last_name }}</p>
+        <div class="address">
+            <strong>DIRECCIÓN DE SALUD INTEGRAL</strong><br>
+            Edif. Unearte, Av. México, entre UNEARTE y Teatro Teresa Carreño.
         </div>
-        <div class="footer-logo-area">
-            <!-- Ubicación del logo inferior -->
-            <img src="file://{{ logo_path }}" alt="Logo UNEARTE">
-            <p style="font-size: 8pt; text-align: center; margin: 0;">DIRECCIÓN DE SALUD INTEGRAL</p>
-        </div>
-    </div>
-
-    <div class="footer-address">
-        <p>Edif. Unearte, Av. México, entre UNEARTE y Teatro Teresa Carreño.</p>
     </div>
 
 </body>

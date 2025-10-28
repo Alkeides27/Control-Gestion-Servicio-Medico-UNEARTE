@@ -325,7 +325,7 @@ def nutricion_create_or_update(request, historial_pk):
 
 from django.http import HttpResponse
 from django.template.loader import render_to_string
-from weasyprint import HTML
+from weasyprint import CSS, HTML
 from django.conf import settings
 import os
 
@@ -347,6 +347,7 @@ def generar_recipe_pdf(request, recipe_pk):
     except DocumentoRecipe.DoesNotExist:
         return HttpResponse("El récipe no existe.", status=404)
 
+    # ... (tus paths de cintillo, unearte_logo, etc. están bien) ...
     cintillo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'CINTILLO-INSTITUCIONAL-PDF.png')
     unearte_logo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'UNEARTE-LOGO-PDF.png')
     alma_mater_logo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'ALMA-MATER-LOGO-PDF.png')
@@ -356,19 +357,21 @@ def generar_recipe_pdf(request, recipe_pk):
         'historial': historial,
         'paciente': paciente,
         'medico': medico,
+        # Seguimos pasando las rutas de archivo, las usaremos con file://
         'cintillo_path': cintillo_path,
         'unearte_logo_path': unearte_logo_path,
         'alma_mater_logo_path': alma_mater_logo_path,
     }
     
-    # Renderizar el template HTML a una cadena
-    # Usamos request.build_absolute_uri() para que WeasyPrint pueda encontrar archivos estáticos si se referencian con URL completa
     html_string = render_to_string('historiales/pdf/recipe_template.html', context, request=request)
 
+    # CORRECCIÓN DE TAMAÑO DE PÁGINA:
+    css_string = "@page { size: A5 portrait; margin: 1.5cm; }" # Cambiado a portrait
+    
     # Generar el PDF
-    pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri('/')).write_pdf()
+    pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri('/')).write_pdf(stylesheets=[CSS(string=css_string)])
 
-    # Devolver el PDF como una respuesta HTTP
+    # ... (el resto de la vista está bien) ...
     response = HttpResponse(pdf_file, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="recipe_{paciente.numero_documento}_{historial.fecha.strftime("%Y-%m-%d")}.pdf"'
     

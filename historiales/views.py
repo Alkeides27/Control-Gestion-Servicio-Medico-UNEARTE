@@ -187,19 +187,20 @@ class HistorialMedicoListView(LoginRequiredMixin, ListView):
     model = HistorialMedico
     template_name = 'historiales/index.html'
     context_object_name = 'historiales'
+    paginate_by = 10
 
     def get_queryset(self):
-        return HistorialMedico.objects.all().order_by('-fecha')
+        queryset = super().get_queryset().select_related('paciente', 'medico').order_by('-fecha')
+        filtro = self.request.GET.get('filtro', 'todos')
+
+        if filtro == 'mios':
+            return queryset.filter(medico=self.request.user)
+        
+        return queryset # Por defecto, muestra todos
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Obtener historiales del usuario actual
-        historiales_usuario = HistorialMedico.objects.filter(
-            medico=self.request.user
-        ).order_by('-fecha')
-        context['historiales_usuario'] = historiales_usuario
-        # También incluir todos los historiales para mostrar el médico creador
-        context['todos_historiales'] = self.get_queryset()
+        context['filtro_actual'] = self.request.GET.get('filtro', 'todos')
         return context
 
 def search(request):

@@ -8,45 +8,18 @@
 
     {% if paciente %}
     <div class="alert alert-info">
-        Paciente: <strong>{{ paciente.get_full_name }} (CI: {{ paciente.cedula }})</strong>
+        Paciente: <strong>{{ paciente }} (CI: {{ paciente.numero_documento }})</strong>
     </div>
     {% endif %}
 
     <form method="post">
         {% csrf_token %}
-
-        {% if form.paciente %}
-            {{ form.paciente }}
-        {% endif %}
-
-        <ul class="nav nav-tabs" id="historialTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="general" aria-selected="true">Historia General</button>
-            </li>
-            {% if object %}
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="nutricion-tab" data-bs-toggle="tab" data-bs-target="#nutricion" type="button" role="tab" aria-controls="nutricion" aria-selected="false">Nutrición</button>
-            </li>
-            {% endif %}
-        </ul>
-
-        <div class="tab-content pt-3" id="historialTabsContent">
-            <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
-                {% crispy general_form %}
-            </div>
-
-            {% if object %}
-            <div class="tab-pane fade" id="nutricion" role="tabpanel" aria-labelledby="nutricion-tab">
-                {% crispy nutricion_form %}
-            </div>
-            {% endif %}
-        </div>
-
+        {% crispy general_form %}
         <hr>
         <button type="submit" class="btn btn-success">
-            <i class="bi bi-check-circle-fill"></i> Guardar Historial
+            <i class="bi bi-check-circle-fill"></i> Guardar
         </button>
-                <a href="{% if object %}{% url 'historiales:show' object.pk %}{% elif paciente %}{% url 'pacientes:show' paciente.pk %}{% else %}{% url 'pacientes:index' %}{% endif %}" class="btn btn-secondary">
+        <a href="{% if object %}{% url 'historiales:show' object.pk %}{% elif paciente %}{% url 'pacientes:show' paciente.pk %}{% else %}{% url 'pacientes:index' %}{% endif %}" class="btn btn-secondary">
             <i class="bi bi-x-circle-fill"></i> Cancelar
         </a>
     </form>

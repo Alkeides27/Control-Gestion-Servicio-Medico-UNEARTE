@@ -9,7 +9,7 @@ from .views import (
     generar_reposo_pdf,
     generar_justificativo_pdf,
     generar_referencia_pdf,
-    nutricion_create_or_update, # Añade esta
+    nutricion_create_or_update,
 )
 
 app_name = 'historiales'
@@ -30,7 +30,7 @@ urlpatterns = [
     path('<int:historial_pk>/documentos/recipe/crear/', RecipeCreateView.as_view(), name='recipe_create'),
 
     # --- URL para Nutrición ---
-    path('<int:historial_pk>/nutricion/', nutricion_create_or_update, name='nutricion_create_or_update'),
+    path('<int:historial_pk>/nutricion/', nutricion_create_or_update, name='nutricion_form'),
 
     # --- URLs para generar PDFs ---
     path('documentos/recipe/<int:recipe_pk>/pdf/', generar_recipe_pdf, name='recipe_pdf'),

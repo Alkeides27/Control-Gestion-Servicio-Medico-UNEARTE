@@ -66,12 +66,11 @@
             {% if historia_nutricion %}
                 <h4>Datos de Nutrición</h4>
                 <p><strong>Peso Usual:</strong> {{ historia_nutricion.antropo_peso_usual|default:"N/A" }} kg</p>
-                <p><strong>Hábitos Cafeicos:</strong> {{ historia_nutricion.cafeicos|default:"N/A" }}</p>
-                 <p><strong>Dx Nutricional:</strong> {{ historia_nutricion.dx_nutricional|linebreaksbr|default:"N/A" }}</p>
-                <a href="{% url 'historiales:nutricion_create_or_update' historial_pk=object.pk %}" class="btn btn-primary">Editar Nutrición</a>
+                <p><strong>Dx Nutricional:</strong> {{ historia_nutricion.dx_nutricional|linebreaksbr|default:"N/A" }}</p>
+                <a href="{% url 'historiales:nutricion_form' historial_pk=object.pk %}" class="btn btn-primary btn-sm mt-2">Editar Datos de Nutrición</a>
             {% else %}
-                <p class="text-muted">No se han registrado datos de Nutrición.</p>
-                <a href="{% url 'historiales:nutricion_create_or_update' historial_pk=object.pk %}" class="btn btn-success">Crear Formulario de Nutrición</a>
+                <p class="text-muted">No se han registrado datos de Nutrición para este historial.</p>
+                <a href="{% url 'historiales:nutricion_form' historial_pk=object.pk %}" class="btn btn-success">+ Añadir Datos de Nutrición</a>
             {% endif %}
         </div>
 

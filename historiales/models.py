@@ -178,18 +178,18 @@ class HistoriaNutricion(models.Model):
 
     alim_n_comidas_dia = models.IntegerField(verbose_name="Nº Comidas/día", null=True, blank=True)
     alim_n_meriendas_dia = models.IntegerField(verbose_name="Nº Meriendas/día", null=True, blank=True)
-    alim_hidricos_vasos_dia = models.IntegerField(verbose_name="Hidratación: Vasos/día", null=True, blank=True)
+    alim_hidricos_vasos_dia = models.IntegerField(verbose_name="Hídricos: Vasos/día", null=True, blank=True)
     alim_alergias = models.TextField(verbose_name="Alergias Alimentarias", null=True, blank=True)
     alim_intolerancias = models.TextField(verbose_name="Intolerancias Alimentarias", null=True, blank=True)
 
     # --- Campos Pág. 1: Examen Funcional (Nutrición) ---
-    func_masticacion = models.BooleanField(verbose_name="Masticación Dificultosa", default=False)
+    func_masticacion = models.BooleanField(verbose_name="Masticación", default=False)
     func_disfagia = models.BooleanField(verbose_name="Disfagia", default=False)
     func_nauseas = models.BooleanField(verbose_name="Náuseas", default=False)
     func_vomitos = models.BooleanField(verbose_name="Vómitos", default=False)
     func_pirosis = models.BooleanField(verbose_name="Pirosis", default=False)
     func_rge = models.BooleanField(verbose_name="RGE", default=False)
-    func_periodos_menstruales = models.BooleanField(verbose_name="Síntomas Períodos Menstruales", default=False)
+    func_periodos_menstruales = models.BooleanField(verbose_name="Períodos Menstruales", default=False)
     func_micciones = models.CharField(max_length=255, verbose_name="Micciones", null=True, blank=True)
     func_evacuaciones = models.CharField(max_length=255, verbose_name="Evacuaciones", null=True, blank=True)
 
@@ -235,7 +235,7 @@ class HistoriaNutricion(models.Model):
     frec_frutos_secos = models.CharField(max_length=2, choices=FREC_CHOICES, verbose_name="Frutos Secos", null=True, blank=True)
     frec_frituras = models.CharField(max_length=2, choices=FREC_CHOICES, verbose_name="Frituras", null=True, blank=True)
     frec_azucar = models.CharField(max_length=2, choices=FREC_CHOICES, verbose_name="Azúcar", null=True, blank=True)
-    frec_dulces_otros = models.CharField(max_length=2, choices=FREC_CHOICES, verbose_name="Dulces (Otros)", null=True, blank=True)
+    frec_dulces_otros = models.CharField(max_length=2, choices=FREC_CHOICES, verbose_name="Dulces", null=True, blank=True)
     frec_refrescos = models.CharField(max_length=2, choices=FREC_CHOICES, verbose_name="Refrescos", null=True, blank=True)
     frec_malta = models.CharField(max_length=2, choices=FREC_CHOICES, verbose_name="Malta", null=True, blank=True)
     frec_te_frio = models.CharField(max_length=2, choices=FREC_CHOICES, verbose_name="Té frío", null=True, blank=True)
@@ -262,23 +262,45 @@ class HistoriaNutricion(models.Model):
     antropo_porc_grasa = models.FloatField(verbose_name="% Grasa", null=True, blank=True)
     antropo_porc_grasa_rcom = models.FloatField(verbose_name="% Grasa Recomendado", null=True, blank=True)
     antropo_peso_rcom = models.FloatField(verbose_name="Peso Recomendado (kg)", null=True, blank=True)
-    tabla_antropometrica = models.TextField(
-        verbose_name="Tabla de Evolución Antropométrica",
-        help_text="Registrar Fecha, Peso, Talla, IMC, C. Brazo, C. Cintura, C. Cadera, Pliegues (Triceps, Subescapular, Muslo anterior, Pantorrilla, Suprailiaco, Abdominal), Σ Pliegues, AM, AG",
-        null=True, blank=True
-    )
+    
+    # Campos para la tabla de evolución antropométrica
+    antropo_fecha = models.DateField(verbose_name="Fecha", null=True, blank=True)
+    antropo_talla = models.FloatField(verbose_name="Talla (cm)", null=True, blank=True)
+    antropo_imc = models.FloatField(verbose_name="IMC", null=True, blank=True)
+    antropo_circ_brazo = models.FloatField(verbose_name="C. Brazo", null=True, blank=True)
+    antropo_circ_cintura = models.FloatField(verbose_name="C. Cintura", null=True, blank=True)
+    antropo_circ_cadera = models.FloatField(verbose_name="C. Cadera", null=True, blank=True)
+    antropo_pliegue_triceps = models.FloatField(verbose_name="Pliegue Tríceps", null=True, blank=True)
+    antropo_pliegue_subescapular = models.FloatField(verbose_name="Pliegue Subescapular", null=True, blank=True)
+    antropo_pliegue_muslo_anterior = models.FloatField(verbose_name="Pliegue Muslo Anterior", null=True, blank=True)
+    antropo_pliegue_pantorrilla = models.FloatField(verbose_name="Pliegue Pantorrilla", null=True, blank=True)
+    antropo_pliegue_suprailiaco = models.FloatField(verbose_name="Pliegue Suprailíaco", null=True, blank=True)
+    antropo_pliegue_abdominal = models.FloatField(verbose_name="Pliegue Abdominal", null=True, blank=True)
+    antropo_suma_pliegues = models.FloatField(verbose_name="Σ Pliegues", null=True, blank=True)
+    antropo_am = models.FloatField(verbose_name="AM", null=True, blank=True)
+    antropo_ag = models.FloatField(verbose_name="AG", null=True, blank=True)
+    
     dx_nutricional = models.TextField(verbose_name="Dx Nutricional", null=True, blank=True)
     req_rct = models.FloatField(verbose_name="Requerimiento Calórico: RCT", null=True, blank=True)
     req_kcal_kg = models.FloatField(verbose_name="Requerimiento (kcal/kg)", null=True, blank=True)
     req_cho_porc = models.FloatField(verbose_name="CHO (%)", null=True, blank=True)
     req_prot_porc = models.FloatField(verbose_name="Prot (%)", null=True, blank=True)
     req_grasa_porc = models.FloatField(verbose_name="Grasa (%)", null=True, blank=True)
+    
+    # Nuevos campos L, V, F, A, C, G
+    req_l = models.CharField(max_length=15, verbose_name="L", null=True, blank=True)
+    req_v = models.CharField(max_length=15, verbose_name="V", null=True, blank=True)
+    req_f = models.CharField(max_length=15, verbose_name="F", null=True, blank=True)
+    req_a = models.CharField(max_length=15, verbose_name="A", null=True, blank=True)
+    req_c = models.CharField(max_length=15, verbose_name="C", null=True, blank=True)
+    req_g = models.CharField(max_length=15, verbose_name="G", null=True, blank=True)
+    
     observaciones = models.TextField(verbose_name="Observaciones", null=True, blank=True)
     evolucion = models.TextField(verbose_name="Evolución", null=True, blank=True)
 
     class Meta:
-        verbose_name = "Formato: Historia de Nutrición (Pág. 1 y 3)"
-        verbose_name_plural = "Formatos: Historias de Nutrición (Pág. 1 y 3)"
+        verbose_name = "Formato: Historia de Nutrición"
+        verbose_name_plural = "Formatos: Historias de Nutrición"
 
     def __str__(self):
         return f"H. Nutrición de: {self.historial_padre.paciente}"

@@ -116,11 +116,251 @@
 
                             {% if historia_nutricion %}
 
-                                <p><strong>Peso Usual:</strong> {{ historia_nutricion.antropo_peso_usual|default:"N/A" }} kg</p>
+                                <!-- Información Básica Adicional -->
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Información Básica</h6>
+                                                <p class="card-text"><strong>N° Historia Clínica:</strong> {{ historia_nutricion.numero_historia_clinica|default:"N/A" }}</p>
+                                                <p class="card-text"><strong>CECA:</strong> {{ historia_nutricion.ceca|default:"N/A" }}</p>
+                                                <p class="card-text"><strong>Mención:</strong> {{ historia_nutricion.mencion|default:"N/A" }}</p>
+                                                <p class="card-text"><strong>Semestre:</strong> {{ historia_nutricion.semestre|default:"N/A" }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Categorías</h6>
+                                                <p class="card-text"><strong>Estudiante:</strong> {% if historia_nutricion.es_estudiante %}Sí{% else %}No{% endif %}</p>
+                                                <p class="card-text"><strong>Empleado:</strong> {% if historia_nutricion.es_empleado %}Sí{% else %}No{% endif %}</p>
+                                                <p class="card-text"><strong>Docente:</strong> {% if historia_nutricion.es_docente %}Sí{% else %}No{% endif %}</p>
+                                                <p class="card-text"><strong>Otros:</strong> {{ historia_nutricion.otros_basicos|default:"N/A" }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-                                <p><strong>Dx Nutricional:</strong> {{ historia_nutricion.dx_nutricional|linebreaksbr|default:"N/A" }}</p>
+                                <!-- Motivo de Consulta -->
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Consulta</h6>
+                                        <p class="card-text"><strong>Motivo:</strong> {{ historia_nutricion.motivo_consulta_nutricion|linebreaksbr|default:"N/A" }}</p>
+                                    </div>
+                                </div>
 
-                                <a href="{% url 'historiales:nutricion_edit' historial_pk=object.pk %}" class="btn btn-primary btn-sm mt-2">Editar Datos de Nutrición</a>
+                                <!-- Antecedentes Médicos -->
+                                <div class="row mb-4">
+                                    <!-- Antecedentes Personales -->
+                                    <div class="col-md-6 mb-4">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Antecedentes Personales</h6>
+                                                <ul class="mb-0">
+                                                    {% if historia_nutricion.antp_nutri_diabetes %}<li>Diabetes</li>{% endif %}
+                                                    {% if historia_nutricion.antp_nutri_hta %}<li>HTA</li>{% endif %}
+                                                    {% if historia_nutricion.antp_nutri_cardiopatias %}<li>Cardiopatías</li>{% endif %}
+                                                    {% if historia_nutricion.antp_nutri_cancer %}<li>Cáncer</li>{% endif %}
+                                                    {% if historia_nutricion.antp_nutri_gastritis %}<li>Gastritis</li>{% endif %}
+                                                    {% if historia_nutricion.antp_nutri_hipertiroidismo %}<li>Hipertiroidismo</li>{% endif %}
+                                                    {% if historia_nutricion.antp_nutri_hipotiroidismo %}<li>Hipotiroidismo</li>{% endif %}
+                                                </ul>
+                                                <p class="mb-0">{{ historia_nutricion.antp_nutri_otros|linebreaksbr|default:"" }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Antecedentes Familiares -->
+                                    <div class="col-md-6 mb-4">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Antecedentes Familiares</h6>
+                                                <ul class="mb-0">
+                                                    {% if historia_nutricion.antf_nutri_diabetes %}<li>Diabetes</li>{% endif %}
+                                                    {% if historia_nutricion.antf_nutri_hta %}<li>HTA</li>{% endif %}
+                                                    {% if historia_nutricion.antf_nutri_cardiopatias %}<li>Cardiopatías</li>{% endif %}
+                                                    {% if historia_nutricion.antf_nutri_cancer %}<li>Cáncer</li>{% endif %}
+                                                    {% if historia_nutricion.antf_nutri_gastritis %}<li>Gastritis</li>{% endif %}
+                                                    {% if historia_nutricion.antf_nutri_hipertiroidismo %}<li>Hipertiroidismo</li>{% endif %}
+                                                    {% if historia_nutricion.antf_nutri_hipotiroidismo %}<li>Hipotiroidismo</li>{% endif %}
+                                                </ul>
+                                                <p class="mb-0">{{ historia_nutricion.antf_nutri_otros|linebreaksbr|default:"" }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Hábitos y Estilo de Vida -->
+                                <div class="row mb-4">
+                                    <div class="col-md-6 mb-4">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Hábitos Psicológicos</h6>
+                                                <p class="card-text"><strong>Caféicos:</strong> {{ historia_nutricion.hab_cafeicos|default:"N/A" }}</p>
+                                                <p class="card-text"><strong>Cigarros:</strong> {{ historia_nutricion.hab_cigarros|default:"N/A" }}</p>
+                                                <p class="card-text"><strong>OH (Alcohol):</strong> {{ historia_nutricion.hab_oh|default:"N/A" }}</p>
+                                                <p class="card-text"><strong>Sueño:</strong> {{ historia_nutricion.hab_sueno|default:"N/A" }}</p>
+                                                <p class="card-text"><strong>Apetito:</strong> {{ historia_nutricion.hab_apetito|default:"N/A" }}</p>
+                                                <p class="card-text"><strong>Act. Física:</strong> {{ historia_nutricion.hab_act_fisica|default:"N/A" }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Hábitos Alimentarios</h6>
+                                                <p class="card-text"><strong>N° Comidas/día:</strong> {{ historia_nutricion.alim_n_comidas_dia|default:"N/A" }}</p>
+                                                <p class="card-text"><strong>N° Meriendas/día:</strong> {{ historia_nutricion.alim_n_meriendas_dia|default:"N/A" }}</p>
+                                                <p class="card-text"><strong>Vasos/día (Hídricos):</strong> {{ historia_nutricion.alim_hidricos_vasos_dia|default:"N/A" }}</p>
+                                                <p class="card-text"><strong>Alergias:</strong> {{ historia_nutricion.alim_alergias|default:"N/A" }}</p>
+                                                <p class="card-text"><strong>Intolerancias:</strong> {{ historia_nutricion.alim_intolerancias|default:"N/A" }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Examen Funcional -->
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Examen Funcional</h6>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <ul class="mb-0">
+                                                    {% if historia_nutricion.func_masticacion %}<li>Masticación</li>{% endif %}
+                                                    {% if historia_nutricion.func_disfagia %}<li>Disfagia</li>{% endif %}
+                                                    {% if historia_nutricion.func_nauseas %}<li>Náuseas</li>{% endif %}
+                                                    {% if historia_nutricion.func_vomitos %}<li>Vómitos</li>{% endif %}
+                                                    {% if historia_nutricion.func_pirosis %}<li>Pirosis</li>{% endif %}
+                                                    {% if historia_nutricion.func_rge %}<li>RGE</li>{% endif %}
+                                                    {% if historia_nutricion.func_periodos_menstruales %}<li>Períodos Menstruales</li>{% endif %}
+                                                </ul>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p class="card-text mb-0"><strong>Micciones:</strong> {{ historia_nutricion.func_micciones|default:"N/A" }}</p>
+                                                <p class="card-text mb-0"><strong>Evacuaciones:</strong> {{ historia_nutricion.func_evacuaciones|default:"N/A" }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Datos Laboratorio (Pág. 3) -->
+                                {% if historia_nutricion.datos_laboratorio %}
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Datos Laboratorio</h6>
+                                        <p class="card-text">{{ historia_nutricion.datos_laboratorio|linebreaksbr|default:"N/A" }}</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                <!-- Datos Antropométricos (Pág. 3) -->
+                                <div class="row mb-4">
+                                    <div class="col-md-6 mb-4">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Datos Antropométricos</h6>
+                                                <p class="card-text"><strong>Fecha:</strong> {{ historia_nutricion.antropo_fecha|date:"d/m/Y"|default:"N/A" }}</p>
+                                                <p class="card-text"><strong>Peso Usual:</strong> {{ historia_nutricion.antropo_peso_usual|default:"N/A" }} kg</p>
+                                                <p class="card-text"><strong>Peso Graso:</strong> {{ historia_nutricion.antropo_peso_graso|default:"N/A" }} kg</p>
+                                                <p class="card-text"><strong>Peso Máx:</strong> {{ historia_nutricion.antropo_peso_max|default:"N/A" }} kg</p>
+                                                <p class="card-text"><strong>Peso Mín:</strong> {{ historia_nutricion.antropo_peso_min|default:"N/A" }} kg</p>
+                                                <p class="card-text"><strong>Peso Magro:</strong> {{ historia_nutricion.antropo_peso_magro|default:"N/A" }} kg</p>
+                                                <p class="card-text"><strong>Peso Recomendado:</strong> {{ historia_nutricion.antropo_peso_rcom|default:"N/A" }} kg</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Medidas Adicionales</h6>
+                                                <p class="card-text"><strong>% Grasa:</strong> {{ historia_nutricion.antropo_porc_grasa|default:"N/A" }}%</p>
+                                                <p class="card-text"><strong>% Grasa Recomendado:</strong> {{ historia_nutricion.antropo_porc_grasa_rcom|default:"N/A" }}%</p>
+                                                <p class="card-text"><strong>Talla:</strong> {{ historia_nutricion.antropo_talla|default:"N/A" }} cm</p>
+                                                <p class="card-text"><strong>IMC:</strong> {{ historia_nutricion.antropo_imc|default:"N/A" }}</p>
+                                                <p class="card-text"><strong>C. Brazo:</strong> {{ historia_nutricion.antropo_circ_brazo|default:"N/A" }}</p>
+                                                <p class="card-text"><strong>C. Cintura:</strong> {{ historia_nutricion.antropo_circ_cintura|default:"N/A" }}</p>
+                                                <p class="card-text"><strong>C. Cadera:</strong> {{ historia_nutricion.antropo_circ_cadera|default:"N/A" }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Pliegues y Otros Datos Antropométricos -->
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Pliegues y Otros Datos</h6>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p class="card-text mb-0"><strong>Pliegue Tríceps:</strong> {{ historia_nutricion.antropo_pliegue_triceps|default:"N/A" }}</p>
+                                                <p class="card-text mb-0"><strong>Pliegue Subescapular:</strong> {{ historia_nutricion.antropo_pliegue_subescapular|default:"N/A" }}</p>
+                                                <p class="card-text mb-0"><strong>Pliegue Muslo Anterior:</strong> {{ historia_nutricion.antropo_pliegue_muslo_anterior|default:"N/A" }}</p>
+                                                <p class="card-text mb-0"><strong>Pliegue Pantorrilla:</strong> {{ historia_nutricion.antropo_pliegue_pantorrilla|default:"N/A" }}</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p class="card-text mb-0"><strong>Pliegue Suprailíaco:</strong> {{ historia_nutricion.antropo_pliegue_suprailiaco|default:"N/A" }}</p>
+                                                <p class="card-text mb-0"><strong>Pliegue Abdominal:</strong> {{ historia_nutricion.antropo_pliegue_abdominal|default:"N/A" }}</p>
+                                                <p class="card-text mb-0"><strong>Σ Pliegues:</strong> {{ historia_nutricion.antropo_suma_pliegues|default:"N/A" }}</p>
+                                                <p class="card-text mb-0"><strong>AM:</strong> {{ historia_nutricion.antropo_am|default:"N/A" }}</p>
+                                                <p class="card-text mb-0"><strong>AG:</strong> {{ historia_nutricion.antropo_ag|default:"N/A" }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Diagnóstico y Requerimiento Nutricional -->
+                                <div class="row mb-4">
+                                    <div class="col-md-8 mb-4">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Diagnóstico Nutricional</h6>
+                                                <p class="card-text"><strong>Dx Nutricional:</strong> {{ historia_nutricion.dx_nutricional|linebreaksbr|default:"N/A" }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Requerimientos</h6>
+                                                <p class="card-text"><strong>RCT:</strong> {{ historia_nutricion.req_rct|default:"N/A" }}</p>
+                                                <p class="card-text"><strong>kcal/kg:</strong> {{ historia_nutricion.req_kcal_kg|default:"N/A" }}</p>
+                                                <p class="card-text"><strong>CHO (%):</strong> {{ historia_nutricion.req_cho_porc|default:"N/A" }}%</p>
+                                                <p class="card-text"><strong>Prot (%):</strong> {{ historia_nutricion.req_prot_porc|default:"N/A" }}%</p>
+                                                <p class="card-text"><strong>Grasa (%):</strong> {{ historia_nutricion.req_grasa_porc|default:"N/A" }}%</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- L, V, F, A, C, G y Observaciones -->
+                                <div class="row mb-4">
+                                    <div class="col-md-6 mb-4">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Parámetros Adicionales</h6>
+                                                <div class="row">
+                                                    <div class="col-4"><p class="card-text mb-0"><strong>L:</strong> {{ historia_nutricion.req_l|default:"N/A" }}</p></div>
+                                                    <div class="col-4"><p class="card-text mb-0"><strong>V:</strong> {{ historia_nutricion.req_v|default:"N/A" }}</p></div>
+                                                    <div class="col-4"><p class="card-text mb-0"><strong>F:</strong> {{ historia_nutricion.req_f|default:"N/A" }}</p></div>
+                                                    <div class="col-4"><p class="card-text mb-0"><strong>A:</strong> {{ historia_nutricion.req_a|default:"N/A" }}</p></div>
+                                                    <div class="col-4"><p class="card-text mb-0"><strong>C:</strong> {{ historia_nutricion.req_c|default:"N/A" }}</p></div>
+                                                    <div class="col-4"><p class="card-text mb-0"><strong>G:</strong> {{ historia_nutricion.req_g|default:"N/A" }}</p></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Observaciones y Evolución</h6>
+                                                <p class="card-text"><strong>Observaciones:</strong> {{ historia_nutricion.observaciones|linebreaksbr|default:"N/A" }}</p>
+                                                <p class="card-text"><strong>Evolución:</strong> {{ historia_nutricion.evolucion|linebreaksbr|default:"N/A" }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <a href="{% url 'historiales:nutricion_edit' historial_pk=object.pk %}" class="btn btn-primary btn-sm">Editar Datos de Nutrición</a>
 
                             {% else %}
 

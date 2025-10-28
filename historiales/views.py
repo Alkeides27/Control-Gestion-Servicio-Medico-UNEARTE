@@ -343,14 +343,14 @@ def nutricion_create_or_update(request, historial_pk):
         nutricion = None
 
     if request.method == 'POST':
-        form = HistoriaNutricionForm(request.POST, instance=nutricion)
+        form = HistoriaNutricionForm(request.POST, instance=nutricion, paciente=historial.paciente)
         if form.is_valid():
             nutricion = form.save(commit=False)
             nutricion.historial_padre = historial
             nutricion.save()
             return redirect('historiales:show', pk=historial.pk)
     else:
-        form = HistoriaNutricionForm(instance=nutricion)
+        form = HistoriaNutricionForm(instance=nutricion, paciente=historial.paciente)
 
     return render(request, 'historiales/nutricion_form.html', {
         'form': form,

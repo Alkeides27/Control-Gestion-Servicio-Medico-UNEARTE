@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -30,7 +31,7 @@
         }
         .field-label {
             font-weight: bold;
-            width: 30%; /* Ancho para las etiquetas de campos principales */
+            width: 30%;
         }
         .field-content {
             min-height: 30px;
@@ -51,24 +52,54 @@
         .antecedentes-list li::before {
             content: "- ";
         }
+        .checkbox-label {
+            margin-right: 15px;
+        }
+        .no-break {
+            page-break-inside: avoid;
+        }
     </style>
 </head>
 <body>
 
     <table class="main-table">
         <!-- Fila del Encabezado -->
-        <tr>
+        <tr class="no-break">
             <td style="width: 25%; text-align: center; border-right: none;">
-                <img src="file://{{ logo_path }}" alt="Logo" style="width: 120px;">
+                <img src="{% static 'img/UNEARTE-LOGO-PDF.png' %}" alt="Logo UNEARTE" style="width: 120px;">
             </td>
             <td style="text-align: center; vertical-align: middle; border-left: none;">
                 <h2>UNIDAD DE SERVICIOS MEDICO</h2>
+            </td>
+        </tr>
+        
+        <!-- Fila de Metadatos -->
+        <tr class="no-break">
+            <td colspan="2">
+                <strong>CARACAS,</strong> {{ historial.fecha|date:"d/m/Y" }}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <strong>CECA:</strong> {{ documento.ceca|default:"N/A" }}
+            </td>
+        </tr>
+        <tr class="no-break">
+            <td colspan="2">
+                <span class="checkbox-label">Administrativo {% if documento.tipo_afiliado == 'ADM' %}(X){% else %}(&nbsp;){% endif %}</span>
+                <span class="checkbox-label">Obrero {% if documento.tipo_afiliado == 'OBR' %}(X){% else %}(&nbsp;){% endif %}</span>
+                <span class="checkbox-label">Docente {% if documento.tipo_afiliado == 'DOC' %}(X){% else %}(&nbsp;){% endif %}</span>
+                <span class="checkbox-label">Estudiante {% if documento.tipo_afiliado == 'EST' %}(X){% else %}(&nbsp;){% endif %}</span>
+                <span class="checkbox-label">Familiar {% if documento.tipo_afiliado == 'FAM' %}(X){% else %}(&nbsp;){% endif %}</span>
+            </td>
+        </tr>
+        
+        <!-- Fila del Título Principal -->
+        <tr class="no-break">
+            <td colspan="2" style="text-align: center;">
                 <h1>INFORME MÉDICO</h1>
             </td>
         </tr>
 
         <!-- Fila de Datos Personales -->
-        <tr>
+        <tr class="no-break">
             <td colspan="2" class="section-title">DATOS PERSONALES</td>
         </tr>
         <tr>

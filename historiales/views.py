@@ -501,6 +501,34 @@ def generar_referencia_pdf(request, referencia_pk):
     response['Content-Disposition'] = f'attachment; filename="referencia_{paciente.numero_documento}_{historial.fecha.strftime("%Y-%m-%d")}.pdf"'
     return response
 
+### HISTORIA GENERAL ###
+@medico_required
+def generar_historia_general_pdf(request, historia_pk):
+    try:
+        historia_general = get_object_or_404(HistoriaGeneral, pk=historia_pk)
+        historial = historia_general.historial_padre
+        paciente = historial.paciente
+        medico = historial.medico
+        if historial.medico != request.user:
+            return HttpResponse("No tiene permiso para ver este documento.", status=403)
+    except HistoriaGeneral.DoesNotExist:
+        return HttpResponse("La historia general no existe.", status=404)
+
+    logo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'logo.png')
+    context = {
+        'documento': historia_general,
+        'historial': historial,
+        'paciente': paciente,
+        'medico': medico,
+        'logo_path': logo_path,
+    }
+    html_string = render_to_string('historiales/pdf/historia_general_template.html', context, request=request)
+    pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri('/')).write_pdf()
+    response = HttpResponse(pdf_file, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="historia_general_{paciente.numero_documento}_{historial.fecha.strftime("%Y-%m-%d")}.pdf"'
+    return response
+
+
 
     
 # Añadir vistas de Update y Delete para los documentos si es necesario...

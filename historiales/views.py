@@ -191,7 +191,6 @@ class HistorialMedicoListView(LoginRequiredMixin, ListView):
         # Mostramos solo los historiales del médico logueado
         return HistorialMedico.objects.filter(medico=self.request.user).order_by('-fecha')
 
-@method_decorator(medico_required, name='dispatch')
 def search(request):
     query = request.GET.get('q', '')
     historiales = HistorialMedico.objects.filter(medico=request.user).order_by('-fecha')

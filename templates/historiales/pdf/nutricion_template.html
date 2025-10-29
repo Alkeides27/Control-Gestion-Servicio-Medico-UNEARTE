@@ -329,9 +329,13 @@
     </table>
 
     <div class="section-title">Datos Laboratorio</div>
-    {% for i in "123" %} <div class="notes-line">&nbsp;</div> {% endfor %} {% if documento.datos_laboratorio %}<div style="padding: 5px 0; font-size: 8.5pt;">{{ documento.datos_laboratorio|linebreaksbr }}</div>{% endif %}
+    {% if documento.datos_laboratorio %}
+        <div class="notes-line">{{ documento.datos_laboratorio|linebreaksbr }}</div>
+    {% else %}
+        {% for i in "123" %} <div class="notes-line">&nbsp;</div> {% endfor %}
+    {% endif %}
 
-    <div class="section-title">Datos Antropométricos</div>
+    <div class="section-title">Datos Autonométricos</div>
      <table>
          <tr>
              <td><span class="line-label">Peso Usual:</span> <span class="value-line">{{ documento.antropo_peso_usual|default:"" }} kg</span></td>
@@ -351,7 +355,7 @@
          </tr>
      </table>
 
-    <div class="section-title">Tabla de Evolución Antropométrica</div>
+    <div class="section-title">Tabla de Evolución Autonométrica</div>
     <table class="anthropometric-table">
         <thead>
             <tr>
@@ -384,8 +388,11 @@
     </table>
 
     <div class="section-title mt-3">Dx Nutricional</div>
-    {% for i in "123" %} <div class="notes-line">&nbsp;</div> {% endfor %}
-     {% if documento.dx_nutricional %}<div style="padding: 5px 0; font-size: 8.5pt;">{{ documento.dx_nutricional|linebreaksbr }}</div>{% endif %}
+    {% if documento.dx_nutricional %}
+        <div class="notes-line">{{ documento.dx_nutricional|linebreaksbr }}</div>
+    {% else %}
+        {% for i in "123" %} <div class="notes-line">&nbsp;</div> {% endfor %}
+    {% endif %}
 
 
     <div class="section-title">Requerimiento Calórico</div>
@@ -414,11 +421,19 @@
     </table>
 
     <div class="section-title">Observaciones</div>
-     {% for i in "123" %} <div class="notes-line">&nbsp;</div> {% endfor %} {% if documento.observaciones %}<div style="padding: 5px 0; font-size: 8.5pt;">{{ documento.observaciones|linebreaksbr }}</div>{% endif %}
+    {% if documento.observaciones %}
+        <div class="notes-line">{{ documento.observaciones|linebreaksbr }}</div>
+    {% else %}
+        {% for i in "123" %} <div class="notes-line">&nbsp;</div> {% endfor %}
+    {% endif %}
 
 
     <div class="section-title">Evolución</div>
-    {% for i in "1234" %} <div class="notes-line">&nbsp;</div> {% endfor %} {% if documento.evolucion %}<div style="padding: 5px 0; font-size: 8.5pt;">{{ documento.evolucion|linebreaksbr }}</div>{% endif %}
+    {% if documento.evolucion %}
+        <div class="notes-line">{{ documento.evolucion|linebreaksbr }}</div>
+    {% else %}
+        {% for i in "1234" %} <div class="notes-line">&nbsp;</div> {% endfor %}
+    {% endif %}
 
 
 </body>

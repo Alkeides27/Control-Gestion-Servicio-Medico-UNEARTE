@@ -421,18 +421,13 @@ def generar_nutricion_pdf(request, historia_nutricion_pk):
     Genera la vista en PDF de una historia de nutrición.
     """
     try:
-        # Obtenemos el objeto específico de HistoriaNutricion
         historia_nutricion = get_object_or_404(HistoriaNutricion, pk=historia_nutricion_pk)
-        
-        # Obtenemos los objetos relacionados
         historial = historia_nutricion.historial_padre
         paciente = historial.paciente
         medico = historial.medico
 
-        # Verificación de permisos (copiada de tus otras vistas de documentos)
         if not (hasattr(request.user, 'perfilusuario') and request.user.perfilusuario.rol == 'admin' or historial.medico == request.user):
             return HttpResponse("No tiene permiso para ver este documento.", status=403)
-
     except HistoriaNutricion.DoesNotExist:
         return HttpResponse("La historia de nutrición no existe.", status=404)
 
@@ -441,9 +436,8 @@ def generar_nutricion_pdf(request, historia_nutricion_pk):
     unearte_logo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'UNEARTE-LOGO-PDF.png')
     alma_mater_logo_path = os.path.join(settings.STATICFILES_DIRS[0], 'img', 'ALMA-MATER-LOGO-PDF.png')
 
-    # Creamos el contexto para el template
     context = {
-        'documento': historia_nutricion, # Usamos 'documento' para consistencia
+        'documento': historia_nutricion,
         'historial': historial,
         'paciente': paciente,
         'medico': medico,
@@ -452,17 +446,14 @@ def generar_nutricion_pdf(request, historia_nutricion_pk):
         'alma_mater_logo_path': alma_mater_logo_path,
     }
     
-    # Renderizamos el template HTML (que crearemos a continuación)
     html_string = render_to_string('historiales/pdf/nutricion_template.html', context, request=request)
     
-    # (Opcional: Si necesitamos un tamaño de página específico, lo añadimos aquí)
-    # css_string = "@page { size: A4 portrait; margin: 1.5cm; }"
-    # pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri('/')).write_pdf(stylesheets=[CSS(string=css_string)])
+    # CORRECCIÓN DE TAMAÑO DE PÁGINA:
+    css_string = "@page { size: A4 portrait; margin: 1.5cm; }"
+    
+    # Generar el PDF
+    pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri('/')).write_pdf(stylesheets=[CSS(string=css_string)])
 
-    # Generar el PDF (versión simple, A4 por defecto)
-    pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri('/')).write_pdf()
-
-    # Preparamos la respuesta HTTP
     response = HttpResponse(pdf_file, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="nutricion_{paciente.numero_documento}_{historial.fecha.strftime("%Y-%m-%d")}.pdf"'
     

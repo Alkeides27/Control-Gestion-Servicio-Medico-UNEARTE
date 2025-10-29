@@ -7,6 +7,7 @@ from .views import (
     nutricion_create_or_update,
     search,
     generar_recipe_pdf,
+    generar_nutricion_pdf,
     generar_reposo_pdf,
     generar_justificativo_pdf,
     generar_referencia_pdf,
@@ -41,6 +42,7 @@ urlpatterns = [
     
     # --- URLs para generar PDFs ---
     path('documentos/recipe/<int:recipe_pk>/pdf/', generar_recipe_pdf, name='recipe_pdf'),
+    path('documentos/nutricion/<int:historia_nutricion_pk>/pdf/', generar_nutricion_pdf, name='nutricion_pdf'),
     path('documentos/reposo/<int:reposo_pk>/pdf/', generar_reposo_pdf, name='reposo_pdf'),
     path('documentos/justificativo/<int:justificativo_pk>/pdf/', generar_justificativo_pdf, name='justificativo_pdf'),
     path('documentos/referencia/<int:referencia_pk>/pdf/', generar_referencia_pdf, name='referencia_pdf'),

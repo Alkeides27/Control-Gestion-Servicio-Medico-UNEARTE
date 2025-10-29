@@ -360,7 +360,10 @@
                                     </div>
                                 </div>
 
-                                <a href="{% url 'historiales:nutricion_edit' historial_pk=object.pk %}" class="btn btn-primary btn-sm">Editar Datos de Nutrición</a>
+                                <div class="btn-group" role="group">
+                                    <a href="{% url 'historiales:nutricion_edit' historial_pk=object.pk %}" class="btn btn-primary btn-sm">Editar Datos de Nutrición</a>
+                                    <a href="{% url 'historiales:nutricion_pdf' historia_nutricion_pk=historia_nutricion.pk %}" target="_blank" class="btn btn-info btn-sm">Exportar a PDF</a>
+                                </div>
 
                             {% else %}
 

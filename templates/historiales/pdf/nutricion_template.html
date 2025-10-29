@@ -1,0 +1,507 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Historia de Nutrición</title>
+    <style>
+        /* Definido en la vista */
+        /* @page { size: A4 portrait; margin: 1.5cm; } */
+        
+        body { 
+            font-family: 'Arial', sans-serif; /* Más parecido al original */
+            font-size: 10pt; 
+            color: #000;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* --- NUEVO HEADER --- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        .header-left img.alma-mater {
+            max-width: 120px;
+            display: block;
+        }
+        .header-left img.unearte-logo {
+            max-width: 130px;
+            display: block;
+            margin-top: 5px;
+        }
+        .header-right {
+            text-align: right;
+        }
+        .header-right h2 {
+            font-size: 1.2em;
+            margin: 0;
+            font-weight: bold;
+        }
+        .header-right h3 {
+            font-size: 1.1em;
+            margin: 5px 0 0 0;
+            font-weight: bold;
+        }
+        .header-right .fecha-historia {
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        /* --- ESTRUCTURA DE FORMULARIO --- */
+        .form-section {
+            margin-bottom: 15px;
+            border: 1px solid #000; /* Borde de la sección */
+            padding: 8px;
+        }
+        .form-section-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-decoration: underline;
+        }
+
+        /* Filas Flex */
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 5px;
+        }
+        .form-group {
+            display: flex;
+            align-items: baseline; /* Alinea label y dato */
+            margin-right: 15px;
+            margin-bottom: 5px;
+        }
+        .form-group label {
+            font-weight: bold;
+            margin-right: 5px;
+            white-space: nowrap;
+        }
+        /* El dato que simula la línea */
+        .data {
+            border-bottom: 1px dotted #333;
+            padding: 0 4px;
+            min-width: 100px; /* Ancho mínimo para el dato */
+            flex-grow: 1; /* Crece para llenar espacio */
+            font-family: 'Courier New', Courier, monospace; /* Fuente para datos */
+        }
+        
+        /* Modificadores de ancho */
+        .w-100 { width: 100%; }
+        .w-75 { width: 75%; }
+        .w-60 { width: 60%; }
+        .w-50 { width: 50%; }
+        .w-40 { width: 40%; }
+        .w-33 { width: 33.3%; }
+        .w-25 { width: 25%; }
+        .min-w-0 { min-width: 0 !important; }
+
+        /* --- Checkboxes --- */
+        .check-group {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .check-item {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+            margin-bottom: 3px;
+            font-size: 9pt;
+        }
+        .check-box {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 1px solid #000;
+            margin-right: 4px;
+            text-align: center;
+            line-height: 12px;
+            font-weight: bold;
+            font-size: 9pt;
+        }
+        .check-box.checked {
+            background-color: #ddd; /* Opcional: sombrear si está marcado */
+        }
+        .check-box.checked::after {
+            content: "X";
+        }
+
+        /* --- Text Areas (para Motivo, Dx, etc.) --- */
+        .text-area-box {
+            border: 1px solid #000;
+            padding: 5px;
+            min-height: 60px;
+            width: 100%;
+            margin-top: 5px;
+            white-space: pre-wrap; /* Respeta saltos de línea */
+            box-sizing: border-box; /* Asegura que el padding no desborde */
+        }
+
+        /* --- Frecuencia de Consumo --- */
+        .frecuencia-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px 5px;
+            font-size: 9pt;
+        }
+        .frecuencia-list h5 {
+            font-weight: bold;
+            font-size: 1em;
+            margin: 0 0 3px 0;
+            padding-bottom: 2px;
+            border-bottom: 1px solid #ccc;
+        }
+        .frecuencia-list .check-item {
+            margin-right: 5px;
+        }
+
+        /* --- Página 2 --- */
+        .page-break {
+            page-break-before: always;
+        }
+
+        /* --- Tabla Antropométrica --- */
+        /* NOTA: El modelo guarda esto como TextField, no como datos estructurados.
+           La mejor forma de mostrarlo es como un bloque de texto preformateado. */
+        .tabla-antropo-texto {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 9pt;
+        }
+
+        /* --- Firma (Página 2) --- */
+        .signature-box {
+            margin-top: 100px;
+            text-align: center;
+        }
+        .signature-box .line {
+            width: 60%;
+            margin: 0 auto;
+            border-top: 1px solid #000;
+            padding-top: 5px;
+        }
+        .signature-box p {
+            margin: 0;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+    
+    <div class="header">
+        <div class="header-left">
+            <img src="file://{{ alma_mater_logo_path }}" alt="Alma Mater" class="alma-mater">
+            <img src="file://{{ unearte_logo_path }}" alt="Logo UNEARTE" class="unearte-logo">
+        </div>
+        <div class="header-right">
+            <h2>HISTORIA CLÍNICA N° <span class="data" style="min-width: 150px;">{{ documento.numero_historia_clinica|default_if_none:'' }}</span></h2>
+            <h3>Servicio de Nutrición y Dietética</h3>
+            <div class="fecha-historia">
+                Fecha: <span class="data" style="min-width: 120px;">{{ historial.fecha|date:"d/m/Y" }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <div class="form-row">
+            <div class="form-group w-100">
+                <label>Nombre completo del Paciente:</label>
+                <span class="data w-100">{{ paciente.get_full_name }}</span>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group" style="width: 15%;">
+                <label>Edad:</label>
+                <span class="data w-100">{{ paciente.edad }}</span>
+            </div>
+            <div class="form-group" style="width: 45%;">
+                <label>Fecha y lugar de nacimiento:</label>
+                <span class="data w-100">{{ paciente.fecha_nacimiento|date:"d/m/Y" }} {{ paciente.lugar_nacimiento|default_if_none:'' }}</span>
+            </div>
+            <div class="form-group" style="width: 35%;">
+                <label>C.I:</label>
+                <span class="data w-100">{{ paciente.numero_documento }}</span>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group" style="width: 40%;">
+                <label>Teléfono / Celular:</label>
+                <span class="data w-100">{{ paciente.telefono_principal|default_if_none:'' }}</span>
+            </div>
+            <div class="form-group" style="width: 25%;">
+                <label>Est. (Civil):</label>
+                <span class="data w-100">{{ documento.estado_civil|default_if_none:'' }}</span>
+            </div>
+            <div class="form-group" style="width: 30%;">
+                <label>Empleo:</label>
+                <span class="data w-100">{{ documento.empleo|default_if_none:'' }}</span>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group" style="width: 15%;">
+                <label>Docente:</label>
+                <span class="data w-100">{% if documento.es_docente %}Sí{% else %}No{% endif %}</span>
+            </div>
+            <div class="form-group" style="width: 25%;">
+                <label>C.E.C.A.:</label>
+                <span class="data w-100">{{ documento.ceca|default_if_none:'' }}</span>
+            </div>
+            <div class="form-group" style="width: 30%;">
+                <label>Mención:</label>
+                <span class="data w-100">{{ documento.mencion|default_if_none:'' }}</span>
+            </div>
+            <div class="form-group" style="width: 20%;">
+                <label>Semestre:</label>
+                <span class="data w-100">{{ documento.semestre|default_if_none:'' }}</span>
+            </div>
+        </div>
+        <div class="form-row">
+             <div class="form-group w-100">
+                <label>Dirección:</label>
+                <span class="data w-100">{{ paciente.direccion.direccion_completa|default_if_none:'' }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <div class="form-section-title">Motivo de consulta:</div>
+        <div class="text-area-box" style="min-height: 40px;">{{ documento.motivo_consulta_nutricion|default_if_none:''|linebreaksbr }}</div>
+    </div>
+
+    <div class="form-section">
+        <div class="form-section-title">Antecedentes Personales:</div>
+        <div class="check-group">
+            <span class="check-item"><span class="check-box {% if documento.antp_nutri_diabetes %}checked{% endif %}"></span> Diabetes</span>
+            <span class="check-item"><span class="check-box {% if documento.antp_nutri_hta %}checked{% endif %}"></span> HTA</span>
+            <span class="check-item"><span class="check-box {% if documento.antp_nutri_cardiopatias %}checked{% endif %}"></span> Cardiopatías</span>
+            <span class="check-item"><span class="check-box {% if documento.antp_nutri_cancer %}checked{% endif %}"></span> Cáncer</span>
+            <span class="check-item"><span class="check-box {% if documento.antp_nutri_gastritis %}checked{% endif %}"></span> Gastritis</span>
+            <span class="check-item"><span class="check-box {% if documento.antp_nutri_hipertiroidismo %}checked{% endif %}"></span> Hipertiroidismo</span>
+            <span class="check-item"><span class="check-box {% if documento.antp_nutri_hipotiroidismo %}checked{% endif %}"></span> Hipotiroidismo</span>
+        </div>
+        <div class="form-group w-100" style="margin-top: 5px;">
+            <label>Otros (Especifique):</label>
+            <span class="data w-100">{{ documento.antp_nutri_otros|default_if_none:'' }}</span>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <div class="form-section-title">Antecedentes Familiares:</div>
+        <div class="check-group">
+            <span class="check-item"><span class="check-box {% if documento.antf_nutri_diabetes %}checked{% endif %}"></span> Diabetes</span>
+            <span class="check-item"><span class="check-box {% if documento.antf_nutri_hta %}checked{% endif %}"></span> HTA</span>
+            <span class="check-item"><span class="check-box {% if documento.antf_nutri_cardiopatias %}checked{% endif %}"></span> Cardiopatías</span>
+            <span class="check-item"><span class="check-box {% if documento.antf_nutri_cancer %}checked{% endif %}"></span> Cáncer</span>
+            <span class="check-item"><span class="check-box {% if documento.antf_nutri_gastritis %}checked{% endif %}"></span> Gastritis</span>
+            <span class="check-item"><span class="check-box {% if documento.antf_nutri_hipertiroidismo %}checked{% endif %}"></span> Hipertiroidismo</span>
+            <span class="check-item"><span class="check-box {% if documento.antf_nutri_hipotiroidismo %}checked{% endif %}"></span> Hipotiroidismo</span>
+        </div>
+        <div class="form-group w-100" style="margin-top: 5px;">
+            <label>Otros (Especifique):</label>
+            <span class="data w-100">{{ documento.antf_nutri_otros|default_if_none:'' }}</span>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <div class="form-section-title">Hábitos Psicobiológicos:</div>
+        <div class="form-row">
+            <div class="form-group w-50"><label>Cafeicos:</label><span class="data w-100">{{ documento.hab_cafeicos|default_if_none:'' }}</span></div>
+            <div class="form-group w-50"><label>Medicamentos:</label><span class="data w-100">{{ documento.hab_medicamentos|default_if_none:'' }}</span></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group w-50"><label>Cigarros:</label><span class="data w-100">{{ documento.hab_cigarros|default_if_none:'' }}</span></div>
+            <div class="form-group w-50"><label>Sueño:</label><span class="data w-100">{{ documento.hab_sueno|default_if_none:'' }}</span></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group w-50"><label>OH (Alcohol):</label><span class="data w-100">{{ documento.hab_oh|default_if_none:'' }}</span></div>
+            <div class="form-group w-50"><label>Apetito:</label><span class="data w-100">{{ documento.hab_apetito|default_if_none:'' }}</span></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group w-100"><label>Act. física:</label><span class="data w-100">{{ documento.hab_act_fisica|default_if_none:'' }}</span></div>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <div class="form-section-title">Hábitos Alimentarios:</div>
+        <div class="form-row">
+            <div class="form-group w-33"><label>Nº Comidas/día:</label><span class="data w-100">{{ documento.alim_n_comidas_dia|default_if_none:'' }}</span></div>
+            <div class="form-group w-33"><label>Nº Meriendas/día:</label><span class="data w-100">{{ documento.alim_n_meriendas_dia|default_if_none:'' }}</span></div>
+            <div class="form-group w-33"><label>Hidricos: Vasos/días:</label><span class="data w-100">{{ documento.alim_hidricos_vasos_dia|default_if_none:'' }}</span></div>
+        </div>
+        <div class="form-group w-100"><label>Alergias alimentarias:</label><span class="data w-100">{{ documento.alim_alergias|default_if_none:'' }}</span></div>
+        <div class="form-group w-100"><label>Intolerancias alimentarias:</label><span class="data w-100">{{ documento.alim_intolerancias|default_if_none:'' }}</span></div>
+    </div>
+
+    <div class="form-section">
+        <div class="form-section-title">Examen funcional:</div>
+        <div class="check-group">
+            <span class="check-item"><span class="check-box {% if documento.func_masticacion %}checked{% endif %}"></span> Masticación</span>
+            <span class="check-item"><span class="check-box {% if documento.func_disfagia %}checked{% endif %}"></span> Disfagia</span>
+            <span class="check-item"><span class="check-box {% if documento.func_nauseas %}checked{% endif %}"></span> Náuseas</span>
+            <span class="check-item"><span class="check-box {% if documento.func_vomitos %}checked{% endif %}"></span> Vómitos</span>
+            <span class="check-item"><span class="check-box {% if documento.func_pirosis %}checked{% endif %}"></span> Pirosis</span>
+            <span class="check-item"><span class="check-box {% if documento.func_rge %}checked{% endif %}"></span> RGE</span>
+            <span class="check-item"><span class="check-box {% if documento.func_periodos_menstruales %}checked{% endif %}"></span> Períodos Menstruales</span>
+        </div>
+        <div class="form-row" style="margin-top: 5px;">
+            <div class="form-group w-50"><label>Micciones:</label><span class="data w-100">{{ documento.func_micciones|default_if_none:'' }}</span></div>
+            <div class="form-group w-50"><label>Evacuaciones:</label><span class="data w-100">{{ documento.func_evacuaciones|default_if_none:'' }}</span></div>
+        </div>
+    </div>
+    
+    <div class="form-section">
+        <div class="form-section-title">Frecuencia de consumo de Alimentos</div>
+        <div class="frecuencia-grid">
+            <div class="frecuencia-list">
+                <h5>Lista 1: Lácteos</h5>
+                <span class="check-item">Leche Comp: ({{ documento.get_frec_leche_comp_display|default_if_none:' ' }})</span>
+                <span class="check-item">Leche des: ({{ documento.get_frec_leche_des_display|default_if_none:' ' }})</span>
+                <span class="check-item">Yogurt Nat: ({{ documento.get_frec_yogurt_nat_display|default_if_none:' ' }})</span>
+                <span class="check-item">Yogurt des: ({{ documento.get_frec_yogurt_des_display|default_if_none:' ' }})</span>
+            </div>
+            <div class="frecuencia-list">
+                <h5>Lista 2: Vegetales</h5>
+                <span class="check-item">Vegetales crudos: ({{ documento.get_frec_vegetales_crudos_display|default_if_none:' ' }})</span>
+                <span class="check-item">Cocidos: ({{ documento.get_frec_vegetales_cocidos_display|default_if_none:' ' }})</span>
+                <span class="check-item">Licuados: ({{ documento.get_frec_vegetales_licuados_display|default_if_none:' ' }})</span>
+            </div>
+            <div class="frecuencia-list">
+                <h5>Lista 3: Frutas</h5>
+                <span class="check-item">Frutas enteras: ({{ documento.get_frec_frutas_enteras_display|default_if_none:' ' }})</span>
+                <span class="check-item">Licuadas: ({{ documento.get_frec_frutas_licuadas_display|default_if_none:' ' }})</span>
+            </div>
+            <div class="frecuencia-list">
+                <h5>Lista 4: Carbohidratos</h5>
+                <span class="check-item">Arepa: ({{ documento.get_frec_arepa_display|default_if_none:' ' }})</span>
+                <span class="check-item">Pan Blanco: ({{ documento.get_frec_pan_blanco_display|default_if_none:' ' }})</span>
+                <span class="check-item">Pan Integral: ({{ documento.get_frec_pan_integral_display|default_if_none:' ' }})</span>
+                <span class="check-item">Pasta: ({{ documento.get_frec_pasta_display|default_if_none:' ' }})</span>
+                <span class="check-item">Arroz: ({{ documento.get_frec_arroz_display|default_if_none:' ' }})</span>
+                <span class="check-item">Casabe: ({{ documento.get_frec_casabe_display|default_if_none:' ' }})</span>
+                <span class="check-item">Tubérculos: ({{ documento.get_frec_tuberculos_display|default_if_none:' ' }})</span>
+                <span class="check-item">Plátano: ({{ documento.get_frec_platano_display|default_if_none:' ' }})</span>
+                <span class="check-item">Granos: ({{ documento.get_frec_granos_display|default_if_none:' ' }})</span>
+                <span class="check-item">Galletas: ({{ documento.get_frec_galletas_display|default_if_none:' ' }})</span>
+                <span class="check-item">Dulces: ({{ documento.get_frec_dulces_display|default_if_none:' ' }})</span>
+                <span class="check-item">Salados: ({{ documento.get_frec_salados_display|default_if_none:' ' }})</span>
+            </div>
+            <div class="frecuencia-list">
+                <h5>Lista 5: Proteínas</h5>
+                <span class="check-item">Pollo c/piel: ({{ documento.get_frec_pollo_c_piel_display|default_if_none:' ' }})</span>
+                <span class="check-item">Pollo s/piel: ({{ documento.get_frec_pollo_s_piel_display|default_if_none:' ' }})</span>
+                <span class="check-item">Pescado: ({{ documento.get_frec_pescado_display|default_if_none:' ' }})</span>
+                <span class="check-item">Res: ({{ documento.get_frec_res_display|default_if_none:' ' }})</span>
+                <span class="check-item">Pavo: ({{ documento.get_frec_pavo_display|default_if_none:' ' }})</span>
+                <span class="check-item">Cerdo: ({{ documento.get_frec_cerdo_display|default_if_none:' ' }})</span>
+                <span class="check-item">Huevos: ({{ documento.get_frec_huevos_display|default_if_none:' ' }})</span>
+                <span class="check-item">Embutidos: ({{ documento.get_frec_embutidos_display|default_if_none:' ' }})</span>
+                <span class="check-item">Vísceras: ({{ documento.get_frec_visceras_display|default_if_none:' ' }})</span>
+                <span class="check-item">Otros: ({{ documento.frec_otros_lista5|default_if_none:' ' }})</span>
+            </div>
+            <div class="frecuencia-list">
+                <h5>Lista 6: Grasas</h5>
+                <span class="check-item">Aceite: ({{ documento.get_frec_aceite_display|default_if_none:' ' }})</span>
+                <span class="check-item">Mayonesa: ({{ documento.get_frec_mayonesa_display|default_if_none:' ' }})</span>
+                <span class="check-item">Mantequilla: ({{ documento.get_frec_mantequilla_display|default_if_none:' ' }})</span>
+                <span class="check-item">Margarina: ({{ documento.get_frec_margarina_display|default_if_none:' ' }})</span>
+                <span class="check-item">Frutos secos: ({{ documento.get_frec_frutos_secos_display|default_if_none:' ' }})</span>
+                <span class="check-item">Frituras: ({{ documento.get_frec_frituras_display|default_if_none:' ' }})</span>
+            </div>
+            <div class="frecuencia-list">
+                <h5>Otros</h5>
+                <span class="check-item">Azúcar: ({{ documento.get_frec_azucar_display|default_if_none:' ' }})</span>
+                <span class="check-item">Dulces: ({{ documento.get_frec_dulces_otros_display|default_if_none:' ' }})</span>
+                <span class="check-item">Refrescos: ({{ documento.get_frec_refrescos_display|default_if_none:' ' }})</span>
+                <span class="check-item">Malta: ({{ documento.get_frec_malta_display|default_if_none:' ' }})</span>
+                <span class="check-item">Té frío: ({{ documento.get_frec_te_frio_display|default_if_none:' ' }})</span>
+                <span class="check-item">Jugos envasados: ({{ documento.get_frec_jugos_envasados_display|default_if_none:' ' }})</span>
+                <span class="check-item">Sal: ({{ documento.get_frec_sal_display|default_if_none:' ' }})</span>
+                <span class="check-item">Enlatados: ({{ documento.get_frec_enlatados_display|default_if_none:' ' }})</span>
+                <span class="check-item">Cubitos: ({{ documento.get_frec_cubitos_display|default_if_none:' ' }})</span>
+                <span class="check-item">Otro: ({{ documento.frec_otros_final|default_if_none:' ' }})</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-section">
+        <div class="form-section-title">Recordatorio de 24h:</div>
+        <div class="form-group w-100"><label>D:</label><span class="data w-100">{{ documento.recordatorio_24h_d|default_if_none:'' }}</span></div>
+        <div class="form-group w-100"><label>M:</label><span class="data w-100">{{ documento.recordatorio_24h_m1|default_if_none:'' }}</span></div>
+        <div class="form-group w-100"><label>A:</label><span class="data w-100">{{ documento.recordatorio_24h_a|default_if_none:'' }}</span></div>
+        <div class="form-group w-100"><label>M:</label><span class="data w-100">{{ documento.recordatorio_24h_m2|default_if_none:'' }}</span></div>
+        <div class="form-group w-100"><label>C:</label><span class="data w-100">{{ documento.recordatorio_24h_c|default_if_none:'' }}</span></div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <div class="form-section">
+        <div class="form-section-title">Datos Laboratorio:</div>
+        <div class="text-area-box">{{ documento.datos_laboratorio|default_if_none:''|linebreaksbr }}</div>
+    </div>
+
+    <div class="form-section">
+        <div class="form-section-title">Datos Antropométricos:</div>
+        <div class="form-row">
+            <div class="form-group w-33"><label>Peso Usual:</label><span class="data w-100">{{ documento.antropo_peso_usual|default_if_none:'' }} kg</span></div>
+            <div class="form-group w-33"><label>Peso Graso:</label><span class="data w-100">{{ documento.antropo_peso_graso|default_if_none:'' }} kg</span></div>
+            <div class="form-group w-33"><label>% Grasa:</label><span class="data w-100">{{ documento.antropo_porc_grasa|default_if_none:'' }} %</span></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group w-33"><label>Peso Máx:</label><span class="data w-100">{{ documento.antropo_peso_max|default_if_none:'' }} kg</span></div>
+            <div class="form-group w-33"><label>Peso Magro:</label><span class="data w-100">{{ documento.antropo_peso_magro|default_if_none:'' }} kg</span></div>
+            <div class="form-group w-33"><label>% Grasa Rcom:</label><span class="data w-100">{{ documento.antropo_porc_grasa_rcom|default_if_none:'' }} %</span></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group w-33"><label>Peso Mín:</label><span class="data w-100">{{ documento.antropo_peso_min|default_if_none:'' }} kg</span></div>
+            <div class="form-group w-33"><label>Peso Rcom:</label><span class="data w-100">{{ documento.antropo_peso_rcom|default_if_none:'' }} kg</span></div>
+        </div>
+        
+        <div class="form-section-title" style="margin-top: 15px;">Tabla de Evolución Antropométrica:</div>
+        <div class="text-area-box tabla-antropo-texto">
+            {{ documento.tabla_antropometrica|default_if_none:''|linebreaksbr }}
+        </div>
+    </div>
+    
+    <div class="form-section">
+        <div class="form-section-title">Dx Nutricional:</div>
+        <div class="text-area-box">{{ documento.dx_nutricional|default_if_none:''|linebreaksbr }}</div>
+    </div>
+
+    <div class="form-section">
+        <div class="form-section-title">Requerimientos:</div>
+        <div class="form-row">
+            <div class="form-group w-33"><label>RCT:</label><span class="data w-100">{{ documento.req_rct|default_if_none:'' }}</span></div>
+            <div class="form-group w-33"><label>CHO (%):</label><span class="data w-100">{{ documento.req_cho_porc|default_if_none:'' }} %</span></div>
+            <div class="form-group w-33"><label>Prot (%):</label><span class="data w-100">{{ documento.req_prot_porc|default_if_none:'' }} %</span></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group w-33"><label>Grasa (%):</label><span class="data w-100">{{ documento.req_grasa_porc|default_if_none:'' }} %</span></div>
+            <div class="form-group w-33"><label>Kcal/kg:</label><span class="data w-100">{{ documento.req_kcal_kg|default_if_none:'' }}</span></div>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <div class="form-section-title">Plan de Alimentación:</div>
+        <div class="text-area-box" style="min-height: 80px;"></div>
+    </div>
+
+    <div class="form-section">
+        <div class="form-section-title">Observaciones:</div>
+        <div class="text-area-box">{{ documento.observaciones|default_if_none:''|linebreaksbr }}</div>
+    </div>
+
+    <div class="form-section">
+        <div class="form-section-title">Evolución:</div>
+        <div class="text-area-box">{{ documento.evolucion|default_if_none:''|linebreaksbr }}</div>
+    </div>
+
+    <div class="signature-box">
+        <div class="line">
+            <p>Firma / Sello</p>
+        </div>
+    </div>
+
+</body>
+</html>
